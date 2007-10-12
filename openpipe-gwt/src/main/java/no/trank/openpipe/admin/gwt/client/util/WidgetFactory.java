@@ -18,7 +18,7 @@ import no.trank.openpipe.admin.gwt.client.widget.type.StepWidget;
 import no.trank.openpipe.admin.gwt.client.widget.type.StringWidget;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class WidgetFactory {
    public static Widget getWidget(FieldType type, final ValueWrapper wrapper) {
