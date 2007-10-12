@@ -1,0 +1,30 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+   <parent>
+      <artifactId>openpipe-parent</artifactId>
+      <groupId>no.trank.openpipe</groupId>
+      <version>1.0-SNAPSHOT</version>
+      <relativePath>../pom.xml</relativePath>
+   </parent>
+   <groupId>no.trank.openpipe</groupId>
+   <artifactId>openpipe-opennlp</artifactId>
+   <packaging>jar</packaging>
+   <version>1.0-SNAPSHOT</version>
+   <name>Pipeline OpenNLP module</name>
+   <dependencies>
+      <dependency>
+         <groupId>no.trank.openpipe</groupId>
+         <artifactId>openpipe-core</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>net.sourceforge.opennlp</groupId>
+         <artifactId>opennlp-tools</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>ch.qos.logback</groupId>
+         <artifactId>logback-classic</artifactId>
+         <scope>test</scope>
+      </dependency>
+   </dependencies>
+</project>

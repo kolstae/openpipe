@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+   
+   <!-- Tokenizer -->
+   <bean id="tokResource" class="org.springframework.core.io.ClassPathResource" scope="prototype">
+      <constructor-arg>
+         <value>/tokenize/en.bin.gz</value>
+      </constructor-arg>
+   </bean>
+   
+   <bean id="tokModelReader" class="no.trank.openpipe.opennlp.io.InputStreamGISModelReader"  lazy-init="true">
+      <constructor-arg type="java.io.InputStream">
+         <bean factory-bean="tokResource" factory-method="getInputStream"/>
+      </constructor-arg>
+      <constructor-arg type="boolean" value="true"/>
+   </bean>
+
+   <bean id="tokenizer" class="opennlp.tools.lang.english.Tokenizer" lazy-init="true">
+      <constructor-arg type="opennlp.maxent.MaxentModel">
+         <bean factory-bean="tokModelReader" factory-method="getModel"/>
+      </constructor-arg>
+   </bean>
+
+   <!-- SentenceDetector -->
+   <bean id="sdResource" class="org.springframework.core.io.ClassPathResource" scope="prototype">
+      <constructor-arg>
+         <value>/sentdetect/en.bin.gz</value>
+      </constructor-arg>
+   </bean>
+   
+   <bean id="sdModelReader" class="no.trank.openpipe.opennlp.io.InputStreamGISModelReader" lazy-init="true">
+      <constructor-arg type="java.io.InputStream">
+         <bean factory-bean="sdResource" factory-method="getInputStream"/>
+      </constructor-arg>
+      <constructor-arg type="boolean" value="true"/>
+   </bean>
+
+   <bean id="detector" class="opennlp.tools.sentdetect.SentenceDetectorME" lazy-init="true">
+      <constructor-arg type="opennlp.maxent.MaxentModel">
+         <bean factory-bean="sdModelReader" factory-method="getModel"/>
+      </constructor-arg>
+   </bean>
+
+   <!-- NameFinder -->
+   <bean id="nePersonResource" class="org.springframework.core.io.ClassPathResource" scope="prototype">
+      <constructor-arg>
+         <value>/namefind/person.bin.gz</value>
+      </constructor-arg>
+   </bean>
+   
+   <bean id="nePersonModelReader" class="no.trank.openpipe.opennlp.io.InputStreamGISModelReader" lazy-init="true">
+      <constructor-arg type="java.io.InputStream">
+         <bean factory-bean="nePersonResource" factory-method="getInputStream"/>
+      </constructor-arg>
+      <constructor-arg type="boolean" value="true"/>
+   </bean>
+
+   <bean id="nameFinderPerson" class="opennlp.tools.namefind.NameFinderME" lazy-init="true">
+      <constructor-arg type="opennlp.maxent.MaxentModel">
+         <bean factory-bean="nePersonModelReader" factory-method="getModel"/>
+      </constructor-arg>
+   </bean>
+
+   <bean id="neLocationResource" class="org.springframework.core.io.ClassPathResource" scope="prototype">
+      <constructor-arg>
+         <value>/namefind/location.bin.gz</value>
+      </constructor-arg>
+   </bean>
+   
+   <bean id="neLocationModelReader" class="no.trank.openpipe.opennlp.io.InputStreamGISModelReader" lazy-init="true">
+      <constructor-arg type="java.io.InputStream">
+         <bean factory-bean="neLocationResource" factory-method="getInputStream"/>
+      </constructor-arg>
+      <constructor-arg type="boolean" value="true"/>
+   </bean>
+
+   <bean id="nameFinderLocation" class="opennlp.tools.namefind.NameFinderME" lazy-init="true">
+      <constructor-arg type="opennlp.maxent.MaxentModel">
+         <bean factory-bean="neLocationModelReader" factory-method="getModel"/>
+      </constructor-arg>
+   </bean>
+</beans>

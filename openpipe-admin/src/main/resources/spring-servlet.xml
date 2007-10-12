@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+
+   <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+      <property name="order" value="20"/>
+      <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+      <property name="prefix" value="/WEB-INF/jsp/"/>
+      <property name="suffix" value=".jsp"/>
+   </bean>
+
+   <bean id="urlMappings" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+      <property name="alwaysUseFullPath" value="true"/>
+      <property name="mappings">
+         <props>
+            <prop key="admin.form">adminController</prop>
+         </props>
+      </property>
+   </bean>   
+   
+   <bean id="adminController" class="no.trank.openpipe.admin.ui.AdminController">
+      <property name="stepManager" ref="stepManager"/>
+      <property name="typeManager" ref="typeManager"/>
+   </bean>
+
+   <bean class="no.trank.openpipe.admin.taglib.Functions">
+      <property name="typeManager" ref="typeManager"/>
+   </bean>
+</beans>

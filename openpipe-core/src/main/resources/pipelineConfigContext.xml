@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+
+   <bean id="steps" class="java.util.ArrayList">
+      <constructor-arg>
+         <list>
+            <value>no.trank.openpipe.step.AnnotateSentence</value>
+            <value>no.trank.openpipe.step.AnnotateSpace</value>
+            <value>no.trank.openpipe.step.AnnotationToField</value>
+            <value>no.trank.openpipe.step.ChecksumFields</value>
+            <value>no.trank.openpipe.step.ConvertDate</value>
+            <value>no.trank.openpipe.step.CopyField</value>
+            <value>no.trank.openpipe.step.Debug</value>
+            <value>no.trank.openpipe.step.HierarchicalSplitter</value>
+            <value>no.trank.openpipe.step.ParseXML</value>
+            <value>no.trank.openpipe.step.ParseXMLXPath</value>
+            <value>no.trank.openpipe.step.PipelineSelector</value>
+            <value>no.trank.openpipe.step.RegexField</value>
+            <value>no.trank.openpipe.step.RemoveFields</value>
+            <value>no.trank.openpipe.step.SetField</value>
+            <value>no.trank.openpipe.step.StripHtml</value>
+            <value>no.trank.openpipe.step.Uppercase</value>
+         </list>
+      </constructor-arg>
+   </bean>
+</beans>

@@ -1,0 +1,16 @@
+ -----
+ OpenPipe
+ -----
+ Espen Amble Kolstad
+ -----
+
+OpenPipe
+
+  OpenPipe is a scalable platform for manipulating a stream of
+  documents. PipeLines are created from building bricks doing atomic
+  operations on documents, like language detection, field manipulation,
+  POS tagging, entity extraction or submitting the document to a search
+  engine. OpenPipe was originally designed for indexing with the Solr
+  full-text search engine, but could easily be extended to any search
+  engine or any other use case where documents need to be processed in
+  various ways.

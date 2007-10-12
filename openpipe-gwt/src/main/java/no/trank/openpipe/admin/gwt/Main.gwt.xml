@@ -1,0 +1,5 @@
+<module>
+	<inherits name='com.google.gwt.user.User'/>
+	<entry-point class='no.trank.openpipe.admin.gwt.client.Main'/>
+   <servlet path='/step' class='no.trank.openpipe.admin.gwt.server.StepServer'/>
+</module>

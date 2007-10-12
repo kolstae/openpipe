@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="OpenPipe">
+   <skin>
+     <groupId>org.apache.maven.skins</groupId>
+     <artifactId>maven-classic-skin</artifactId>
+     <version>1.0</version>
+   </skin>
+   <bannerLeft>
+      <name>OpenPipe</name>
+      <src>http://maven.apache.org/images/apache-maven-project.png</src>
+      <href>http://maven.apache.org/</href>
+   </bannerLeft>
+   <bannerRight>
+      <src>http://developer.berlios.de/bslogo.php?group_id=8967</src>
+   </bannerRight>
+   <publishDate format="dd MMM yyyy" />
+   <body>
+      <links>
+         <item name="Maven" href="http://maven.apache.org/"/>
+      </links>
+      <menu name="Main">
+         <item name="Welcome" href="/index.html"/>
+         <item name="Getting started" href="guides/getting-started.html"/>
+         <item name="FAQ" href="faq.html"/>
+      </menu>
+      <menu name="Ymse - dev-help">
+         <item name="APT Format" href="format.html"/>
+         <item name="berliOS - site" href="http://developer.berlios.de/projects/openpipe/"/>
+      </menu>
+      <menu ref="reports"/>
+   </body>
+</project>

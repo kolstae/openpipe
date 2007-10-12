@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+
+   <bean id="pipeline" class="no.trank.openpipe.api.Pipeline">
+      <property name="pipelineSteps">
+         <list>
+            <bean class="no.trank.openpipe.step.Uppercase">
+               <property name="fieldNameMap">
+                  <map>
+                     <entry key="body" value="uppercaseBody" />
+                  </map>
+               </property>
+            </bean>
+            <bean class="no.trank.openpipe.step.AnnotateSentence">
+               <property name="fieldNames" value="uppercaseBody"/>
+            </bean>
+            <bean class="no.trank.openpipe.step.Debug"/>
+         </list>
+      </property>
+   </bean>
+
+   <bean id="textFileDocumentReader" class="no.trank.openpipe.reader.TextFileDocumentReader">
+      <property name="directory" value="pipeline-app/src/main/resources/docs"/>
+      <property name="encoding" value="UTF-8"/>
+      <property name="bodyField" value="body"/>
+   </bean>
+
+   <bean id="pipelineApplicationBean" class="no.trank.openpipe.PipelineRunner">
+      <property name="documentReader">
+         <ref local="textFileDocumentReader"/>
+      </property>
+      <property name="pipeline">
+         <ref local="pipeline"/>
+      </property>
+   </bean>
+
+
+   <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+      <property name="url" value="jdbc:mysql://frode/pipeline?useUnicode=true&amp;characterEncoding=utf8"/>
+      <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+      <property name="username" value="root"/>
+      <property name="password" value=""/>
+   </bean>
+   
+   <bean id="jdbcDocumentProducer" class="no.trank.openpipe.jdbc.JdbcDocumentProducer">
+      <property name="dataSource" ref="dataSource"/>
+      <property name="jdbcStats" ref="jdbcStats"/>
+      <property name="addPreSql" value="update test set in_progress=1 where is_updated=1"/>
+      <property name="addSql" value="select title,body from test where in_progress=1"/>
+      <property name="addPostSql" value="update test set is_updated=0,in_progress=0 where in_progress=1"/>
+   </bean>
+
+   <bean id="jdbcPipelineRunner" class="no.trank.openpipe.PipelineRunner">
+      <property name="documentReader">
+         <ref local="jdbcDocumentProducer"/>
+      </property>
+      <property name="pipeline">
+         <ref local="pipeline"/>
+      </property>
+   </bean>
+   
+   <bean id="jdbcPoller" class="no.trank.openpipe.jdbc.JdbcPoller">
+      <property name="pipelineRunner" ref="jdbcPipelineRunner"/>
+   </bean>
+   
+   <bean id="jdbcStats" class="no.trank.openpipe.jdbc.HtmlJdbcStats"/>
+   
+   <bean id="jdbcAdmin" class="no.trank.openpipe.jdbc.JdbcAdmin" init-method="start">
+      <property name="server" ref="jettyServer"/>
+      <property name="jdbcPoller" ref="jdbcPoller"/>
+      <property name="jdbcStats" ref="jdbcStats"/>
+      <property name="jettyEnabled" value="true"/>
+      <property name="pollingEnabled" value="false"/>
+      <property name="intervalMillis" value="1000"/>
+   </bean>
+   
+   <bean id="jettyServer" class="org.mortbay.jetty.Server">
+      <property name="connectors">
+         <bean class="org.mortbay.jetty.nio.BlockingChannelConnector">
+            <property name="host" value="127.0.0.1"/>
+            <property name="port" value="4444"/>
+         </bean>
+      </property>
+      <property name="handlers">
+         <bean class="org.mortbay.jetty.servlet.ServletHandler">
+            <property name="servlets">
+               <bean class="org.mortbay.jetty.servlet.ServletHolder">
+                  <property name="servlet" ref="jdbcAdmin"/>
+                  <property name="name" value="root"/>
+               </bean>
+            </property>
+            <property name="servletMappings">
+               <bean class="org.mortbay.jetty.servlet.ServletMapping">
+                  <property name="pathSpec" value="/"/>
+                  <property name="servletName" value="root"/>
+               </bean>
+            </property>
+         </bean>
+      </property>
+      <property name="threadPool">
+         <bean class="org.mortbay.thread.BoundedThreadPool">
+            <property name="lowThreads" value="1"/>
+            <property name="minThreads" value="2"/>
+         </bean>
+      </property>
+   </bean>
+</beans>

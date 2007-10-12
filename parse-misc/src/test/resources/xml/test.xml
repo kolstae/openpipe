@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doc>
+   <!-- Should be ignored -->
+   <title>Dette er en test tittle</title>
+   <summary>
+      Her er det litt ymse.
+      Og enda litt! Og det er jo &gt; <tt>ingenting</tt> :-)
+   </summary>
+   <script lang="Should be ignored">
+      <![CDATA[
+function matchwo(a,b)
+{
+if (a < b && a < 0) then
+   {
+   return 1
+   }
+else
+   {
+   return 0
+   }
+}
+]]>
+   </script>
+</doc>
