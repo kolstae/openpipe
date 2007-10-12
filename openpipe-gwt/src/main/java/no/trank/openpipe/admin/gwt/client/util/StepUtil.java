@@ -16,7 +16,7 @@ import no.trank.openpipe.admin.gwt.client.model.type.MapType;
 import no.trank.openpipe.admin.gwt.client.model.type.StepType;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class StepUtil {
    public static String getName(StepConfig stepConfig) {
