@@ -1,6 +1,7 @@
 package no.trank.openpipe.api;
 
 /**
+ * @version $Revision$
  */
 public enum PipelineStatusCode {
    CONTINUE(false),

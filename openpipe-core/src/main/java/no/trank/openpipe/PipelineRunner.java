@@ -7,7 +7,7 @@ import no.trank.openpipe.api.document.DocumentProducer;
 
 /**
  *
- * @version $Revision:670 $
+ * @version $Revision$
 
  */
 public class PipelineRunner implements Runnable {

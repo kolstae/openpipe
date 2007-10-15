@@ -7,7 +7,7 @@ import java.util.Set;
 /**
  * This class represents a field-value with annotations (if any).
  * 
- * @version $Revision:712 $
+ * @version $Revision$
  */
 public interface AnnotatedField {
    /**

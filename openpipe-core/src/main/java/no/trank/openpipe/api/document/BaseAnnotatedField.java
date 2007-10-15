@@ -10,7 +10,7 @@ import java.util.Set;
 import no.trank.openpipe.util.Iterators;
 
 /**
- * @version $Revision:712 $
+ * @version $Revision$
  */
 public class BaseAnnotatedField implements AnnotatedField {
    private final Map<String, List<? extends Annotation>> annotations = new LinkedHashMap<String, List<? extends Annotation>>();

@@ -23,7 +23,7 @@ import no.trank.openpipe.api.document.Document;
 /**
  * A {@link PipelineStep} that selects a sub-pipeline and 
  * 
- * @version $Revision:712 $
+ * @version $Revision$
  */
 public class PipelineSelector extends BasePipelineStep {
    private static final Logger log = LoggerFactory.getLogger(PipelineSelector.class);
@@ -103,7 +103,7 @@ public class PipelineSelector extends BasePipelineStep {
    }
 
    public String getRevision() {
-      return "$Revision:712 $";
+      return "$Revision$";
    }
 
    public Map<String, List<PipelineStep>> getOperationMap() {

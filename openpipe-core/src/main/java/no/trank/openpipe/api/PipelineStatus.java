@@ -1,6 +1,7 @@
 package no.trank.openpipe.api;
 
 /**
+ * @version $Revision$
  */
 public class PipelineStatus {
    private final int status;

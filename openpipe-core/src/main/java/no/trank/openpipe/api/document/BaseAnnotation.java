@@ -1,6 +1,7 @@
 package no.trank.openpipe.api.document;
 
 /**
+ * @version $Revision$
  */
 public class BaseAnnotation implements Annotation {
    private int startPos;

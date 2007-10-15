@@ -13,7 +13,7 @@ import no.trank.openpipe.api.PipelineStepStatusCode;
 import no.trank.openpipe.api.document.Document;
 
 /**
- * @version $Revision:712 $
+ * @version $Revision$
  */
 public class PipelineSelectorTest extends TestCase {
    private static final String ADD = "ADD";

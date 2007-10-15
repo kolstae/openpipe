@@ -16,7 +16,7 @@ import no.trank.openpipe.api.document.BaseAnnotation;
 import no.trank.openpipe.api.document.Document;
 
 /**
- * @version $Revision:712 $
+ * @version $Revision$
  */
 public class AnnotateSpace extends BasePipelineStep {
    private static final Logger log = LoggerFactory.getLogger(AnnotateSpace.class);
@@ -28,7 +28,7 @@ public class AnnotateSpace extends BasePipelineStep {
    }
 
    public String getRevision() {
-      return "$Revision:712 $";
+      return "$Revision$";
    }
 
    public PipelineStepStatus execute(Document doc) {

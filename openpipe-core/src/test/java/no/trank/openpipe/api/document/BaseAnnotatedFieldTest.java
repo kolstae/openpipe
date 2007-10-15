@@ -9,7 +9,7 @@ import java.util.List;
 import junit.framework.TestCase;
 
 /**
- * @version $Revision:712 $
+ * @version $Revision$
  */
 public class BaseAnnotatedFieldTest extends TestCase {
    private static final String VALUE = "en gul katt virre virre vapp";

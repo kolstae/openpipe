@@ -6,7 +6,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * @version $Revision:670 $
+ * @version $Revision$
  */
 public class Main {
    private static final Logger log = LoggerFactory.getLogger(Main.class);

@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * @version $Revision:672 $
+ * @version $Revision$
  */
 public interface RawData {   
    InputStream getInputStream() throws IOException;

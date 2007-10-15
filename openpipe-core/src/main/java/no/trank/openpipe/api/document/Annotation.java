@@ -1,7 +1,7 @@
 package no.trank.openpipe.api.document;
 
 /**
- * @version $Revision:672 $
+ * @version $Revision$
  */
 public interface Annotation {
    int getStartPos();

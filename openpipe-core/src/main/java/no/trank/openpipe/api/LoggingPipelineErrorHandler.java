@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import no.trank.openpipe.api.document.Document;
 
 /**
- * @version $Revision:712 $
+ * @version $Revision$
  */
 public class LoggingPipelineErrorHandler implements PipelineErrorHandler {
    private static final Logger log = LoggerFactory.getLogger(LoggingPipelineErrorHandler.class);

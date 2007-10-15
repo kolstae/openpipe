@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @version $Revision:712 $
+ * @version $Revision$
  */
 public class SolrDocumentProcessorTest extends TestCase {
    private static final Logger log = LoggerFactory.getLogger(SolrDocumentProcessorTest.class);
