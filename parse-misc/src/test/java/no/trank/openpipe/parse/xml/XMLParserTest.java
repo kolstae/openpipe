@@ -9,7 +9,7 @@ import no.trank.openpipe.parse.api.ParseData;
 import no.trank.openpipe.parse.api.ParserResult;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class XMLParserTest extends TestCase {
 

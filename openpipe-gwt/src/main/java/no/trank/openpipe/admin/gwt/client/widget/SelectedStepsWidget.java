@@ -16,7 +16,7 @@ import no.trank.openpipe.admin.gwt.client.model.StepConfig;
 import no.trank.openpipe.admin.gwt.client.model.StepValues;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class SelectedStepsWidget extends Composite {
    private final IStepServerAsync stepServer = IStepServer.Instance.getInstance();

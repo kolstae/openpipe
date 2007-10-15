@@ -5,7 +5,7 @@ import java.util.Arrays;
 import junit.framework.TestCase;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class HexUtilTest extends TestCase {
    private static final byte[] BYTES = new byte[256];

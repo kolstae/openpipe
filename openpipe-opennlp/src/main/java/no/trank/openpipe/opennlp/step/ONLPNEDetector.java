@@ -26,7 +26,7 @@ import no.trank.openpipe.api.document.ResolvedAnnotation;
 
 /**
 
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class ONLPNEDetector extends BasePipelineStep {
    private static final Logger log = LoggerFactory.getLogger(ONLPNEDetector.class);
@@ -127,7 +127,7 @@ public class ONLPNEDetector extends BasePipelineStep {
    }
 
    public String getRevision() {
-      return "$Revision: 874 $";
+      return "$Revision$";
    }
 
    public Map<String, NameFinder> getNameFinders() {

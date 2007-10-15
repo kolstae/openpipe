@@ -16,7 +16,7 @@ import no.trank.openpipe.api.document.Document;
 import no.trank.openpipe.api.document.ResolvedAnnotation;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class Debug extends BasePipelineStep {
    private Logger log = LoggerFactory.getLogger(Debug.class);
@@ -91,7 +91,7 @@ public class Debug extends BasePipelineStep {
    }
 
    public String getRevision() {
-      return "$Revision: 874 $";
+      return "$Revision$";
    }
 
    public Set<String> getAnnotationTypes() {

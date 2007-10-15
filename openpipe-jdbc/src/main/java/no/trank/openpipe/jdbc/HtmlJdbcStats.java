@@ -6,7 +6,7 @@ import java.text.SimpleDateFormat;
 import static no.trank.openpipe.api.document.DocumentOperation.*;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class HtmlJdbcStats implements JdbcStats {
    private static final DateFormat DF = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");

@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class ListType implements FieldType {
    private FieldType[] listType = new FieldType[1];

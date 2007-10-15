@@ -9,7 +9,7 @@ import no.trank.openpipe.api.PipelineStepStatusCode;
 import no.trank.openpipe.api.document.Document;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class SetField extends BasePipelineStep {
    private Map<String, String> fieldValueMap;
@@ -45,6 +45,6 @@ public class SetField extends BasePipelineStep {
    }
 
    public String getRevision() {
-      return "$Revision: 874 $";
+      return "$Revision$";
    }
 }

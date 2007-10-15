@@ -1,7 +1,7 @@
 package no.trank.openpipe.admin.gwt.client.model.value;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public interface ValueWrapper {
    Object getValue();

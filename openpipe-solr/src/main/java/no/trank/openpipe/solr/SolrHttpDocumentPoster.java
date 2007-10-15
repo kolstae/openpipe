@@ -18,7 +18,7 @@ import no.trank.openpipe.api.document.Document;
 import no.trank.openpipe.api.document.DocumentOperation;
 
 /**
- * @version $Revision: 701 $
+ * @version $Revision$
  */
 public class SolrHttpDocumentPoster {
    private int docsPerCommit = 10000;

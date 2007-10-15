@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public interface ParseData {
 

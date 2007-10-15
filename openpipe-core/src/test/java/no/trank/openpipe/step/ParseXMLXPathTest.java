@@ -8,7 +8,7 @@ import no.trank.openpipe.api.PipelineException;
 import no.trank.openpipe.api.document.Document;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class ParseXMLXPathTest extends TestCase {
    private ParseXMLXPath xml;

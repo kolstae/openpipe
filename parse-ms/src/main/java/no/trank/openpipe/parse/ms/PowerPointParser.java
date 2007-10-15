@@ -12,7 +12,7 @@ import no.trank.openpipe.parse.api.ParserResult;
 import no.trank.openpipe.parse.api.ParserResultImpl;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class PowerPointParser implements Parser {
 

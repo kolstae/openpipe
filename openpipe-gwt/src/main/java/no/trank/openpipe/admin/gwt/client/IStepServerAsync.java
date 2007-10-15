@@ -4,7 +4,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public interface IStepServerAsync extends RemoteService {
    void getAvailableSteps(AsyncCallback callback);

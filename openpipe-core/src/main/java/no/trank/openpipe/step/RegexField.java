@@ -16,7 +16,7 @@ import no.trank.openpipe.api.PipelineStepStatusCode;
 import no.trank.openpipe.api.document.Document;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class RegexField extends BasePipelineStep {
    private static Logger log = LoggerFactory.getLogger(RegexField.class);
@@ -71,7 +71,7 @@ public class RegexField extends BasePipelineStep {
    }
 
    public String getRevision() {
-      return "$Revision: 874 $";
+      return "$Revision$";
    }
 
    public String getFromPattern() {

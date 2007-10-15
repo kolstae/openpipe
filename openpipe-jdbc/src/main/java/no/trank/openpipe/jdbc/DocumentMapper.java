@@ -11,7 +11,7 @@ import no.trank.openpipe.api.document.Document;
 /**
  * An interface for mapping a row in a {@link ResultSet} to a {@link Document}. 
  * 
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public interface DocumentMapper extends ParameterizedRowMapper<Document> {
 

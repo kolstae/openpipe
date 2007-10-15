@@ -7,7 +7,7 @@ import com.google.gwt.user.client.rpc.ServiceDefTarget;
 import no.trank.openpipe.admin.gwt.client.model.StepConfig;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public interface IStepServer extends RemoteService {
    StepConfig[] getAvailableSteps();

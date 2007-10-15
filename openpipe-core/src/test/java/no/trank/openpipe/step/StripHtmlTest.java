@@ -8,7 +8,7 @@ import junit.framework.TestCase;
 import no.trank.openpipe.api.document.Document;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class StripHtmlTest extends TestCase {
    private StripHtml stripHtml;

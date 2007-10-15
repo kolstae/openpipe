@@ -13,7 +13,7 @@ import no.trank.openpipe.api.PipelineStepStatusCode;
 import no.trank.openpipe.api.document.Document;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class HierarchicalSplitter extends BasePipelineStep {
    private static Logger log = LoggerFactory.getLogger(HierarchicalSplitter.class);
@@ -81,7 +81,7 @@ public class HierarchicalSplitter extends BasePipelineStep {
    }
    
    public String getRevision() {
-      return "$Revision: 874 $";
+      return "$Revision$";
    }
 
    public String getAlternativeSplit() {

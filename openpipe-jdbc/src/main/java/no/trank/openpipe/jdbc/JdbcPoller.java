@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class JdbcPoller implements Runnable {
    private static final Logger log = LoggerFactory.getLogger(JdbcPoller.class);

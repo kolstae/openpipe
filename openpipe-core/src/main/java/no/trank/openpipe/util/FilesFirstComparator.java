@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.Comparator;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class FilesFirstComparator implements Comparator<File> {
 

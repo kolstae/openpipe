@@ -15,7 +15,7 @@ import no.trank.openpipe.admin.gwt.client.model.value.ValueWrapper;
 import no.trank.openpipe.admin.gwt.client.util.WidgetFactory;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class EditStepWidget extends Composite {
    private final VerticalPanel top = new VerticalPanel();

@@ -24,7 +24,7 @@ import no.trank.openpipe.parse.api.ParserResult;
 import no.trank.openpipe.parse.api.PipelineParseData;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class DocumentParser extends BasePipelineStep {
    private static final Logger log = LoggerFactory.getLogger(DocumentParser.class);
@@ -148,7 +148,7 @@ public class DocumentParser extends BasePipelineStep {
    }
 
    public String getRevision() {
-      return "$Revision: 874 $";
+      return "$Revision$";
    }
 
    public String getFileNameField() {

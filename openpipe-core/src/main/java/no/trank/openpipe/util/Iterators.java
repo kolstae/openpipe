@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class Iterators {
    private static final ListIterator EMPTY_ITERATOR = new ListIterator() {

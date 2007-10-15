@@ -9,7 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class FileRawData implements RawData {
    private final List<Closeable> closeables = new LinkedList<Closeable>();

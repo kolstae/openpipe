@@ -1,7 +1,7 @@
 package no.trank.openpipe.api.document;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public interface DocumentProducer extends Iterable<Document> {
    void init();

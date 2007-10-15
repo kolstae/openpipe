@@ -13,7 +13,7 @@ import no.trank.openpipe.api.PipelineStepStatusCode;
 import no.trank.openpipe.api.document.Document;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class StripHtml extends BasePipelineStep {
    private static Logger log = LoggerFactory.getLogger(StripHtml.class);
@@ -156,7 +156,7 @@ public class StripHtml extends BasePipelineStep {
    }
 
    public String getRevision() {
-      return "$Revision: 874 $";
+      return "$Revision$";
    }
    
    public void setFieldNameMap(Map<String, String> fieldNameMap) {

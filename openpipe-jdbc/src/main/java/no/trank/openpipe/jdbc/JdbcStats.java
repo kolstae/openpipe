@@ -1,7 +1,7 @@
 package no.trank.openpipe.jdbc;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public interface JdbcStats {
 

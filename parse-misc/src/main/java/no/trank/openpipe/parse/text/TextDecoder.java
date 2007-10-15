@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 import no.trank.openpipe.parse.api.ParseData;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class TextDecoder implements Closeable {
    private static final Logger log = LoggerFactory.getLogger(TextParser.class);

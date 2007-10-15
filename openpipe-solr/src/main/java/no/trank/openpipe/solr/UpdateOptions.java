@@ -7,7 +7,7 @@ import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.events.Attribute;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class UpdateOptions {
    // Add options

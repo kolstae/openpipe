@@ -7,7 +7,7 @@ import no.trank.openpipe.api.document.RawData;
 
 /**
 
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class PipelineParseData implements ParseData {
    private final RawData data;

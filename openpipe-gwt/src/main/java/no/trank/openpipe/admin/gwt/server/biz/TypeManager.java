@@ -22,7 +22,7 @@ import no.trank.openpipe.admin.gwt.server.config.StepEdit;
 import no.trank.openpipe.api.PipelineStep;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class TypeManager {
    private static StepManager stepManager;

@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class MultiPipelineException extends PipelineException {
    private List<Throwable> exceptions = Collections.emptyList();

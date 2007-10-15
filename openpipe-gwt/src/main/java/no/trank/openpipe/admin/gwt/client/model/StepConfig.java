@@ -5,7 +5,7 @@ import java.util.Map;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class StepConfig implements IsSerializable {
    private String className;

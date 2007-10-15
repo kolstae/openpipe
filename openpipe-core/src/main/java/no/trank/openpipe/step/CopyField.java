@@ -6,7 +6,7 @@ import no.trank.openpipe.api.PipelineStepStatusCode;
 import no.trank.openpipe.api.document.Document;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class CopyField extends BasePipelineStep {
    private String fromFieldName;
@@ -31,7 +31,7 @@ public class CopyField extends BasePipelineStep {
    }
 
    public String getRevision() {
-      return "$Revision: 874 $";
+      return "$Revision$";
    }
 
    public String getFromFieldName() {

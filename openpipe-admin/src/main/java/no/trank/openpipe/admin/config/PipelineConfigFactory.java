@@ -6,7 +6,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class PipelineConfigFactory {
 //   private static final Logger log = LoggerFactory.getLogger(PipelineConfigFactory.class);

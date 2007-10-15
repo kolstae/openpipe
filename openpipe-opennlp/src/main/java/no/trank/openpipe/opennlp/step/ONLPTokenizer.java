@@ -19,7 +19,7 @@ import no.trank.openpipe.api.document.Document;
 
 /**
 
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class ONLPTokenizer extends BasePipelineStep {
    private static final Logger log = LoggerFactory.getLogger(ONLPTokenizer.class);
@@ -52,7 +52,7 @@ public class ONLPTokenizer extends BasePipelineStep {
    }
 
    public String getRevision() {
-      return "$Revision: 874 $";
+      return "$Revision$";
    }
 
    public Tokenizer getTokenizer() {

@@ -7,7 +7,7 @@ import java.util.Map.Entry;
 import no.trank.openpipe.admin.gwt.client.util.Linked14Map;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class MapType implements FieldType {
    private FieldType[] fieldTypes = new FieldType[2];

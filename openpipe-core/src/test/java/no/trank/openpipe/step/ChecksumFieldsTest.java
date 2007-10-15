@@ -10,7 +10,7 @@ import no.trank.openpipe.api.document.Document;
 import no.trank.openpipe.util.HexUtil;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class ChecksumFieldsTest extends TestCase {
    private static final String IN_FIELD = "text";

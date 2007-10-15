@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class Document {
    private static final Logger log = LoggerFactory.getLogger(Document.class);

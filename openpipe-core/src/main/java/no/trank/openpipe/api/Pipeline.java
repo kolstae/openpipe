@@ -5,7 +5,7 @@ import java.util.List;
 import no.trank.openpipe.api.document.Document;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class Pipeline extends BaseSubPipeline {
    private PipelineErrorHandler pipelineErrorHandler = new LoggingPipelineErrorHandler();

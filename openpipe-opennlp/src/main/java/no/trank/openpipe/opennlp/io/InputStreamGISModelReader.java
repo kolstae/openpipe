@@ -8,7 +8,7 @@ import java.util.zip.GZIPInputStream;
 import opennlp.maxent.io.BinaryGISModelReader;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class InputStreamGISModelReader extends BinaryGISModelReader {
 

@@ -2,7 +2,7 @@ package no.trank.openpipe.parse.api;
 
 /**
 
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class ParserException extends RuntimeException {
    public ParserException() {

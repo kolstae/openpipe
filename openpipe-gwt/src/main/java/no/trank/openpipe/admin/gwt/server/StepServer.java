@@ -16,7 +16,7 @@ import no.trank.openpipe.admin.gwt.server.biz.TypeManager;
 import no.trank.openpipe.admin.gwt.server.config.StepEdit;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class StepServer extends RemoteServiceServlet implements IStepServer {
    private static final long serialVersionUID = -3522045718383373709L;

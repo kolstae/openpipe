@@ -13,7 +13,7 @@ import no.trank.openpipe.api.document.BaseAnnotation;
 import no.trank.openpipe.api.document.Document;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class AnnotationToFieldTest extends TestCase {
    private static final String SENTENCE = "sentence";

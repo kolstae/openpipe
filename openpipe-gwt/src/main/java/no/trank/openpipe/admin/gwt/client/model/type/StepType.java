@@ -3,7 +3,7 @@ package no.trank.openpipe.admin.gwt.client.model.type;
 import no.trank.openpipe.admin.gwt.client.model.StepConfig;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class StepType implements FieldType {
    public String getTypeName() {

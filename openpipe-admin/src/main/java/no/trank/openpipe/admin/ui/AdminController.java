@@ -17,7 +17,7 @@ import no.trank.openpipe.admin.biz.TypeManager;
 import no.trank.openpipe.admin.config.StepEdit;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class AdminController extends AbstractController {
    private StepManager stepManager;

@@ -3,7 +3,7 @@ package no.trank.openpipe.api.document;
 import junit.framework.TestCase;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class DocumentTest extends TestCase {
 

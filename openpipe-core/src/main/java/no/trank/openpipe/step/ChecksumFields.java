@@ -13,7 +13,7 @@ import no.trank.openpipe.api.document.Document;
 import static no.trank.openpipe.util.HexUtil.toHexString;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class ChecksumFields extends BasePipelineStep {
    private List<String> fieldNames;
@@ -66,7 +66,7 @@ public class ChecksumFields extends BasePipelineStep {
    }
 
    public String getRevision() {
-      return "$Revision: 874 $";
+      return "$Revision$";
    }
 
    @Override

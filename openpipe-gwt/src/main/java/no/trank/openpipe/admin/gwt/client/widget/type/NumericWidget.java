@@ -8,7 +8,7 @@ import no.trank.openpipe.admin.gwt.client.model.type.BasicType;
 import no.trank.openpipe.admin.gwt.client.model.value.ValueWrapper;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class NumericWidget extends TextBox {
    public NumericWidget(final BasicType type, final ValueWrapper wrapper) {

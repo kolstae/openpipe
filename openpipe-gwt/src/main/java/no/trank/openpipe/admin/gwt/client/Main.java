@@ -11,7 +11,7 @@ import no.trank.openpipe.admin.gwt.client.widget.SelectedStepsWidget;
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
  * 
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class Main implements EntryPoint {
    

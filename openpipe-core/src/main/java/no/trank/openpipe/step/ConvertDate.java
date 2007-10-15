@@ -18,7 +18,7 @@ import no.trank.openpipe.api.PipelineStepStatusCode;
 import no.trank.openpipe.api.document.Document;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class ConvertDate extends BasePipelineStep {
    private static Logger log = LoggerFactory.getLogger(ConvertDate.class);
@@ -94,7 +94,7 @@ public class ConvertDate extends BasePipelineStep {
    }
 
    public String getRevision() {
-      return "$Revision: 874 $";
+      return "$Revision$";
    }
 
    public Map<String, String> getFieldNameMap() {

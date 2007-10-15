@@ -20,7 +20,7 @@ import no.trank.openpipe.admin.config.StepEdit;
 import no.trank.openpipe.api.PipelineStep;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class StepManager {
    private static final Logger log = LoggerFactory.getLogger(StepManager.class);

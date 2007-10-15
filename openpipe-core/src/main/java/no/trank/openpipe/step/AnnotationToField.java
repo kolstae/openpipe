@@ -14,7 +14,7 @@ import no.trank.openpipe.api.document.Document;
 import no.trank.openpipe.api.document.ResolvedAnnotation;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class AnnotationToField extends BasePipelineStep {
    private String fromFieldName;
@@ -59,7 +59,7 @@ public class AnnotationToField extends BasePipelineStep {
    }
 
    public String getRevision() {
-      return "$Revision: 874 $";
+      return "$Revision$";
    }
 
    public String getFromFieldName() {

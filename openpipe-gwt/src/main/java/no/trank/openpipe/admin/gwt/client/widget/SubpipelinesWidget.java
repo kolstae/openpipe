@@ -12,7 +12,7 @@ import no.trank.openpipe.admin.gwt.client.model.Subpipeline;
 import no.trank.openpipe.admin.gwt.client.util.StepUtil;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class SubpipelinesWidget extends Composite {
    private final VerticalPanel top = new VerticalPanel();

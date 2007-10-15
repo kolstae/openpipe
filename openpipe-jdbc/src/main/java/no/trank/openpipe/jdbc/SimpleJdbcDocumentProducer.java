@@ -14,7 +14,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import static no.trank.openpipe.api.document.DocumentOperation.*;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class SimpleJdbcDocumentProducer extends JdbcDocumentProducer {
    private static final Logger log = LoggerFactory.getLogger(SimpleJdbcDocumentProducer.class);

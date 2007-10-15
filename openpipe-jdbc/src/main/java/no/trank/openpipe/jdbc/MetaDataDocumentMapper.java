@@ -10,7 +10,7 @@ import no.trank.openpipe.api.document.Document;
  * A class that maps a column in a {@link ResultSet} using {@link ResultSetMetaData#getColumnLabel(int)} as field-name 
  * in the {@link Document}.  
  * 
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class MetaDataDocumentMapper implements DocumentMapper {
    private String[] colNames;

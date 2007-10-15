@@ -36,7 +36,7 @@ import no.trank.openpipe.solr.SolrHttpDocumentPoster;
 import no.trank.openpipe.solr.XmlInputStream;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class SolrDocumentProcessor extends BasePipelineStep {
    private static final Logger log = LoggerFactory.getLogger(SolrDocumentProcessor.class);
@@ -124,7 +124,7 @@ public class SolrDocumentProcessor extends BasePipelineStep {
    }
 
    public String getRevision() {
-      return "$Revision: 874 $";
+      return "$Revision$";
    }
 
    public void setInputToOuputFieldMap(Map<String, String> inputToOuputFieldMap) {

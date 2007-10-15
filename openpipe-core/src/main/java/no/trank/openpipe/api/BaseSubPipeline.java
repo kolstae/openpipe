@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import no.trank.openpipe.api.document.Document;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class BaseSubPipeline implements SubPipeline {
    private static final Logger log = LoggerFactory.getLogger(BaseSubPipeline.class);

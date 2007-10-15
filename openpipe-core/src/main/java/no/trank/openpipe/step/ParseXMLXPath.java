@@ -31,7 +31,7 @@ import no.trank.openpipe.api.document.Document;
 
 /**
  *
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class ParseXMLXPath extends BasePipelineStep {
    private static final Logger log = LoggerFactory.getLogger(ParseXML.class);
@@ -143,7 +143,7 @@ public class ParseXMLXPath extends BasePipelineStep {
    }
 
    public String getRevision() {
-      return "$Revision: 874 $";
+      return "$Revision$";
    }
 
    public String getFieldName() {

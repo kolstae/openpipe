@@ -1,7 +1,7 @@
 package no.trank.openpipe.api;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public abstract class BasePipelineStep implements PipelineStep {
    private String name;

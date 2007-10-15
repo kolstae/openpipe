@@ -13,7 +13,7 @@ import junit.framework.TestCase;
 import no.trank.openpipe.api.document.Document;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class FileDocumentReaderTest extends TestCase {
    private static final List<String> FILE_NAMES = Arrays.asList("a.txt", "b.txt", "c.txt", "/a/a/a/aaa.txt", "/a/a/a/bbb.txt");

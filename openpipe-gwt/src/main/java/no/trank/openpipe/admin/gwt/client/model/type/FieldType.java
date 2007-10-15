@@ -3,7 +3,7 @@ package no.trank.openpipe.admin.gwt.client.model.type;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public interface FieldType extends IsSerializable {
    String getTypeName();

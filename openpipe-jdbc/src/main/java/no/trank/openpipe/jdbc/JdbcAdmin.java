@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class JdbcAdmin extends HttpServlet {
    private static final long serialVersionUID = 7503537802693274153L;

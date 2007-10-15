@@ -7,7 +7,7 @@ import junit.framework.TestCase;
 import no.trank.openpipe.api.document.Document;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class SetFieldTest extends TestCase {
    private static final String FROM_FIELD = "from";

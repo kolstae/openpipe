@@ -1,7 +1,7 @@
 package no.trank.openpipe.admin.gwt.client.model.type;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class StringType implements FieldType {
    private static FieldType instance = new StringType();

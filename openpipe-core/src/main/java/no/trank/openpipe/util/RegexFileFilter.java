@@ -5,7 +5,7 @@ import java.io.FileFilter;
 import java.util.regex.Pattern;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class RegexFileFilter implements FileFilter {
    private Pattern[] fileNamePatterns;

@@ -4,7 +4,7 @@ import java.util.Map;
 
 /**
 
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public interface ParserResult {
    String getTitle();

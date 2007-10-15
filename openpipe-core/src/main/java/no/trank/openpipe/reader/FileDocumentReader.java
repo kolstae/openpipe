@@ -18,7 +18,7 @@ import no.trank.openpipe.util.FilesFirstComparator;
 import no.trank.openpipe.util.RegexFileFilter;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class FileDocumentReader implements DocumentProducer {
    private static final FileFilter ACCEPT_ALL = new AcceptAllFileFilter();

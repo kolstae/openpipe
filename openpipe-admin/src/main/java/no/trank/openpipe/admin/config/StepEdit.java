@@ -8,7 +8,7 @@ import java.util.Map;
 import no.trank.openpipe.api.PipelineStep;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class StepEdit {
    private PipelineStep step; 

@@ -3,7 +3,7 @@ package no.trank.openpipe.api;
 import no.trank.openpipe.api.document.Document;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public interface PipelineStep {
 

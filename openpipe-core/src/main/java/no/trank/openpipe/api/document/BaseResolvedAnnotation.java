@@ -1,7 +1,7 @@
 package no.trank.openpipe.api.document;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class BaseResolvedAnnotation extends BaseAnnotation implements ResolvedAnnotation {
    private String fieldValue;

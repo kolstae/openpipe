@@ -11,7 +11,7 @@ import no.trank.openpipe.api.PipelineException;
 import no.trank.openpipe.api.document.Document;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class ParseXMLTest extends TestCase {
    private ParseXML xml;

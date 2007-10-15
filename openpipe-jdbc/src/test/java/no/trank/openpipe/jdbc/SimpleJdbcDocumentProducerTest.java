@@ -16,7 +16,7 @@ import no.trank.openpipe.api.document.Document;
 import no.trank.openpipe.api.document.DocumentOperation;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class SimpleJdbcDocumentProducerTest extends TestCase {
    private static final String SQL_QUERY = "SELECT text, id FROM documents WHERE status = ";

@@ -5,7 +5,7 @@ import java.util.Map;
 
 /**
 
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class ParserResultImpl implements ParserResult {
    private String title;

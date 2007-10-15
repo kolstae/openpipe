@@ -15,7 +15,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
  * 
  * Keeps an ordered collection of keys and map entries.
  * 
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class Linked14Map implements Map, IsSerializable {
    private List keys = new ArrayList();

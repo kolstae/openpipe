@@ -7,7 +7,7 @@ import no.trank.openpipe.admin.gwt.client.model.type.StepType;
 import no.trank.openpipe.admin.gwt.client.model.value.ValueWrapper;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class StepWidget extends Label {
    public StepWidget(final StepType type, final ValueWrapper wrapper) {

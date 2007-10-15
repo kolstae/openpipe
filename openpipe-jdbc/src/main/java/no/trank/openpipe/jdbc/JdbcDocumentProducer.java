@@ -23,7 +23,7 @@ import no.trank.openpipe.api.document.DocumentProducer;
 import no.trank.openpipe.util.Iterators;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class JdbcDocumentProducer implements DocumentProducer {
    private static final Logger log = LoggerFactory.getLogger(JdbcDocumentProducer.class);

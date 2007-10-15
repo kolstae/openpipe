@@ -8,7 +8,7 @@ import no.trank.openpipe.admin.gwt.client.model.type.FieldType;
 import no.trank.openpipe.admin.gwt.client.model.value.ValueWrapper;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class BooleanWidget extends CheckBox {
    public BooleanWidget(final FieldType type, final ValueWrapper wrapper) {

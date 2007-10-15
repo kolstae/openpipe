@@ -1,7 +1,7 @@
 package no.trank.openpipe.solr;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class SolrDocumentPostException extends Exception {
 

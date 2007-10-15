@@ -6,7 +6,7 @@ import java.io.InputStream;
 import junit.framework.TestCase;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class XmlInputStreamTest extends TestCase {
    public void testRead() throws Exception {

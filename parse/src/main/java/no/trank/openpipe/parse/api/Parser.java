@@ -4,7 +4,7 @@ import java.io.IOException;
 
 /**
 
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public interface Parser {
    ParserResult parse(ParseData data) throws IOException, ParserException;

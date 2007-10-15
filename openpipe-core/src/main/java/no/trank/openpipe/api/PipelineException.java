@@ -1,7 +1,7 @@
 package no.trank.openpipe.api;
 
 /**
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class PipelineException extends Exception {
    private String pipelineStepName;

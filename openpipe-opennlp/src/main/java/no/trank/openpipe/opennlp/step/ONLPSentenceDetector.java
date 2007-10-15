@@ -19,7 +19,7 @@ import no.trank.openpipe.api.document.Document;
 
 /**
 
- * @version $Revision: 874 $
+ * @version $Revision$
  */
 public class ONLPSentenceDetector extends BasePipelineStep {
    private static final Logger log = LoggerFactory.getLogger(ONLPSentenceDetector.class);
@@ -54,7 +54,7 @@ public class ONLPSentenceDetector extends BasePipelineStep {
    }
 
    public String getRevision() {
-      return "$Revision: 874 $";
+      return "$Revision$";
    }
 
    public SentenceDetector getDetector() {
