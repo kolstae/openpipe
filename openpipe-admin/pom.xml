@@ -11,7 +11,7 @@
    <artifactId>openpipe-admin</artifactId>
    <packaging>war</packaging>
    <version>1.0-SNAPSHOT</version>
-   <name>Pipeline admin</name>
+   <name>OpenPipe admin</name>
    <dependencies>
       <dependency>
          <groupId>no.trank.openpipe</groupId>

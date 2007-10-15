@@ -9,12 +9,6 @@
    <packaging>pom</packaging>
    <inceptionYear>2007</inceptionYear>
    <url>http://openpipe.berlios.de/</url>
-   <repositories>
-      <repository>
-         <id>trank</id>
-         <url>http://dev.trank.no/repository/</url>
-      </repository>
-   </repositories>
    <modules>
       <module>openpipe-core</module>
       <module>openpipe-admin</module>
@@ -70,7 +64,7 @@
                   <showWarnings>true</showWarnings>
                   <compilerArgument>-Xlint:unchecked</compilerArgument>
                   <compilerArguments>
-                     <encoding>UTF-8</encoding>
+                     <encoding>${encoding}</encoding>
                   </compilerArguments>
                </configuration>
             </plugin>
@@ -236,23 +230,31 @@
       <plugins>
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-report-plugin</artifactId>
-         </plugin>
-         <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
             <configuration>
+               <source>${javaVersion}</source>
+               <aggregate>true</aggregate>
                <links>
                   <link>http://java.sun.com/j2ee/1.4/docs/api</link>
-                  <link>http://java.sun.com/j2se/1.5.0/docs/api</link>
+                  <link>http://java.sun.com/javase/6/docs/api/</link>
                   <link>http://jakarta.apache.org/commons/dbcp/apidocs/</link>
                   <link>http://jakarta.apache.org/commons/httpclient/apidocs/</link>
                   <link>http://jakarta.apache.org/commons/logging/apidocs/</link>
                   <link>http://jakarta.apache.org/commons/pool/apidocs/</link>
-                  <link>http://www.junit.org/junit/javadoc/</link>
                   <link>http://logging.apache.org/log4j/docs/api/</link>
+                  <link>http://www.slf4j.org/api/</link>
                </links>
+               <outputDirectory>${site-dir}/apidocs</outputDirectory>
+               <charset>${encoding}</charset>
             </configuration>
+            <reportSets>
+               <reportSet>
+                  <reports>
+                     <report>javadoc</report>
+                     <!-- <report>test-javadoc</report> -->
+                  </reports>
+               </reportSet>
+            </reportSets>
          </plugin>
       </plugins>
    </reporting>
@@ -261,21 +263,34 @@
       <site>
          <id>openpipe.site</id>
          <name>OpenPipe</name>
-         <url>scpexe://shell.berlios.de/home/groups/openpipe/htdocs</url>
+         <url>scpexe://shell.berlios.de/home/groups/openpipe/htdocs/</url>
       </site>
    </distributionManagement>
+   <scm>
+      <connection>scm:svn:http://svn.berlios.de/svnroot/repos/openpipe/openpipe/trunk</connection>
+      <developerConnection>scm:svn:svn+ssh://svn.berlios.de/svnroot/repos/openpipe/openpipe/trunk</developerConnection>
+      <url>http://svn.berlios.de/viewcvs/openpipe</url>
+   </scm>
    <mailingLists>
       <mailingList>
          <name>Users</name>
          <archive>https://lists.berlios.de/pipermail/openpipe-user/</archive>
+         <post>openpipe-user@lists.berlios.de</post>
+         <subscribe>https://lists.berlios.de/mailman/listinfo/openpipe-user</subscribe>
+         <unsubscribe>https://lists.berlios.de/mailman/listinfo/openpipe-user</unsubscribe>
       </mailingList>
       <mailingList>
          <name>Developers</name>
          <archive>https://lists.berlios.de/pipermail/openpipe-dev/</archive>
+         <post>mailto:openpipe-dev@lists.berlios.de</post>
+         <subscribe>https://lists.berlios.de/mailman/listinfo/openpipe-dev</subscribe>
+         <unsubscribe>https://lists.berlios.de/mailman/listinfo/openpipe-dev</unsubscribe>
       </mailingList>
       <mailingList>
          <name>Commits</name>
          <archive>https://lists.berlios.de/pipermail/openpipe-commits/</archive>
+         <subscribe>https://lists.berlios.de/mailman/listinfo/openpipe-commits</subscribe>
+         <unsubscribe>https://lists.berlios.de/mailman/listinfo/openpipe-commits</unsubscribe>
       </mailingList>
    </mailingLists>
    <issueManagement>
@@ -314,5 +329,7 @@
    </developers>
    <properties>
       <javaVersion>1.6</javaVersion>
+      <site-dir>${basedir}/openpipe-site/target/site</site-dir>
+      <encoding>UTF-8</encoding>
    </properties>
 </project>

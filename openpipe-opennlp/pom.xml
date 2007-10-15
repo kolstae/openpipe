@@ -11,7 +11,7 @@
    <artifactId>openpipe-opennlp</artifactId>
    <packaging>jar</packaging>
    <version>1.0-SNAPSHOT</version>
-   <name>Pipeline OpenNLP module</name>
+   <name>OpenPipe OpenNLP module</name>
    <dependencies>
       <dependency>
          <groupId>no.trank.openpipe</groupId>

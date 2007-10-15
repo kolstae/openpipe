@@ -11,7 +11,7 @@
    <artifactId>openpipe-core</artifactId>
    <packaging>jar</packaging>
    <version>1.0-SNAPSHOT</version>
-   <name>Pipeline</name>
+   <name>OpenPipe - Core</name>
    <dependencies>
       <dependency>
          <groupId>org.slf4j</groupId>

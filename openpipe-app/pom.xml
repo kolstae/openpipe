@@ -11,7 +11,7 @@
    <artifactId>openpipe-app</artifactId>
    <packaging>jar</packaging>
    <version>1.0-SNAPSHOT</version>
-   <name>Pipeline sandbox application</name>
+   <name>OpenPipe sandbox application</name>
    <build>
       <plugins>
          <plugin>

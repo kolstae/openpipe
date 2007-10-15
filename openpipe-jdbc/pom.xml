@@ -11,7 +11,7 @@
    <artifactId>openpipe-jdbc</artifactId>
    <packaging>jar</packaging>
    <version>1.0-SNAPSHOT</version>
-   <name>Pipeline jdbc</name>
+   <name>OpenPipe jdbc</name>
    <dependencies>
       <dependency>
          <groupId>no.trank.openpipe</groupId>

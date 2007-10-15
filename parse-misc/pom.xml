@@ -11,7 +11,7 @@
    <artifactId>openpipe-parse-misc</artifactId>
    <packaging>jar</packaging>
    <version>1.0-SNAPSHOT</version>
-   <name>Pipeline Parse Misc</name>
+   <name>OpenPipe Parse Misc</name>
    <dependencies>
       <dependency>
          <groupId>no.trank.openpipe</groupId>

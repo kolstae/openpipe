@@ -11,7 +11,7 @@
    <artifactId>openpipe-solr</artifactId>
    <packaging>jar</packaging>
    <version>1.0-SNAPSHOT</version>
-   <name>Pipeline solr module</name>
+   <name>OpenPipe solr module</name>
    <dependencies>
       <dependency>
          <groupId>no.trank.openpipe</groupId>
