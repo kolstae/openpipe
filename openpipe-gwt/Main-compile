@@ -2,4 +2,4 @@
 APPDIR=`dirname $0`;
 VERSION=1.4.60;
 REPOSITORY=$HOME/.m2/repository;
-java  -cp "$APPDIR/src/main/java:$APPDIR/bin:$REPOSITORY/com/google/gwt/gwt-user/$VERSION/gwt-user-$VERSION.jar:$GWT_HOME/gwt-dev-linux.jar" com.google.gwt.dev.GWTCompiler -out "$APPDIR/www" "$@" no.trank.pipeline.admin.gwt.Main;
+java  -cp "$APPDIR/src/main/java:$APPDIR/bin:$REPOSITORY/com/google/gwt/gwt-user/$VERSION/gwt-user-$VERSION.jar:$GWT_HOME/gwt-dev-linux.jar" com.google.gwt.dev.GWTCompiler -out "$APPDIR/www" "$@" no.trank.openpipe.admin.gwt.Main;
