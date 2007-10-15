@@ -22,6 +22,7 @@
          <item name="Welcome" href="/index.html"/>
          <item name="Getting started" href="guides/getting-started.html"/>
          <item name="FAQ" href="faq.html"/>
+         <item name="Wiki" href="http://openfacts2.berlios.de/wikien/index.php/BerliosProject:OpenPipe"/>
       </menu>
       <menu name="Ymse - dev-help">
          <item name="APT Format" href="format.html"/>
