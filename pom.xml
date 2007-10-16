@@ -21,6 +21,20 @@
       <module>parse-misc</module>
       <module>openpipe-site</module>
    </modules>
+   <repositories>
+      <repository>
+         <id>openpipe</id>
+         <name>OpenPipe - repo</name>
+         <url>http://openpipe.berlios.de/repository/</url>
+         <releases>
+            <enabled>true</enabled>
+            <updatePolicy>never</updatePolicy>
+         </releases>
+         <snapshots>
+            <enabled>false</enabled>
+         </snapshots>
+      </repository>
+   </repositories>
    <build>
       <plugins>
          <plugin>
