@@ -1,6 +1,7 @@
 package no.trank.openpipe.api;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,13 +13,14 @@ import no.trank.openpipe.api.document.Document;
  */
 public class BaseSubPipeline implements SubPipeline {
    private static final Logger log = LoggerFactory.getLogger(BaseSubPipeline.class);
+   private final List<PipelineStep> preparedSteps = new ArrayList<PipelineStep>();
    private List<? extends PipelineStep> pipelineSteps;
 
    public BaseSubPipeline() {
    }
 
    public BaseSubPipeline(List<? extends PipelineStep> pipelineSteps) {
-      this.pipelineSteps = pipelineSteps;
+      setPipelineSteps(pipelineSteps);
    }
 
    public List<? extends PipelineStep> getPipelineSteps() {
@@ -30,12 +32,16 @@ public class BaseSubPipeline implements SubPipeline {
    }
 
    public boolean prepare() throws PipelineException {
+      preparedSteps.clear();
       for (PipelineStep step : getPipelineSteps()) {
          try {
             step.prepare();
+            preparedSteps.add(step);
          } catch (PipelineException e) {
             e.setPipelineStepNameIfNull(step.getName());
             throw e;
+         } catch (RuntimeException e) {
+            throw new PipelineException(e, step.getName());
          }
       }
       return true;
@@ -43,7 +49,7 @@ public class BaseSubPipeline implements SubPipeline {
 
    public void finish(boolean success) throws PipelineException {
       MultiPipelineException pipelineException = null;
-      for (PipelineStep step : getPipelineSteps()) {
+      for (PipelineStep step : preparedSteps) {
          try {
             step.finish(success);
          } catch (PipelineException e) {
@@ -59,6 +65,7 @@ public class BaseSubPipeline implements SubPipeline {
             pipelineException.add(new PipelineException(e, step.getName()));
          }
       }
+      pipelineSteps.clear();
       if (pipelineException != null) {
          throw pipelineException;
       }
@@ -75,7 +82,7 @@ public class BaseSubPipeline implements SubPipeline {
             PipelineStepStatus status = pipelineStep.execute(document);
             log.info("Execute {} took {} millis", infoString, System.currentTimeMillis() - start);
             if (status == null) {
-               throw new PipelineException(pipelineStep.getName() + " returned null status", pipelineStep.getName());
+               throw new PipelineException("null status received", pipelineStep.getName());
             }
             stepStatusCode = status.getStatusCode();
             if (stepStatusCode.hasSubPipeline()) {

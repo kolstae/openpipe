@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 import no.trank.openpipe.api.document.Document;
 
 /**
+ * A simple error-handler that logs all exceptions.
+ *
  * @version $Revision$
  */
 public class LoggingPipelineErrorHandler implements PipelineErrorHandler {

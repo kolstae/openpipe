@@ -23,18 +23,22 @@ public class PipelineRunner implements Runnable {
    }
 
    public void run() {
+      boolean success = false;
       try {
          documentProducer.init();
-         if (pipeline.prepare()) {
-            try {
-               for (Document document : documentProducer) {
-                  pipeline.execute(document);
+         try {
+            if (pipeline.prepare()) {
+               try {
+                  for (Document document : documentProducer) {
+                     pipeline.execute(document);
+                  }
+                  success = true;
+               } catch (Exception e) {
+                  pipeline.getPipelineErrorHandler().handleException(true, new PipelineException(e));
                }
-               pipeline.finish(true); // Todo: Fix finsih(true/false) ???????
-            } catch (Exception e) {
-               pipeline.getPipelineErrorHandler().handleException(true, new PipelineException(e));
-               pipeline.finish(false);
             }
+         } finally {
+            pipeline.finish(success); // Todo: Fix finsih(true/false) ???????
          }
       } finally {
          documentProducer.close();

@@ -23,6 +23,8 @@ public class Pipeline extends BaseSubPipeline {
          return super.prepare();
       } catch (PipelineException e) {
          pipelineErrorHandler.handleException(false, e);
+      } catch (RuntimeException e) {
+         pipelineErrorHandler.handleException(false, new PipelineException(e));
       }
       return false;
    }
@@ -43,6 +45,8 @@ public class Pipeline extends BaseSubPipeline {
          return executeSteps(document);
       } catch (PipelineException e) {
          pipelineErrorHandler.handleException(document, e);
+      } catch (RuntimeException e) {
+         pipelineErrorHandler.handleException(document, new PipelineException(e));
       }
       return PipelineStatusCode.FINISH;
    }
