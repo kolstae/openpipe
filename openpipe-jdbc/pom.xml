@@ -7,10 +7,8 @@
       <version>1.0-SNAPSHOT</version>
       <relativePath>../pom.xml</relativePath>
    </parent>
-   <groupId>no.trank.openpipe</groupId>
    <artifactId>openpipe-jdbc</artifactId>
    <packaging>jar</packaging>
-   <version>1.0-SNAPSHOT</version>
    <name>OpenPipe jdbc</name>
    <dependencies>
       <dependency>
