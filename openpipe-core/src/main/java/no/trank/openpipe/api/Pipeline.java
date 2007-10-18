@@ -51,6 +51,18 @@ public class Pipeline extends BaseSubPipeline {
       return PipelineStatusCode.FINISH;
    }
 
+   public boolean execute(Iterable<Document> documents) {
+      try {
+         for (Document document : documents) {
+            execute(document);
+         }
+         return true;
+      } catch (Exception e) {
+         pipelineErrorHandler.handleException(false, new PipelineException(e));
+      }
+      return false;
+   }
+
    public PipelineErrorHandler getPipelineErrorHandler() {
       return pipelineErrorHandler;
    }
