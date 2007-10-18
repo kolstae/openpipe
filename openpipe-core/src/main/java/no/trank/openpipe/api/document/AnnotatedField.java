@@ -5,7 +5,7 @@ import java.util.ListIterator;
 import java.util.Set;
 
 /**
- * This class represents a field-value with annotations (if any).
+ * An interface that represents a field-value with annotations.
  * 
  * @version $Revision$
  */

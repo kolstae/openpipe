@@ -10,19 +10,30 @@ import java.util.Set;
 import no.trank.openpipe.util.Iterators;
 
 /**
+ * A basic implementation of {@link AnnotatedField}.
+ * 
  * @version $Revision$
  */
 public class BaseAnnotatedField implements AnnotatedField {
    private final Map<String, List<? extends Annotation>> annotations = new LinkedHashMap<String, List<? extends Annotation>>();
    private String value;
 
+   /**
+    * Constructs a <tt>BaseAnnotatedField</tt> with a value of <tt>null</tt>.
+    */
    public BaseAnnotatedField() {
    }
 
+   /**
+    * Constructs a <tt>BaseAnnotatedField</tt> with a value of <tt>value</tt>.
+    */
    public BaseAnnotatedField(String value) {
       this.value = value;
    }
 
+   /**
+    * Constructs a <tt>BaseAnnotatedField</tt> with a value of <tt>value</tt> and the given annotations.
+    */
    public BaseAnnotatedField(String value, Map<String, List<? extends Annotation>> annotations) {
       this.value = value;
       this.annotations.putAll(annotations);
@@ -32,6 +43,11 @@ public class BaseAnnotatedField implements AnnotatedField {
       return value;
    }
 
+   /**
+    * Sets the value of this field.
+    * 
+    * @param value the new value of this field.
+    */
    public void setValue(String value) {
       this.value = value;
    }
