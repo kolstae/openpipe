@@ -1,7 +1,7 @@
 package no.trank.openpipe.api.document;
 
 /**
- * A basic implementation of a resolved annotation.
+ * A basic implementation of {@link ResolvedAnnotation}.
  * 
  * @version $Revision$
  */
