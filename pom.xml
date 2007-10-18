@@ -18,7 +18,6 @@
       <module>parse</module>
       <module>parse-ms</module>
       <module>parse-misc</module>
-      <module>openpipe-site</module>
    </modules>
    <repositories>
       <repository>
@@ -239,9 +238,10 @@
       </dependency>
    </dependencies>
    <reporting>
+      <excludeDefaults>true</excludeDefaults>
       <plugins>
          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
+            <inherited>false</inherited>
             <artifactId>maven-javadoc-plugin</artifactId>
             <configuration>
                <source>${javaVersion}</source>
@@ -256,14 +256,79 @@
                   <link>http://logging.apache.org/log4j/docs/api/</link>
                   <link>http://www.slf4j.org/api/</link>
                </links>
-               <outputDirectory>${site-dir}/apidocs</outputDirectory>
+               <groups>
+                  <group>
+                     <title>OpenPipe - Core</title>
+                     <packages>no.trank.openpipe:no.trank.openpipe.api*:no.trank.openpipe.step:no.trank.openpipe.reader</packages>
+                  </group>
+                  <group>
+                     <title>OpenPipe - Modules</title>
+                     <packages>no.trank.openpipe.jdbc*:no.trank.openpipe.opennlp*:no.trank.openpipe.solr*</packages>
+                  </group>
+                  <group>
+                     <title>OpenPipe - Parsers</title>
+                     <packages>no.trank.openpipe.parse*</packages>
+                  </group>
+                  <group>
+                     <title>OpenPipe - Web admin</title>
+                     <packages>no.trank.openpipe.admin*</packages>
+                  </group>
+               </groups>
                <charset>${encoding}</charset>
             </configuration>
             <reportSets>
                <reportSet>
                   <reports>
                      <report>javadoc</report>
-                     <!-- <report>test-javadoc</report> -->
+                  </reports>
+               </reportSet>
+            </reportSets>
+         </plugin>
+         <plugin>
+            <artifactId>maven-project-info-reports-plugin</artifactId>
+            <reportSets>
+               <reportSet>
+                  <id>parent-info</id>
+                  <inherited>false</inherited>
+                  <!--<configuration>
+                     <checkoutDirectoryName>openpipe</checkoutDirectoryName>
+                  </configuration>-->
+                  <reports>
+                     <report>dependency-convergence</report>
+                     <report>project-team</report>
+                     <report>mailing-list</report>
+                     <report>issue-tracking</report>
+                     <report>scm</report>
+                  </reports>
+               </reportSet>
+               <reportSet>
+                  <id>general-info</id>
+                  <inherited>true</inherited>
+                  <reports>
+                     <report>index</report>
+                     <report>dependencies</report>
+                     <report>license</report>
+                     <report>summary</report>
+                  </reports>
+               </reportSet>
+            </reportSets>
+         </plugin>
+         <plugin>
+            <artifactId>maven-surefire-report-plugin</artifactId>
+         </plugin>
+         <plugin>
+            <inherited>false</inherited>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jxr-plugin</artifactId>
+            <configuration>
+               <aggregate>true</aggregate>
+               <linkJavadoc>true</linkJavadoc>
+               <javadocDir>/apidocs</javadocDir>
+            </configuration>
+            <reportSets>
+               <reportSet>
+                  <reports>
+                     <report>jxr</report>
                   </reports>
                </reportSet>
             </reportSets>
@@ -280,29 +345,28 @@
    </distributionManagement>
    <scm>
       <connection>scm:svn:http://svn.berlios.de/svnroot/repos/openpipe/openpipe/trunk</connection>
-      <developerConnection>scm:svn:svn+ssh://svn.berlios.de/svnroot/repos/openpipe/openpipe/trunk</developerConnection>
-      <url>http://svn.berlios.de/viewcvs/openpipe</url>
+      <developerConnection>scm:svn:https://svn.berlios.de/svnroot/repos/openpipe/openpipe/trunk</developerConnection>
+      <url>http://svn.berlios.de/viewcvs/openpipe/openpipe/trunk</url>
    </scm>
    <mailingLists>
       <mailingList>
          <name>Users</name>
-         <archive>https://lists.berlios.de/pipermail/openpipe-user/</archive>
+         <archive>http://lists.berlios.de/pipermail/openpipe-user/</archive>
          <post>openpipe-user@lists.berlios.de</post>
-         <subscribe>https://lists.berlios.de/mailman/listinfo/openpipe-user</subscribe>
-         <unsubscribe>https://lists.berlios.de/mailman/listinfo/openpipe-user</unsubscribe>
+         <subscribe>http://lists.berlios.de/mailman/listinfo/openpipe-user</subscribe>
+         <unsubscribe>http://lists.berlios.de/mailman/listinfo/openpipe-user</unsubscribe>
       </mailingList>
       <mailingList>
          <name>Developers</name>
-         <archive>https://lists.berlios.de/pipermail/openpipe-dev/</archive>
+         <archive>http://lists.berlios.de/pipermail/openpipe-dev/</archive>
          <post>mailto:openpipe-dev@lists.berlios.de</post>
-         <subscribe>https://lists.berlios.de/mailman/listinfo/openpipe-dev</subscribe>
-         <unsubscribe>https://lists.berlios.de/mailman/listinfo/openpipe-dev</unsubscribe>
+         <subscribe>http://lists.berlios.de/mailman/listinfo/openpipe-dev</subscribe>
+         <unsubscribe>http://lists.berlios.de/mailman/listinfo/openpipe-dev</unsubscribe>
       </mailingList>
       <mailingList>
          <name>Commits</name>
-         <archive>https://lists.berlios.de/pipermail/openpipe-commits/</archive>
-         <subscribe>https://lists.berlios.de/mailman/listinfo/openpipe-commits</subscribe>
-         <unsubscribe>https://lists.berlios.de/mailman/listinfo/openpipe-commits</unsubscribe>
+         <subscribe>http://lists.berlios.de/mailman/listinfo/openpipe-commits</subscribe>
+         <unsubscribe>http://lists.berlios.de/mailman/listinfo/openpipe-commits</unsubscribe>
       </mailingList>
    </mailingLists>
    <issueManagement>
@@ -323,12 +387,16 @@
          <name>Frode Johannesen</name>
          <email>frode@trank.no</email>
          <organization>T-Rank</organization>
+         <organizationUrl>http://www.trank.no/</organizationUrl>
+         <timezone>+1</timezone>
       </developer>
       <developer>
          <id>gttersen</id>
          <name>Geir H. Pettersen</name>
          <email>geir@trank.no</email>
          <organization>T-Rank</organization>
+         <organizationUrl>http://www.trank.no/</organizationUrl>
+         <timezone>+1</timezone>
       </developer>
       <developer>
          <id>kolstae</id>
@@ -341,7 +409,6 @@
    </developers>
    <properties>
       <javaVersion>1.6</javaVersion>
-      <site-dir>${basedir}/openpipe-site/target/site</site-dir>
       <encoding>UTF-8</encoding>
    </properties>
 </project>

@@ -7,27 +7,27 @@
    </skin>
    <bannerLeft>
       <name>OpenPipe</name>
-      <src>http://maven.apache.org/images/apache-maven-project.png</src>
-      <href>http://maven.apache.org/</href>
+      <src>/images/openpipe.png</src>
+      <href>http://openpipe.berlios.de/</href>
    </bannerLeft>
    <bannerRight>
+      <name>BerliOS Developer</name>
       <src>http://developer.berlios.de/bslogo.php?group_id=8967</src>
+      <href>http://developer.berlios.de/</href>
    </bannerRight>
    <publishDate format="dd MMM yyyy" />
    <body>
-      <links>
-         <item name="Maven" href="http://maven.apache.org/"/>
-      </links>
       <menu name="Main">
-         <item name="Welcome" href="/index.html"/>
          <item name="Getting started" href="guides/getting-started.html"/>
-         <item name="FAQ" href="faq.html"/>
+         <!--<item name="FAQ" href="faq.html"/>-->
          <item name="Wiki" href="http://openfacts2.berlios.de/wikien/index.php/BerliosProject:OpenPipe"/>
       </menu>
-      <menu name="Ymse - dev-help">
-         <item name="APT Format" href="format.html"/>
+      <menu name="Developers">
+         <!--<item name="APT Format" href="format.html"/>-->
          <item name="berliOS - site" href="http://developer.berlios.de/projects/openpipe/"/>
       </menu>
+      <menu ref="parent"/>
+      <menu ref="modules"/>
       <menu ref="reports"/>
    </body>
 </project>
