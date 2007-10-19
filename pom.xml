@@ -314,9 +314,6 @@
             </reportSets>
          </plugin>
          <plugin>
-            <artifactId>maven-surefire-report-plugin</artifactId>
-         </plugin>
-         <plugin>
             <inherited>false</inherited>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-jxr-plugin</artifactId>
