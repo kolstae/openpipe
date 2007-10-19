@@ -65,7 +65,7 @@ public class BaseSubPipeline implements SubPipeline {
             pipelineException.add(new PipelineException(e, step.getName()));
          }
       }
-      pipelineSteps.clear();
+      preparedSteps.clear();
       if (pipelineException != null) {
          throw pipelineException;
       }
