@@ -34,7 +34,7 @@ public class BaseAnnotatedField implements AnnotatedField {
    /**
     * Constructs a <tt>BaseAnnotatedField</tt> with a value of <tt>value</tt> and the given annotations.
     */
-   public BaseAnnotatedField(String value, Map<String, List<? extends Annotation>> annotations) {
+   public BaseAnnotatedField(String value, Map<String, ? extends List<? extends Annotation>> annotations) {
       this.value = value;
       this.annotations.putAll(annotations);
    }
@@ -59,9 +59,13 @@ public class BaseAnnotatedField implements AnnotatedField {
    public boolean add(String type, List<? extends Annotation> annotations) {
       final boolean res = !this.annotations.containsKey(type);
       if (res) {
-         this.annotations.put(type, Collections.unmodifiableList(annotations));
+         set(type, annotations);
       }
       return res;
+   }
+
+   public void set(String type, List<? extends Annotation> annotations) {
+      this.annotations.put(type, Collections.unmodifiableList(annotations));
    }
 
    public ListIterator<ResolvedAnnotation> iterator(String type) {

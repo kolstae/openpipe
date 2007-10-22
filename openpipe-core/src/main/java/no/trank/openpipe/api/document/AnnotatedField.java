@@ -28,6 +28,14 @@ public interface AnnotatedField {
    boolean add(String type, List<? extends Annotation> annotations);
 
    /**
+    * Sets a list of annotations for this field-value, overriding previous annotations.
+    * 
+    * @param type the type of annotations.
+    * @param annotations the list of annotations.
+    */
+   void set(String type, List<? extends Annotation> annotations);
+
+   /**
     * Creates an iterator for a certain type of annotations.
     * 
     * @param type the type of annotations.
