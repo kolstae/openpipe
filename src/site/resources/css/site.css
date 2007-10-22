@@ -1,0 +1,15 @@
+#banner {
+   background: #fff;
+   color: #036;
+}
+
+#poweredBy img {
+   border-top-width: 0;
+   border-right-width: 0;
+   border-bottom-width: 0;
+   border-left-width: 0;
+}
+
+#leftColumn {
+   width: 177px;
+}
