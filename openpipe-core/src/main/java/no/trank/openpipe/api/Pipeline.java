@@ -40,6 +40,12 @@ public class Pipeline extends BaseSubPipeline {
       }
    }
 
+   /**
+    * Runs one document through the pipeline.
+    * 
+    * @param document document to be run through the pipeline
+    * @return status
+    */
    public PipelineStatusCode execute(Document document) {
       try {
          return executeSteps(document);
@@ -51,6 +57,12 @@ public class Pipeline extends BaseSubPipeline {
       return PipelineStatusCode.FINISH;
    }
 
+   /**
+    * Runs a batch of documents through the pipeline.
+    * 
+    * @param documents documents to be run through the pipeline
+    * @return success indicator
+    */
    public boolean execute(Iterable<Document> documents) {
       try {
          for (Document document : documents) {
@@ -61,6 +73,24 @@ public class Pipeline extends BaseSubPipeline {
          pipelineErrorHandler.handleException(false, new PipelineException(e));
       }
       return false;
+   }
+   
+   /**
+    * Runs a batch of documents through the pipeline. Also handles initializing and closing of the pipeline.
+    * 
+    * @param documents documents to be run through the pipeline
+    * @return success indicator
+    */
+   public boolean run(Iterable<Document> documents) {
+      boolean success = false;
+      try {
+         if (prepare()) {
+            success = execute(documents);
+         }
+      } finally {
+         finish(success);
+      }
+      return success;
    }
 
    public PipelineErrorHandler getPipelineErrorHandler() {
