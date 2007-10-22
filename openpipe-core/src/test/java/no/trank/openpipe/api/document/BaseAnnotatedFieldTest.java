@@ -1,6 +1,7 @@
 package no.trank.openpipe.api.document;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -21,6 +22,12 @@ public class BaseAnnotatedFieldTest extends TestCase {
    public void testAdd() throws Exception {
       assertTrue(field.add(NOT_PRESENT, Collections.<Annotation>emptyList()));
       assertFalse(field.add(PRESENT, Collections.<Annotation>emptyList()));
+   }
+
+   public void testSet() throws Exception {
+      final BaseAnnotation ann = new BaseResolvedAnnotation(new BaseAnnotation(), "");
+      field.set(PRESENT, Arrays.asList(ann));
+      assertSame(ann, field.iterator(PRESENT).next());
    }
 
    public void testIterate() throws Exception {

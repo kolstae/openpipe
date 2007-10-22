@@ -1,7 +1,7 @@
 package no.trank.openpipe.api;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,7 +73,7 @@ public class BaseSubPipeline implements SubPipeline {
 
    public PipelineStatusCode executeSteps(Document document) throws PipelineException {
       PipelineStatusCode pipelineStatusCode = PipelineStatusCode.CONTINUE;
-      for (PipelineStep pipelineStep : pipelineSteps) {
+      for (PipelineStep pipelineStep : preparedSteps) {
          final String infoString = buildPipelineInfo(document, pipelineStep);
          log.debug("Running {}", infoString);
          final PipelineStepStatusCode stepStatusCode;
