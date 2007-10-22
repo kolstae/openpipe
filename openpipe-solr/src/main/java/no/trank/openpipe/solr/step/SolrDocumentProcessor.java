@@ -33,7 +33,7 @@ import no.trank.openpipe.api.PipelineStepStatus;
 import no.trank.openpipe.api.PipelineStepStatusCode;
 import no.trank.openpipe.api.document.Document;
 import no.trank.openpipe.solr.SolrHttpDocumentPoster;
-import no.trank.openpipe.solr.XmlInputStream;
+import no.trank.openpipe.solr.xml.XmlInputStream;
 
 /**
  * @version $Revision$
