@@ -31,8 +31,10 @@ import no.trank.openpipe.api.BasePipelineStep;
 import no.trank.openpipe.api.PipelineException;
 import no.trank.openpipe.api.PipelineStepStatus;
 import no.trank.openpipe.api.PipelineStepStatusCode;
+import no.trank.openpipe.api.document.AnnotatedField;
 import no.trank.openpipe.api.document.Document;
 import no.trank.openpipe.solr.SolrHttpDocumentPoster;
+import no.trank.openpipe.solr.analysis.TokenSerializer;
 import no.trank.openpipe.solr.xml.XmlInputStream;
 
 /**
@@ -41,8 +43,8 @@ import no.trank.openpipe.solr.xml.XmlInputStream;
 public class SolrDocumentProcessor extends BasePipelineStep {
    private static final Logger log = LoggerFactory.getLogger(SolrDocumentProcessor.class);
 
-   private Set<String> solrFields = new HashSet<String>();
-   private Set<Pattern> solrDynamicFields = new HashSet<Pattern>();
+   private final Set<String> solrFields = new HashSet<String>();
+   private final Set<Pattern> solrDynamicFields = new HashSet<Pattern>();
 
    private String solrSchemaUrl;
    private String idFieldName;
@@ -50,15 +52,12 @@ public class SolrDocumentProcessor extends BasePipelineStep {
    private Map<String, String> inputToOuputFieldMap = Collections.emptyMap();
    private Set<String> excludeInputFields = Collections.emptySet();
    private Set<String> includeInputFields = Collections.emptySet();
-
+   private Set<String> tokenizedFields = Collections.emptySet();
+   private TokenSerializer serializer;
    private SolrHttpDocumentPoster documentPoster;
 
    public SolrDocumentProcessor() {
       super("SolrPoster");
-   }
-
-   public void setSolrSchemaUrl(String solrSchemaUrl) {
-      this.solrSchemaUrl = solrSchemaUrl;
    }
 
    public PipelineStepStatus execute(Document doc) throws PipelineException {
@@ -107,50 +106,107 @@ public class SolrDocumentProcessor extends BasePipelineStep {
       }
    }
 
+   public String getSolrSchemaUrl() {
+      return solrSchemaUrl;
+   }
+
+   public void setSolrSchemaUrl(String solrSchemaUrl) {
+      this.solrSchemaUrl = solrSchemaUrl;
+   }
+
+   public Set<String> getExcludeInputFields() {
+      return excludeInputFields;
+   }
+
    public void setExcludeInputFields(Set<String> excludeInputFields) {
       this.excludeInputFields = excludeInputFields;
+   }
+
+   public Set<String> getIncludeInputFields() {
+      return includeInputFields;
    }
 
    public void setIncludeInputFields(Set<String> includeInputFields) {
       this.includeInputFields = includeInputFields;
    }
 
+   public String getIdFieldName() {
+      return idFieldName;
+   }
+
    public void setIdFieldName(String idFieldName) {
       this.idFieldName = idFieldName;
+   }
+
+   public SolrHttpDocumentPoster getDocumentPoster() {
+      return documentPoster;
    }
 
    public void setDocumentPoster(SolrHttpDocumentPoster documentPoster) {
       this.documentPoster = documentPoster;
    }
 
-   public String getRevision() {
-      return "$Revision$";
+   public Map<String, String> getInputToOuputFieldMap() {
+      return inputToOuputFieldMap;
    }
 
    public void setInputToOuputFieldMap(Map<String, String> inputToOuputFieldMap) {
       this.inputToOuputFieldMap = inputToOuputFieldMap;
    }
 
-   private void addField(Document doc, String inputField, HashMap<String, List<String>> solrOutputDoc) throws PipelineException {
-      String ouputField = getOuputFieldName(inputField);
-      if (solrSchemaUrl == null || solrFields.contains(inputField) || matchesDynamicField(inputField)) {
-         List<String> fieldValueList = solrOutputDoc.get(inputField);
+   public Set<String> getTokenizedFields() {
+      return tokenizedFields;
+   }
+
+   public void setTokenizedFields(Set<String> tokenizedFields) {
+      this.tokenizedFields = tokenizedFields;
+   }
+
+   public TokenSerializer getSerializer() {
+      return serializer;
+   }
+
+   public void setSerializer(TokenSerializer serializer) {
+      this.serializer = serializer;
+   }
+
+   public String getRevision() {
+      return "$Revision$";
+   }
+
+   protected void addField(Document doc, String inputField, HashMap<String, List<String>> solrOutputDoc) 
+         throws PipelineException {
+      final String ouputField = getOuputFieldName(inputField);
+      if (solrSchemaUrl == null || solrFields.contains(ouputField) || matchesDynamicField(ouputField)) {
+         List<String> fieldValueList = solrOutputDoc.get(ouputField);
          if (fieldValueList == null) {
             fieldValueList = new ArrayList<String>();
-            solrOutputDoc.put(inputField, fieldValueList);
+            solrOutputDoc.put(ouputField, fieldValueList);
          }
-         fieldValueList.addAll(doc.getFieldValues(ouputField));
+         if (tokenizedFields.contains(inputField)) {
+            fieldValueList.addAll(serialize(doc.getFields(inputField)));
+         } else {
+            fieldValueList.addAll(doc.getFieldValues(inputField));
+         }
       } else {
          log.debug("Field '{}' does not exist in solr schema, and does not match a dynamic field. Skipped.", ouputField);
       }
    }
 
-   private String getOuputFieldName(String inputField) {
+   private List<String> serialize(List<AnnotatedField> fields) {
+      final List<String> list = new ArrayList<String>(fields.size());
+      for (AnnotatedField field : fields) {
+         list.add(serializer.serialize(field));
+      }
+      return list;
+   }
+
+   protected String getOuputFieldName(String inputField) {
       final String mappedName = inputToOuputFieldMap.get(inputField);
       return mappedName == null ? inputField : mappedName;
    }
 
-   boolean matchesDynamicField(String inputField) {
+   protected boolean matchesDynamicField(String inputField) {
       for (Pattern dynamicField : solrDynamicFields) {
          if (dynamicField.matcher(inputField).matches()) {
             return true;
@@ -160,6 +216,8 @@ public class SolrDocumentProcessor extends BasePipelineStep {
    }
 
    private void loadIndexSchema(URL url) throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
+      solrFields.clear();
+      solrDynamicFields.clear();
       InputStream inputStream = new XmlInputStream(url.openStream());
       try {
 
@@ -167,7 +225,7 @@ public class SolrDocumentProcessor extends BasePipelineStep {
          org.w3c.dom.Document document = builder.parse(inputStream);
 
          final XPath xpath = XPathFactory.newInstance().newXPath();
-         final NodeList nodes = (NodeList) xpath.evaluate("/schema/fields/field | /schema/fields/dynamicField", document, 
+         final NodeList nodes = (NodeList) xpath.evaluate("/schema/fields/field | /schema/fields/dynamicField", document,
                XPathConstants.NODESET);
 
          for (int i = 0; i < nodes.getLength(); i++) {
@@ -175,12 +233,12 @@ public class SolrDocumentProcessor extends BasePipelineStep {
             final String name = ((Element) node).getAttribute("name");
             final String nodeName = node.getNodeName();
             if ("field".equals(nodeName)) {
-               solrFields.add(name);
+               addField(name);
             } else if ("dynamicField".equals(nodeName)) {
-               solrDynamicFields.add(Pattern.compile(name.replaceAll("\\*", "\\.*")));
+               addDynamicField(name);
             }
          }
-         solrFields.add("boost"); // Adding "always present" field
+         addField("boost");
 
          if (idFieldName == null) {
             Node idNode = (Node) xpath.evaluate("/schema/uniqueKey", document, XPathConstants.NODE);
@@ -194,5 +252,13 @@ public class SolrDocumentProcessor extends BasePipelineStep {
             // Do nothing
          }
       }
+   }
+
+   protected boolean addField(String fieldName) {
+      return solrFields.add(fieldName);
+   }
+
+   protected boolean addDynamicField(String fieldPattern) {
+      return solrDynamicFields.add(Pattern.compile(fieldPattern.replaceAll("\\*", "\\.*")));
    }
 }

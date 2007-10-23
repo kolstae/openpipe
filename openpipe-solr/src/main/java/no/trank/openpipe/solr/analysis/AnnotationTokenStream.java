@@ -19,6 +19,10 @@ public class AnnotationTokenStream extends TokenStream {
    private String[] types;
    private int lastEnd = -1;
 
+   public AnnotationTokenStream(AnnotatedField doc) {
+      this(doc, doc.getAnnotationTypes());
+   }
+   
    @SuppressWarnings({"unchecked"})
    public AnnotationTokenStream(AnnotatedField doc, Set<String> annotations) {
       types = annotations.toArray(new String[annotations.size()]);
