@@ -35,7 +35,7 @@ public class SolrUpdateServletTest extends TestCase {
    }
 
    public void testDoPostFail() throws Exception {
-      setUpStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+      setUpStatus(HttpServletResponse.SC_BAD_REQUEST);
       setUpInputStream("/xml/invalid.xml");
       control.replay();
       servlet.doPost(req, resp);

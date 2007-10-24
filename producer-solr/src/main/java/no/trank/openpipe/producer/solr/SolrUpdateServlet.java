@@ -35,7 +35,7 @@ public class SolrUpdateServlet extends HttpServlet {
 
    /**
     * Handles update POSTs. Keeps the connection open until all documents have been fed into the pipeline.
-    * Sets the response status code to 200 on success, 500 on failure. 
+    * Sets the response status code to 200 on success, 400 on failure to read XML. 
     */
    @Override
    protected void doPost(final HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -43,7 +43,7 @@ public class SolrUpdateServlet extends HttpServlet {
 
       log.debug("Post uri: {}", req.getRequestURI());
 
-      boolean success = false;
+      int status;
 
       final InputStream is = req.getInputStream();
 
@@ -51,7 +51,11 @@ public class SolrUpdateServlet extends HttpServlet {
          final XMLStreamReader reader = factory.createXMLStreamReader(is);
          try {
             final XmlStreamDocumentReader documents = new XmlStreamDocumentReader(reader);
-            success = pipeline.run(documents) && !documents.isFailure();
+            if (pipeline.run(documents)) {
+               status = documents.isFailure() ? HttpServletResponse.SC_BAD_REQUEST : HttpServletResponse.SC_OK;
+            } else {
+               status = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+            }
          } finally {
             try {
                reader.close();
@@ -61,17 +65,17 @@ public class SolrUpdateServlet extends HttpServlet {
          }
       } catch (XMLStreamException e) {
          log.warn("Error creating xml stream", e);
-         success = false;
+         status = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
       } finally {
          is.close();
       }
 
       // TODO: content?
-      resp.setStatus(success ? HttpServletResponse.SC_OK : HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+      resp.setStatus(status);
       resp.setContentLength(0);
       resp.getOutputStream().close();
 
-      log.info("Took {} ms. Success: {}", System.currentTimeMillis() - time, success);
+      log.info("Took {} ms. Success: {}", System.currentTimeMillis() - time, status);
    }
 
    public void setPipeline(Pipeline pipeline) {
