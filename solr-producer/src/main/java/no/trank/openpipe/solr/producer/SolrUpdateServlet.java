@@ -14,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import no.trank.openpipe.api.Pipeline;
-import no.trank.openpipe.producer.solr.xml.XmlStreamDocumentReader;
+import no.trank.openpipe.solr.producer.xml.XmlStreamDocumentReader;
 
 /**
  * Translates Solr update posts into <code>Document</code> instances and feeds them into the <code>Pipeline</code> 

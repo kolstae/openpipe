@@ -1,4 +1,4 @@
-package no.trank.openpipe.producer.solr.xml;
+package no.trank.openpipe.solr.producer.xml;
 
 import java.io.InputStream;
 import java.util.Iterator;
@@ -10,6 +10,7 @@ import junit.framework.TestCase;
 
 import no.trank.openpipe.api.document.AnnotatedField;
 import no.trank.openpipe.api.document.Document;
+import no.trank.openpipe.solr.producer.xml.XmlStreamDocumentReader;
 
 /**
  * @version $Revision$

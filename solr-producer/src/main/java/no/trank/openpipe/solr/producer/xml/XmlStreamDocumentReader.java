@@ -1,4 +1,4 @@
-package no.trank.openpipe.producer.solr.xml;
+package no.trank.openpipe.solr.producer.xml;
 
 import java.util.Arrays;
 import java.util.Iterator;
