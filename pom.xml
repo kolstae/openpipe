@@ -390,17 +390,17 @@
    </licenses>
    <developers>
       <developer>
-         <id>fannesen</id>
+         <id>fjohannesen</id>
          <name>Frode Johannesen</name>
-         <email>frode@trank.no</email>
+         <email>fjohannesen at users dot berlios dot de</email>
          <organization>T-Rank</organization>
          <organizationUrl>http://www.trank.no/</organizationUrl>
          <timezone>+1</timezone>
       </developer>
       <developer>
-         <id>gttersen</id>
+         <id>geir</id>
          <name>Geir H. Pettersen</name>
-         <email>geir@trank.no</email>
+         <email>geir at users dot berlios dot de</email>
          <organization>T-Rank</organization>
          <organizationUrl>http://www.trank.no/</organizationUrl>
          <timezone>+1</timezone>
@@ -408,7 +408,7 @@
       <developer>
          <id>kolstae</id>
          <name>Espen Amble Kolstad</name>
-         <email>kolstae@users.berlios.de</email>
+         <email>kolstae at users dot berlios dot de</email>
          <organization>T-Rank</organization>
          <organizationUrl>http://www.trank.no/</organizationUrl>
          <timezone>+1</timezone>
