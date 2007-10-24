@@ -2,6 +2,7 @@ package no.trank.openpipe.solr.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Random;
 
 import junit.framework.TestCase;
@@ -60,33 +61,39 @@ public class IOUtilTest extends TestCase {
    }
 
    public void testWriteReadNibble() throws Exception {
-      final byte[] buf = new byte[16];
+      final byte[] buf = new byte[5];
       final ByteArrayInputStream bin = new ByteArrayInputStream(buf);
       final MyByteArrayOutputStream bout = new MyByteArrayOutputStream(buf);
-      bin.mark(16);
-      for (int i = 0; i < Integer.MAX_VALUE; i += 7) { 
-         IOUtil.writeNibble(bout, i);
-         assertEquals(i, IOUtil.readNibble(bin));
-         bout.reset();
-         bin.reset();
+      bin.mark(5);
+      for (int i = 0; i < Integer.MAX_VALUE; i += 13) {
+         testValue(bout, bin, i);
       }
-      print(IOUtil.writeNibble(bout, 0), buf, 0);
-      bout.reset();
-      print(IOUtil.writeNibble(bout, 128), buf, 128);
-      bout.reset();
-      print(IOUtil.writeNibble(bout, 5964), buf, 5964);
+      testAndPrint(bout, bin, buf, 0);
+      testAndPrint(bout, bin, buf, 128);
+      testAndPrint(bout, bin, buf, 5964);
+      testAndPrint(bout, bin, buf, Integer.MAX_VALUE);
    }
 
-   private static void print(int len, byte[] buf, int orig) {
+   private static void testAndPrint(MyByteArrayOutputStream bout, ByteArrayInputStream bin, byte[] buf, int value) 
+         throws IOException {
+      final int len = testValue(bout, bin, value);
       if (log.isDebugEnabled()) {
          final StringBuilder sb = new StringBuilder(len * 5 + 16);
-         sb.append(orig).append(':');
+         sb.append(value).append(':');
          for (int i = 0; i < len; i++) {
             sb.append(" 0x");
             sb.append(Integer.toHexString(buf[i] & 0xff).toUpperCase());
          }
          log.debug("{}", sb);
       }
+   }
+
+   private static int testValue(MyByteArrayOutputStream bout, ByteArrayInputStream bin, int value) throws IOException {
+      final int len = IOUtil.writeNibble(bout, value);
+      assertEquals(value, IOUtil.readNibble(bin));
+      bout.reset();
+      bin.reset();
+      return len;
    }
 
    private static class MyByteArrayOutputStream extends ByteArrayOutputStream {

@@ -192,13 +192,15 @@ public class IOUtil {
     * <p/>
     * <a href="http://en.wikipedia.org/wiki/Nibble">Nibble</a> is not the correct term for what this writes, but oh well
     * <br/>
-    * Integers are written as <tt>15-bit</tt> ints with the <tt>16th bit</tt> being continuation flag. <br/>
+    * Integers are written as 7-bit ints with the 8<sup>th</sup> bit being continuation flag. Number of bytes used to 
+    * code an integer is <tt>[1-5]</tt>.<br/>
     * E.g.
     * <table>
     *    <tr><th>decimal</th><th>hexadecimal</th><th>encoded bytes</th></tr>
     *    <tr><td><tt>0</tt></td><td><tt>0x00</tt></td><td><tt>0x80</tt></td></tr>
     *    <tr><td><tt>128</tt></td><td><tt>0x80</tt></td><td><tt>0x01 0x80</tt></td></tr>
     *    <tr><td><tt>5964</tt></td><td><tt>0x174C</tt></td><td><tt>0x2E 0xCC</tt></td></tr>
+    *    <tr><td><tt>2147483647</tt></td><td><tt>0x7FFFFFFF</tt></td><td><tt>0x07 0x7F 0x7F 0x7F 0xFF</tt></td></tr>
     * </table>
     * 
     * @param out the stream to write to.
@@ -235,10 +237,10 @@ public class IOUtil {
     * <p/>
     * For coding description see {@link #writeNibble(OutputStream, int)}.
     * 
-    * @param in the stream to write to.
+    * @param in the stream to read from.
     * 
-    * @return the integer read from the stream or <tt>-1</tt> if end of stream was reached before the int could be 
-    * decoded.
+    * @return the positive integer read from the stream or <tt>-1</tt> if end of stream was reached before the int could 
+    * be decoded.
     * 
     * @throws IOException if an I/O error occures.
     * 
@@ -260,34 +262,133 @@ public class IOUtil {
       return x;
    }
 
-   private static int msb(int n) {
-      int pos = 0;
-      int tmp = n >> 16;
-      if (tmp != 0) {
-         n = tmp;
-         pos += 16;
-      }
-      tmp = n >> 8;
-      if (tmp != 0) {
-         n = tmp;
-         pos += 8;
-      }
-      tmp = n >> 4;
-      if (tmp != 0) {
-         n = tmp;
-         pos += 4;
-      }
-      tmp = n >> 2;
-      if (tmp != 0) {
-         n = tmp;
-         pos += 2;
-      }
-      tmp = n >> 1;
-      if (tmp != 0) {
-         n = tmp;
-         pos += 1;
-      }
-      return pos + n - 1;
+   private static int msb(int x) {
+      return
+            (x < 1 << 15 ?
+                  (x < 1 << 7 ?
+                        (x < 1 << 3 ?
+                              (x < 1 << 1 ?
+                                    (x < 1 ?
+                                          x < 0 ? 31 : -1 /* 6 */
+                                          :
+                                          0 /* 5 */
+                                    )
+                                    :
+                                    (x < 1 << 2 ?
+                                          1 /* 5 */
+                                          :
+                                          2 /* 5 */
+                                    )
+                              )
+                              :
+                              (x < 1 << 5 ?
+                                    (x < 1 << 4 ?
+                                          3 /* 5 */
+                                          :
+                                          4 /* 5 */
+                                    )
+                                    :
+                                    (x < 1 << 6 ?
+                                          5 /* 5 */
+                                          :
+                                          6 /* 5 */
+                                    )
+                              )
+                        )
+                        :
+                        (x < 1 << 11 ?
+                              (x < 1 << 9 ?
+                                    (x < 1 << 8 ?
+                                          7 /* 5 */
+                                          :
+                                          8 /* 5 */
+                                    )
+                                    :
+                                    (x < 1 << 10 ?
+                                          9 /* 5 */
+                                          :
+                                          10 /* 5 */
+                                    )
+                              )
+                              :
+                              (x < 1 << 13 ?
+                                    (x < 1 << 12 ?
+                                          11 /* 5 */
+                                          :
+                                          12 /* 5 */
+                                    )
+                                    :
+                                    (x < 1 << 14 ?
+                                          13 /* 5 */
+                                          :
+                                          14 /* 5 */
+                                    )
+                              )
+                        )
+                  )
+                  :
+                  (x < 1 << 23 ?
+                        (x < 1 << 19 ?
+                              (x < 1 << 17 ?
+                                    (x < 1 << 16 ?
+                                          15 /* 5 */
+                                          :
+                                          16 /* 5 */
+                                    )
+                                    :
+                                    (x < 1 << 18 ?
+                                          17 /* 5 */
+                                          :
+                                          18 /* 5 */
+                                    )
+                              )
+                              :
+                              (x < 1 << 21 ?
+                                    (x < 1 << 20 ?
+                                          19 /* 5 */
+                                          :
+                                          20 /* 5 */
+                                    )
+                                    :
+                                    (x < 1 << 22 ?
+                                          21 /* 5 */
+                                          :
+                                          22 /* 5 */
+                                    )
+                              )
+                        )
+                        :
+                        (x < 1 << 27 ?
+                              (x < 1 << 25 ?
+                                    (x < 1 << 24 ?
+                                          23 /* 5 */
+                                          :
+                                          24 /* 5 */
+                                    )
+                                    :
+                                    (x < 1 << 26 ?
+                                          25 /* 5 */
+                                          :
+                                          26 /* 5 */
+                                    )
+                              )
+                              :
+                              (x < 1 << 29 ?
+                                    (x < 1 << 28 ?
+                                          27 /* 5 */
+                                          :
+                                          28 /* 5 */
+                                    )
+                                    :
+                                    (x < 1 << 30 ?
+                                          29 /* 5 */
+                                          :
+                                          30 /* 5 */
+                                    )
+                              )
+                        )
+                  )
+            );
    }
 
    private IOUtil() {
