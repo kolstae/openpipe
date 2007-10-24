@@ -2,19 +2,23 @@ package no.trank.openpipe.solr.producer;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.xml.stream.XMLStreamWriter;
 
 import no.trank.openpipe.api.Pipeline;
 import no.trank.openpipe.solr.producer.xml.XmlStreamDocumentReader;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Translates Solr update posts into <code>Document</code> instances and feeds them into the <code>Pipeline</code> 
@@ -27,10 +31,12 @@ public class SolrUpdateServlet extends HttpServlet {
    private static final Logger log = LoggerFactory.getLogger(SolrUpdateServlet.class);
 
    private Pipeline pipeline;
-   private final XMLInputFactory factory;
+   private final XMLInputFactory inputFactory;
+   private final XMLOutputFactory outputFactory;
 
    public SolrUpdateServlet() {
-      factory = XMLInputFactory.newInstance();
+      inputFactory = XMLInputFactory.newInstance();
+      outputFactory = XMLOutputFactory.newInstance();
    }
 
    /**
@@ -48,7 +54,7 @@ public class SolrUpdateServlet extends HttpServlet {
       final InputStream is = req.getInputStream();
 
       try {
-         final XMLStreamReader reader = factory.createXMLStreamReader(is);
+         final XMLStreamReader reader = inputFactory.createXMLStreamReader(is);
          try {
             final XmlStreamDocumentReader documents = new XmlStreamDocumentReader(reader);
             if (pipeline.run(documents)) {
@@ -70,12 +76,67 @@ public class SolrUpdateServlet extends HttpServlet {
          is.close();
       }
 
-      // TODO: content?
       resp.setStatus(status);
-      resp.setContentLength(0);
-      resp.getOutputStream().close();
+      if (status == HttpServletResponse.SC_OK) {
+         writeSuccess(resp, System.currentTimeMillis() - time);
+      }
+      else {
+         writeFailure(resp, status);
+      }
+
+      resp.flushBuffer();
 
       log.info("Took {} ms. Success: {}", System.currentTimeMillis() - time, status);
+   }
+   
+   private void writeSuccess(HttpServletResponse resp, long time) throws IOException {
+      resp.setCharacterEncoding("UTF-8");
+      
+      XMLStreamWriter writer = null;
+      try {
+         writer = outputFactory.createXMLStreamWriter(resp.getOutputStream(), "UTF-8");
+         writer.writeStartDocument("UTF-8", "1.0");
+         
+         writer.writeStartElement("response");
+         writer.writeStartElement("lst");
+         writer.writeAttribute("name", "responseHeader");
+         writer.writeStartElement("int");
+         writer.writeAttribute("name", "status");
+         writer.writeCharacters("0");
+         writer.writeEndElement();
+         writer.writeStartElement("int");
+         writer.writeAttribute("name", "QTime");
+         writer.writeCharacters("" + time);
+         writer.writeEndElement();
+         writer.writeEndElement();
+         writer.writeEndElement();
+         writer.writeEndDocument();
+      } catch (XMLStreamException e) {
+         log.warn("Error writing success XML", e);
+      }
+      finally {
+         if (writer != null) {
+            try {
+               writer.close();
+            } catch (XMLStreamException e) {
+               // ignore
+            }
+         }
+      }
+   }
+   
+   private void writeFailure(HttpServletResponse resp, int status) throws IOException {
+      resp.setCharacterEncoding("ISO-8859-1");
+      
+      PrintWriter pw = new PrintWriter(resp.getOutputStream());
+      pw.write("<html>\n");
+      pw.write("<head>\n");
+      pw.write("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=ISO-8859-1\"/>\n");
+      pw.write("<title>Error " + status + " </title>\n");
+      pw.write("</head>\n");
+      pw.write("<body><h2>HTTP ERROR: " + status + "</h2></body>\n");
+      pw.write("</html>");
+      pw.flush();
    }
 
    public void setPipeline(Pipeline pipeline) {

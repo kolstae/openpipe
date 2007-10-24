@@ -1,22 +1,23 @@
 package no.trank.openpipe.solr.producer;
 
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
+
 import javax.servlet.ServletInputStream;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import junit.framework.TestCase;
-import org.easymock.EasyMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.expectLastCall;
-import org.easymock.IMocksControl;
-
 import no.trank.openpipe.api.Pipeline;
 import no.trank.openpipe.api.PipelineStep;
-import no.trank.openpipe.solr.producer.SolrUpdateServlet;
+
+import org.easymock.EasyMock;
+import org.easymock.IMocksControl;
 
 /**
  * @version $Revision$
@@ -63,9 +64,7 @@ public class SolrUpdateServletTest extends TestCase {
       req = control.createMock(HttpServletRequest.class);
       expect(req.getRequestURI()).andReturn("test.uri").anyTimes();
       resp = control.createMock(HttpServletResponse.class);
-      resp.setContentLength(0);
-      expectLastCall().once();
-      expect(resp.getOutputStream()).andReturn(new DummyServletOutputStream()).once();
+      expect(resp.getOutputStream()).andReturn(new NullOutputStream()).once();
    }
 
    private static class WrapperServletInputStream extends ServletInputStream {
@@ -81,7 +80,7 @@ public class SolrUpdateServletTest extends TestCase {
       }
    }
 
-   private static class DummyServletOutputStream extends ServletOutputStream {
+   private static class NullOutputStream extends ServletOutputStream {
       @Override
       public void write(int b) throws IOException {
       }
