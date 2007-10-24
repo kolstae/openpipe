@@ -1,0 +1,11 @@
+<add>
+  <doc>
+    <field name="field1">value1</field>
+    <field name="field2">value2</field>
+    <field name="field3">value3</field>
+    <field name="field3">value3</field>
+    <field name="boosted" boost="2.0">boostedValue</field>
+  </doc>
+  <doc boost="2.0">
+    <field name="field1">value1</field>
+    <field name="field2">value2</field>

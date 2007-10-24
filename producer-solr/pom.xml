@@ -34,5 +34,10 @@
          <artifactId>jcl104-over-slf4j</artifactId>
          <scope>test</scope>
       </dependency>
+      <dependency>
+         <groupId>easymock</groupId>
+         <artifactId>easymock</artifactId>
+         <scope>test</scope>
+      </dependency>
    </dependencies>
 </project>
