@@ -1,4 +1,4 @@
-package no.trank.openpipe.producer.solr;
+package no.trank.openpipe.solr.producer;
 
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.servlet.ServletHandler;

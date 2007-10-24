@@ -15,10 +15,10 @@
       <module>openpipe-jdbc</module>
       <module>openpipe-solr</module>
       <module>openpipe-opennlp</module>
-      <module>producer-solr</module>
       <module>parse</module>
       <module>parse-ms</module>
       <module>parse-misc</module>
+      <module>solr-producer</module>
       <module>solr-tokenizer</module>
    </modules>
    <repositories>

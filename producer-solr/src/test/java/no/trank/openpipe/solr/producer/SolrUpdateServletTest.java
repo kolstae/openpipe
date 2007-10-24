@@ -1,4 +1,4 @@
-package no.trank.openpipe.producer.solr;
+package no.trank.openpipe.solr.producer;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,6 +16,7 @@ import org.easymock.IMocksControl;
 
 import no.trank.openpipe.api.Pipeline;
 import no.trank.openpipe.api.PipelineStep;
+import no.trank.openpipe.solr.producer.SolrUpdateServlet;
 
 /**
  * @version $Revision$

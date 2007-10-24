@@ -1,4 +1,4 @@
-package no.trank.openpipe.producer.solr;
+package no.trank.openpipe.solr.producer;
 
 import java.io.IOException;
 import java.io.InputStream;

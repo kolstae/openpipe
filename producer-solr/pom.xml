@@ -6,9 +6,9 @@
       <groupId>no.trank.openpipe</groupId>
       <version>1.0-SNAPSHOT</version>
    </parent>
-   <artifactId>producer-solr</artifactId>
+   <artifactId>solr-producer</artifactId>
    <packaging>jar</packaging>
-   <name>Producer Solr</name>
+   <name>Solr Producer</name>
    <dependencies>
       <dependency>
          <groupId>no.trank.openpipe</groupId>
