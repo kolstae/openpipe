@@ -347,7 +347,7 @@
       <site>
          <id>openpipe.site</id>
          <name>OpenPipe</name>
-         <url>scpexe://shell.berlios.de/home/groups/openpipe/htdocs/</url>
+         <url>scp://shell.berlios.de/home/groups/openpipe/htdocs/</url>
       </site>
    </distributionManagement>
    <scm>
