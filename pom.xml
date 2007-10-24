@@ -19,6 +19,7 @@
       <module>parse</module>
       <module>parse-ms</module>
       <module>parse-misc</module>
+      <module>solr-tokenizer</module>
    </modules>
    <repositories>
       <repository>
@@ -128,9 +129,9 @@
             <version>${pom.version}</version>
          </dependency>
          <dependency>
-            <groupId>no.trank.sandbox</groupId>
-            <artifactId>solr</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <groupId>no.trank.openpipe</groupId>
+            <artifactId>solr-tokenizer</artifactId>
+            <version>${pom.version}</version>
          </dependency>
          <dependency>
             <groupId>log4j</groupId>
@@ -262,6 +263,8 @@
                   <link>http://jakarta.apache.org/commons/pool/apidocs/</link>
                   <link>http://logging.apache.org/log4j/docs/api/</link>
                   <link>http://www.slf4j.org/api/</link>
+                  <link>http://lucene.apache.org/solr/api/</link>
+                  <link>http://lucene.apache.org/java/docs/api/</link>
                </links>
                <groups>
                   <group>
