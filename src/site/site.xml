@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="OpenPipe">
    <skin>
-      <groupId>org.apache.maven.skins</groupId>
-      <artifactId>maven-classic-skin</artifactId>
-      <version>1.0</version>
+      <groupId>org.apache.hivemind</groupId>
+      <artifactId>maven-skin</artifactId>
+      <version>2.0</version>
    </skin>
    <bannerLeft>
       <name>OpenPipe</name>
