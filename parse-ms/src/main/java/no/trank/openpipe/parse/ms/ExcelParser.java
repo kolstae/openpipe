@@ -1,13 +1,6 @@
 package no.trank.openpipe.parse.ms;
 
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
 import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Type;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -17,10 +10,6 @@ import no.trank.openpipe.parse.api.ParserException;
 import no.trank.openpipe.parse.api.ParserResult;
 import no.trank.openpipe.parse.api.ParserResultImpl;
 
-import org.apache.poi.hpsf.CustomProperties;
-import org.apache.poi.hpsf.DocumentSummaryInformation;
-import org.apache.poi.hpsf.PropertySetFactory;
-import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -37,7 +26,7 @@ public class ExcelParser implements Parser {
       POIFSFileSystem fs = new POIFSFileSystem(data.getInputStream());
       
       final HSSFWorkbook doc = new HSSFWorkbook(fs);
-      Map<String, String> properties = getProperties(fs);
+      Map<String, String> properties = POIUtils.getProperties(fs);
       
       final ParserResultImpl result = new ParserResultImpl();
       result.setText(getText(doc));
@@ -103,55 +92,5 @@ public class ExcelParser implements Parser {
          ret = ret.trim();
       }
       return ret != null && ret.length() > 0 ? ret : null;
-   }
-   
-   private Map<String, String> getProperties(POIFSFileSystem fs) {
-      Map<String, String> map = new HashMap<String, String>();
-      
-      try {
-         InputStream stream = fs.createDocumentInputStream(SummaryInformation.DEFAULT_STREAM_NAME);
-         addProperties(map, PropertySetFactory.create(stream));
-      } catch (Exception e) {
-         // ignore
-      }
-
-      try {
-         InputStream stream = fs.createDocumentInputStream(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
-         addProperties(map, PropertySetFactory.create(stream));
-      } catch (Exception e) {
-         // ignore
-      }
-
-      return map;
-   }
-   
-   private void addProperties(Map<String, String> map, Object ob) {
-      try {
-         for(PropertyDescriptor pd : Introspector.getBeanInfo(ob.getClass()).getPropertyDescriptors()) {
-            try {
-               if(pd.getReadMethod() != null && pd.getWriteMethod() != null) {
-                  Type type = pd.getWriteMethod().getGenericParameterTypes()[0];
-                  Class c = type instanceof Class ? (Class)type : null;
-                  if(c != null && (c.isPrimitive() || c == String.class || c == Date.class || c == CustomProperties.class)) {
-                     Object value = pd.getReadMethod().invoke(ob, new Object[0]);
-//                     TODO: decide what to do with custom properties
-//                     if(value instanceof CustomProperties) {
-//                        CustomProperties cc = (CustomProperties)value;
-//                     }
-                     /*else*/ if(value != null) {
-                        String valueString = value.toString().trim();
-                        if(valueString != null) {
-                           map.put(pd.getName(), valueString);
-                        }
-                     }
-                  }
-               }
-            } catch (Exception e) {
-               e.printStackTrace();
-            }
-         }
-      } catch (IntrospectionException e) {
-         e.printStackTrace();
-      }
    }
 }

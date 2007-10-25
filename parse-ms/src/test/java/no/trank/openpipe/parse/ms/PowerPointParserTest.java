@@ -6,20 +6,22 @@ import no.trank.openpipe.parse.api.Parser;
 /**
  * @version $Revision$
  */
-public class ExcelParserTest extends AbstractMsParserTest {
-   public void testParseXLS() throws Exception {
+public class PowerPointParserTest extends AbstractMsParserTest {
+   public void testParsePPT() throws Exception {
       final String text = result.getText();
       
       assertNotNull(text);
-      assertEquals(true, text.equals("Cell text 4.0\n\nSheet 2 text\n"));
+      assertEquals(true, text.contains("Slide 1"));
+      assertEquals(true, text.contains("Slide 2"));
+      assertEquals(true, text.contains("Text on slide 2"));
       assertEquals("Frode Johannesen", result.getProperties().get("author"));
    }
    
    protected Class<? extends Parser> getParserClass() {
-      return ExcelParser.class;
+      return PowerPointParser.class;
    }
    
    protected String getFileName() {
-      return "test.xls";
+      return "test.ppt";
    }
 }

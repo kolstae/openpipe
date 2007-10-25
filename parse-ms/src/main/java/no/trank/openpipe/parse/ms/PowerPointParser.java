@@ -12,6 +12,8 @@ import no.trank.openpipe.parse.api.ParserResult;
 import no.trank.openpipe.parse.api.ParserResultImpl;
 
 /**
+ * Parses .ppt files.
+ * 
  * @version $Revision$
  */
 public class PowerPointParser implements Parser {
@@ -21,7 +23,10 @@ public class PowerPointParser implements Parser {
       final ParserResultImpl result = new ParserResultImpl();
       result.setTitle(doc.getSummaryInformation().getTitle());
       final PowerPointExtractor extractor = new PowerPointExtractor(doc);
-      result.setText(extractor.getText());
+      result.setText(POIUtils.getCleanText(extractor.getText()));
+      if(data.includeProperties()) {
+         result.setProperties(POIUtils.getProperties(doc));
+      }
       return result;
    }
 }

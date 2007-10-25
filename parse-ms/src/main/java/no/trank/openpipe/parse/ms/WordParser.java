@@ -12,6 +12,8 @@ import no.trank.openpipe.parse.api.ParserResult;
 import no.trank.openpipe.parse.api.ParserResultImpl;
 
 /**
+ * Parses .doc files.
+ * 
  * @version $Revision$
  */
 public class WordParser implements Parser {
@@ -21,7 +23,10 @@ public class WordParser implements Parser {
       final ParserResultImpl result = new ParserResultImpl();
       result.setTitle(doc.getSummaryInformation().getTitle());
       final WordExtractor extractor = new WordExtractor(doc);
-      result.setText(extractor.getText());
+      result.setText(POIUtils.getCleanText(extractor.getText()));
+      if(data.includeProperties()) {
+         result.setProperties(POIUtils.getProperties(doc));
+      }
       return result;
    }
 }
