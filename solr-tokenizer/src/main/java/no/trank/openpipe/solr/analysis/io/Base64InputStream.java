@@ -3,6 +3,7 @@ package no.trank.openpipe.solr.analysis.io;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.io.StringReader;
 
 /**
  * @version $Revision$
@@ -10,30 +11,38 @@ import java.io.Reader;
 public class Base64InputStream extends InputStream {
    private static final int[] B64_VALS = new int['z' + 1];
    private static final int MASK = 0x3f;
+   private final char[] buf = new char[4096];
    private final Reader in;
+   private int pos;
+   private int size;
    private int off = 8;
    private int rest;
+   private boolean eof;
 
    public Base64InputStream(Reader in) {
       this.in = in;
    }
 
-   public Base64InputStream(InputStream in) {
-      this(new Base64InputStreamReader(in));
+   public Base64InputStream(String externalVal) {
+      this(new StringReader(externalVal));
    }
 
    @Override
    public int read() throws IOException {
-      if (off > 6) {
-         final int b = readDecoded();
-         if (b < 0) {
+      final boolean need2Bytes = off > 6;
+      if (!fillBuffer(need2Bytes ? 2 : 1)) {
+         return -1;
+      }
+      if (need2Bytes) {
+         final int b = decode(buf[pos++]);
+         if (eof) {
             return -1;
          }
          rest = b << 2;
          off = 2;
       }
-      final int b = readDecoded();
-      if (b < 0) {
+      final int b = decode(buf[pos++]);
+      if (eof) {
          return -1;
       }
       final int result = rest | (b >> (6 - off));
@@ -42,11 +51,34 @@ public class Base64InputStream extends InputStream {
       return result;
    }
 
-   private int readDecoded() throws IOException {
-      final int b = in.read();
+   private boolean fillBuffer(int wantedSize) throws IOException {
+      if (eof) {
+         return false;
+      }
+      if (pos + wantedSize > size) {
+         if (pos < size) {
+            size -= pos;
+            System.arraycopy(buf, pos, buf, 0, size);
+         } else {
+            size = 0;
+         }
+         pos = 0;
+         final int len = in.read(buf, pos, buf.length - size);
+         if (len < 0 && size == 0) {
+            size = -1;
+            eof = true;
+         } else {
+            size += len;
+         }
+      }
+      return pos + wantedSize <= size;
+   }
+
+   private int decode(int b) {
       if (b >= 0 && b < B64_VALS.length) {
          return B64_VALS[b];
       }
+      eof = true;
       return -1;
    }
 
@@ -70,29 +102,6 @@ public class Base64InputStream extends InputStream {
       }
       for (int i = 0; i < Base64OutputStream.B64_CHARS.length; i++) {
          B64_VALS[Base64OutputStream.B64_CHARS[i]] = i;
-      }
-   }
-
-   private static class Base64InputStreamReader extends Reader {
-      private final InputStream in;
-
-      public Base64InputStreamReader(InputStream in) {
-         this.in = in;
-      }
-
-      @Override
-      public int read() throws IOException {
-         return in.read();
-      }
-
-      @Override
-      public int read(char cbuf[], int off, int len) throws IOException {
-         throw new UnsupportedOperationException();
-      }
-
-      @Override
-      public void close() throws IOException {
-         in.close();
       }
    }
 }

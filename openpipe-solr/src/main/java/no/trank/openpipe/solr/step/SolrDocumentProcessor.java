@@ -99,6 +99,13 @@ public class SolrDocumentProcessor extends BasePipelineStep {
 
    @Override
    public void finish(boolean success) throws PipelineException {
+      if (serializer != null) {
+         try {
+            serializer.close();
+         } catch (IOException e) {
+            // Ignoring
+         }
+      }
       try {
          documentPoster.finish();
       } catch (XMLStreamException e) {
