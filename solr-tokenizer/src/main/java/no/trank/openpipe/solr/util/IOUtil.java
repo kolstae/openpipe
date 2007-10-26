@@ -253,8 +253,11 @@ public class IOUtil {
          x <<= 7;
          b = in.read();
          x |= b & 0x7f;
-      } while ((b & 0x80) == 0 && b >= 0);
+      } while ((b & 0x80) == 0 && b >= 0 && x >= 0);
 
+      if (x < 0) {
+         throw new IOException("Invalid nibble read");
+      }
       if (b < 0) {
          return -1;
       }
