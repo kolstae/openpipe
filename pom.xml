@@ -305,9 +305,6 @@
                <reportSet>
                   <id>parent-info</id>
                   <inherited>false</inherited>
-                  <!--<configuration>
-                     <checkoutDirectoryName>openpipe</checkoutDirectoryName>
-                  </configuration>-->
                   <reports>
                      <report>dependency-convergence</report>
                      <report>project-team</report>

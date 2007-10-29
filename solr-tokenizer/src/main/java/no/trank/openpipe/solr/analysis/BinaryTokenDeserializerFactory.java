@@ -8,9 +8,9 @@ import org.apache.solr.analysis.BaseTokenizerFactory;
 /**
  * @version $Revision$
  */
-public class Base64TokenDeserializerFactory extends BaseTokenizerFactory {
+public class BinaryTokenDeserializerFactory extends BaseTokenizerFactory {
 
    public TokenStream create(Reader input) {
-      return new Base64TokenDeserializer(input);
+      return new BinaryTokenDeserializer(input);
    }
 }

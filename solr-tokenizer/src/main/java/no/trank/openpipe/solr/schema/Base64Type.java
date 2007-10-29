@@ -14,15 +14,53 @@ import static org.apache.solr.core.SolrException.ErrorCode.SERVER_ERROR;
 import org.apache.solr.schema.SchemaField;
 import org.apache.solr.schema.TextField;
 
-import no.trank.openpipe.solr.analysis.Base64IO;
-import no.trank.openpipe.solr.analysis.Base64TokenDeserializer;
+import no.trank.openpipe.solr.analysis.BinaryIO;
+import no.trank.openpipe.solr.analysis.BinaryTokenDeserializer;
 import no.trank.openpipe.solr.analysis.io.Base64InputStream;
 import no.trank.openpipe.solr.util.IOUtil;
 
 /**
+ * A field type for pre-tokenized field-values stored on a binary base64-encoded form.
+ * <br/>
+ * Uses {@link Base64InputStream} for decoding the base64-encoded string.
+ * <br/>
+ * Uses {@link BinaryIO} to verify version of serialized data and to find compression settings for the data.
+ * <p>
+ * Reading a field-value, {@link #createField(SchemaField, String, float)}, does the following:
+ * <pre>
+ * InputStream in = new Base64InputStream(externalVal);
+ * if (BinaryIO.readHeaderIsCompressed(in)) {
+ *    in = new InflaterInputStream(in);
+ * }
+ * String untokenizedValue = IOUtil.readUTF(in);
+ * </pre>
+ * The tokens are parsed as follows:
+ * <pre>
+ * Fieldable {
+ *    ...
+ *    public TokenStream tokenStreamValue() {
+ *       return new BinaryTokenDeserializer(in);
+ *    }
+ * </pre>
+ * Where <tt>in</tt> is the stream openend in {@link #createField(SchemaField, String, float)}.
+ * <p/>
+ *
+ * @see IOUtil#readUTF(InputStream)
+ * @see BinaryTokenDeserializer
+ *
  * @version $Revision$
  */
 public class Base64Type extends TextField {
+
+   /**
+    * Creates a field from a pre-tokenized field from a binary base64-encoded string.
+    * 
+    * @param field the field info as read from schema.
+    * @param externalVal the base64-encoded string.
+    * @param boost the boost of this field.
+    * 
+    * @return a <tt>Fieldable</tt> as read from <tt>externalVal</tt> described {@linkplain Base64Type here}.
+    */
    @Override
    public Fieldable createField(SchemaField field, String externalVal, float boost) {
       if (externalVal == null) {
@@ -34,7 +72,7 @@ public class Base64Type extends TextField {
       }
       InputStream in = new Base64InputStream(externalVal);
       try {
-         if (Base64IO.readHeaderIsCompressed(in)) {
+         if (BinaryIO.readHeaderIsCompressed(in)) {
             in = new InflaterInputStream(in);
          }
          final String val = IOUtil.readUTF(in);
@@ -65,7 +103,7 @@ public class Base64Type extends TextField {
       }
 
       public Reader readerValue() {
-         return Base64TokenDeserializer.createDummyReader(in);
+         return BinaryTokenDeserializer.createDummyReader(in);
       }
 
       public byte[] binaryValue() {
@@ -73,7 +111,7 @@ public class Base64Type extends TextField {
       }
       
       public TokenStream tokenStreamValue() {
-         return new Base64TokenDeserializer(in);
+         return new BinaryTokenDeserializer(in);
       }
    }
 }

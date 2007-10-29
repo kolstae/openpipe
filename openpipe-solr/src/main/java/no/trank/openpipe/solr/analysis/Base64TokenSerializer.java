@@ -35,7 +35,7 @@ public class Base64TokenSerializer implements TokenSerializer {
          try {
             final String value = field.getValue();
             final boolean compress = value.length() > compressionThreshold;
-            Base64IO.writeHeader(out, compress);
+            BinaryIO.writeHeader(out, compress);
             final OutputStream out = getOutputStream(compress);
             writeUTF(out, value);
             for (Token tok = stream.next(); tok != null; tok = stream.next()) {

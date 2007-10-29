@@ -4,4 +4,122 @@
  Espen Amble Kolstad
  -----
 
-  Coming soon!
+Getting started
+~~~~~~~~~~~~~~~
+
+  In order to start using OpenPipe for indexing to {{{http://lucene.apache.org/solr/}Solr}}. You need to set up 
+  Solr, there's a great {{{http://lucene.apache.org/solr/tutorial.html}tutorial}} on the Solr-site if you are new to 
+  Solr.
+  
+  We'll demonstrate how to crawl your local filesystem, making it searchable with Solr.
+      
+      [Note:] This guide will only work for Solr version 1.2 or higher.
+
+* Setting up Solr
+~~~~~~~~~~~~~~~~~
+
+  After you have the example up and running according to the tutorial, we'll have to make some changes to the schema as 
+  well as adding OpenPipe <<<solr-tokenizer.jar>>> to the <<<solr-webapp>>>.
+  
+  From this point forward we'll assume you installed Solr in <<<~/solr>>>. This gives schema file as 
+  <<<~/solr/example/solr/config/schema.xml>>> and the solr-webapp as <<<~/solr/example/solr/webapps/solr.war>>>.
+  
+** Setting up libraries
+~~~~~~~~~~~~~~~~~~~~~~~
+
+  In order to add libraries to <<<solr-webapp>>> we need to unjar <<<~/solr/example/solr/webapps/solr.war>>>:
+  
++----------------------------------+
+  cd ~/solr/example/solr/webapps/
+  mkdir solr
+  cd solr
+  unjar xf ../solr.war
++----------------------------------+
+  
+  Then download <<<solr-tokenizer.jar>>> from {{ftp://ftp.berlios.de/pub/openpipe/}} and save it to
+  <<<~/solr/example/solr/webapps/solr/WEB-INF/lib>>>.\
+  <<Note>>: In order to index pre-tokenized documents with Solr we have submitted an issue with Solr:
+  {{{http://issues.apache.org/jira/browse/SOLR-398}SOLR-398}}.
+  Until this has been accepted into Solr, you'll have to replace
+  <<<~/solr/example/solr/webapps/solr/WEB-INF/lib/apache-solr-1.2.0.jar>>> with this pacthed version 
+  {{{ftp://ftp.berlios.de/pub/openpipe/solr-1.2.0-SOLR-398.jar}solr-1.2.0-SOLR-398.jar}}.
+  
+** Setting up schema.xml
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+  We'll need a different schema, since we're indexing something quite different than the example docs.
+  
+  Replace <<<~/solr/example/solr/config/schema.xml>>> with {{{schema.xml}this}}.
+  
+*** FieldType
+~~~~~~~~~~~~~
+
+  We need set up a fieldType that allows us to tokenize fields prior to submitting to Solr. The current implementation 
+  uses a binary format encoded as {{{http://en.wikipedia.org/wiki/Base64}base64}} in the xml to Solr. 
+  For more details on the binary format, see {{{../apidocs/no/trank/openpipe/solr/schema/Base64Type.html}Base64Type}}.
+  
++--------------------------------------------------------------------------------------------------------+
+  <fieldType name="text_op" class="no.trank.openpipe.solr.schema.Base64Type" positionIncrementGap="100">
+    <analyzer type="index">
+       <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+    </analyzer>
+    <analyzer type="query">
+      <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+      <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1"
+              catenateWords="0" catenateNumbers="0" catenateAll="0"/>
+      <filter class="solr.LowerCaseFilterFactory"/>
+      <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+    </analyzer>
+  </fieldType>
++--------------------------------------------------------------------------------------------------------+
+
+  The <<<WhitespaceTokenizer>>> for <<<analyzer type="index">>> will be used when highlighting your search. While the
+  <<<analyzer type="query">>> is used for the query, which should be <compatible> to the OpenPipe config showed later.\
+  Compared to the standard <<<schema.xml>>>:
+
++--------------------------------------------------------------------------------------------------------+
+  <fieldType name="text" class="solr.TextField" positionIncrementGap="100">
+    <analyzer type="index">
+      <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+      <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt"/>
+      <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1"
+              catenateWords="1" catenateNumbers="1" catenateAll="0"/>
+      <filter class="solr.LowerCaseFilterFactory"/>
+      <filter class="solr.EnglishPorterFilterFactory" protected="protwords.txt"/>
+      <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+    </analyzer>
+    <analyzer type="query">
+      <tokenizer class="solr.WhitespaceTokenizerFactory"/>
+      <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true"/>
+      <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt"/>
+      <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1"
+              catenateWords="0" catenateNumbers="0" catenateAll="0"/>
+      <filter class="solr.LowerCaseFilterFactory"/>
+      <filter class="solr.EnglishPorterFilterFactory" protected="protwords.txt"/>
+      <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+    </analyzer>
+  </fieldType>
++--------------------------------------------------------------------------------------------------------+
+
+  We have removed the <<<SynonymFilter>>>, <<<StopFilter>>> and <<<EnglishPorterFilter>>> (for simplicity).
+
+*** Fields
+~~~~~~~~~~
+
+  The fields we set up are as follows:
+
++--------------------------------------------------------------------------------+
+  <fields>
+    <field name="id" type="string" indexed="true" stored="true" required="true"/>
+    <field name="url" type="text_op" indexed="true" stored="true"/>
+    <field name="title" type="text_op" indexed="true" stored="true"/>
+    <field name="text" type="text_op" indexed="true" stored="true"/>
+    <field name="lastModified" type="slong" indexed="true" stored="true"/>
+  </fields>
++--------------------------------------------------------------------------------+
+
+  For <<<id>>> we'll use the <path> of the document. <<<text>>> is the parsed content of the document.
+
+* Setting up OpenPipe
+~~~~~~~~~~~~~~~~~~~~~
+
