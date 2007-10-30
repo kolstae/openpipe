@@ -20,6 +20,7 @@
       <module>parse-misc</module>
       <module>solr-producer</module>
       <module>solr-tokenizer</module>
+      <module>tutorial-intranet</module>
    </modules>
    <repositories>
       <repository>

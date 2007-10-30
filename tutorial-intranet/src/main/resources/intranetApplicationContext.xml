@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+
+   <bean id="textParser" class="no.trank.openpipe.parse.text.TextParser">
+      <constructor-arg>
+         <bean id="textDecoder" class="no.trank.openpipe.parse.text.TextDecoder">
+            <constructor-arg index="0">
+               <list>
+                  <value>UTF-8</value>
+                  <value>ISO-8859-1</value>
+               </list>
+            </constructor-arg>
+            <constructor-arg index="1">
+               <bean class="com.ibm.icu.text.CharsetDetector"/>
+            </constructor-arg>
+         </bean>
+      </constructor-arg>
+   </bean>
+   
+   <bean id="parseStep" class="no.trank.openpipe.parse.step.DocumentParser">
+      <property name="parsers">
+         <map>
+            <entry key="doc">
+               <bean class="no.trank.openpipe.parse.ms.WordParser"/>
+            </entry>
+            <entry key="ppt">
+               <bean class="no.trank.openpipe.parse.ms.PowerPointParser"/>
+            </entry>
+            <entry key="xls">
+               <bean class="no.trank.openpipe.parse.ms.ExcelParser"/>
+            </entry>
+            <entry key="xls">
+               <bean class="no.trank.openpipe.parse.ms.ExcelParser"/>
+            </entry>
+            <entry key="odp">
+               <bean class="no.trank.openpipe.parse.oo.OOParser"/>
+            </entry>
+            <entry key="ods">
+               <bean class="no.trank.openpipe.parse.oo.OOParser"/>
+            </entry>
+            <entry key="odt">
+               <bean class="no.trank.openpipe.parse.oo.OOParser"/>
+            </entry>
+               <entry key="pdf">
+               <bean class="no.trank.openpipe.parse.pdf.PDFParser"/>
+            </entry>
+            <entry key="xml">
+               <bean class="no.trank.openpipe.parse.xml.XMLParser"/>
+            </entry>
+            <entry key="txt" value-ref="textParser"/>
+            <entry key="csv" value-ref="textParser"/>
+         </map>
+      </property>
+      <property name="textField" value="body"/>
+      <property name="titleField" value="title"/>
+      <property name="stopOnParseFailure" value="true"/>
+   </bean>
+
+   <bean id="solrDocumentPoster" class="no.trank.openpipe.solr.SolrHttpDocumentPoster">
+       <property name="postUrl" value="http://localhost:8983/solr/update"/>
+       <property name="docsPerPost" value="500"/>
+   </bean>
+
+   <bean id="solrDocumentProcessor" class="no.trank.openpipe.solr.step.SolrDocumentProcessor">
+      <property name="documentPoster" ref="solrDocumentPoster"/>
+      <property name="solrSchemaUrl" value="http://localhost:8983/solr/admin/get-file.jsp?file=schema.xml"/>
+   </bean>
+   
+   <bean id="pipeline" class="no.trank.openpipe.api.Pipeline">
+      <property name="pipelineSteps">
+         <list>
+            <ref bean="parseStep"/>
+            <ref bean="solrDocumentProcessor"/>
+         </list>
+      </property>
+   </bean>
+
+   <bean id="fileDocumentReader" class="no.trank.openpipe.reader.FileDocumentReader">
+      <property name="directory" value="."/>
+      <property name="maxDepth" value="-1"/>
+   </bean>
+
+   <bean id="pipelineApplicationBean" class="no.trank.openpipe.api.PipelineRunner">
+      <property name="documentReader">
+         <ref local="fileDocumentReader"/>
+      </property>
+      <property name="pipeline">
+         <ref local="pipeline"/>
+      </property>
+   </bean>
+</beans>
