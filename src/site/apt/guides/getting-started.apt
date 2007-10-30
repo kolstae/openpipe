@@ -22,26 +22,26 @@ Getting started
   well as adding OpenPipe <<<solr-tokenizer.jar>>> to the <<<solr-webapp>>>.
   
   From this point forward we'll assume you installed Solr in <<<~/solr>>>. This gives schema file as 
-  <<<~/solr/example/solr/config/schema.xml>>> and the solr-webapp as <<<~/solr/example/solr/webapps/solr.war>>>.
+  <<<~/solr/example/solr/conf/schema.xml>>> and the solr-webapp as <<<~/solr/example/webapps/solr.war>>>.
   
 ** Setting up libraries
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-  In order to add libraries to <<<solr-webapp>>> we need to unjar <<<~/solr/example/solr/webapps/solr.war>>>:
+  In order to add libraries to <<<solr-webapp>>> we need to unjar <<<~/solr/example/webapps/solr.war>>>:
   
 +----------------------------------+
-  cd ~/solr/example/solr/webapps/
+  cd ~/solr/example/webapps/
   mkdir solr
   cd solr
-  unjar xf ../solr.war
+  jar xf ../solr.war
 +----------------------------------+
   
   Then download <<<solr-tokenizer.jar>>> from {{ftp://ftp.berlios.de/pub/openpipe/}} and save it to
-  <<<~/solr/example/solr/webapps/solr/WEB-INF/lib>>>.\
+  <<<~/solr/example/webapps/solr/WEB-INF/lib>>>.\
   <<Note>>: In order to index pre-tokenized documents with Solr we have submitted an issue with Solr:
   {{{http://issues.apache.org/jira/browse/SOLR-398}SOLR-398}}.
   Until this has been accepted into Solr, you'll have to replace
-  <<<~/solr/example/solr/webapps/solr/WEB-INF/lib/apache-solr-1.2.0.jar>>> with this pacthed version 
+  <<<~/solr/example/webapps/solr/WEB-INF/lib/apache-solr-1.2.0.jar>>> with this patched version 
   {{{ftp://ftp.berlios.de/pub/openpipe/solr-1.2.0-SOLR-398.jar}solr-1.2.0-SOLR-398.jar}}.
   
 ** Setting up schema.xml
@@ -49,7 +49,7 @@ Getting started
 
   We'll need a different schema, since we're indexing something quite different than the example docs.
   
-  Replace <<<~/solr/example/solr/config/schema.xml>>> with {{{schema.xml}this}}.
+  Replace <<<~/solr/example/solr/conf/schema.xml>>> with {{{schema.xml}this}}.
   
 *** FieldType
 ~~~~~~~~~~~~~
@@ -113,13 +113,54 @@ Getting started
     <field name="id" type="string" indexed="true" stored="true" required="true"/>
     <field name="url" type="text_op" indexed="true" stored="true"/>
     <field name="title" type="text_op" indexed="true" stored="true"/>
+    <field name="content" type="text_op" indexed="true" stored="true"/>
     <field name="text" type="text_op" indexed="true" stored="true"/>
     <field name="lastModified" type="slong" indexed="true" stored="true"/>
   </fields>
 +--------------------------------------------------------------------------------+
 
-  For <<<id>>> we'll use the <path> of the document. <<<text>>> is the parsed content of the document.
+  For <<<id>>> we'll use the <path> of the document. <<<content>>> is the parsed content of the document.
+
+** Starting Solr
+~~~~~~~~~~~~~~~~
+
+  Before we set up OpenPipe and start feeding documents, Solr needs to be to be up and running:
+
++----------------------------------+
+  cd ~/solr/example
+  java -jar start.jar
++----------------------------------+
+
 
 * Setting up OpenPipe
 ~~~~~~~~~~~~~~~~~~~~~
 
+  There are currently no binary releases of OpenPipe. Getting OpenPipe up and running requires that
+  {{{http://subversion.tigris.org/}Subversion}} and {{{http://maven.apache.org/}Maven 2}} are available.
+  
+  Follow these steps to acquire the latest version and build the modules:
+
++----------------------------------+
+  svn checkout http://svn.berlios.de/svnroot/repos/openpipe/openpipe/trunk openpipe
+  cd openpipe
+  mvn package
++----------------------------------+
+
+
+* Indexing
+~~~~~~~~~~
+
+  We now have a live Solr index and OpenPipe available. Pick a directory on your hard drive that contains
+  a nice batch of documents and run these steps:
+
++----------------------------------+
+  cd tutorial-intranet/target
+  java -jar tutorial-intranet-1.0-SNAPSHOT-jar-with-dependencies.jar <path to your files>
++----------------------------------+
+
+
+* Searching
+~~~~~~~~~~~
+
+  Go to {{http://localhost:8983/solr/admin/}}. Type <<<id:[* TO *]>>> in the <Query String> field. Hit the
+  <Search> button. This search result represents all the indexed documents. Only the first 10 are displayed.
