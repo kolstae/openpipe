@@ -58,25 +58,88 @@
             <entry key="csv" value-ref="textParser"/>
          </map>
       </property>
-      <property name="textField" value="body"/>
+      <property name="textField" value="content"/>
       <property name="titleField" value="title"/>
       <property name="stopOnParseFailure" value="true"/>
    </bean>
 
    <bean id="solrDocumentPoster" class="no.trank.openpipe.solr.SolrHttpDocumentPoster">
-       <property name="postUrl" value="http://localhost:8983/solr/update"/>
-       <property name="docsPerPost" value="500"/>
+      <property name="postUrl" value="http://localhost:8983/solr/update"/>
+      <property name="docsPerPost" value="5"/>
+      <property name="docsPerCommit" value="5"/>
    </bean>
 
    <bean id="solrDocumentProcessor" class="no.trank.openpipe.solr.step.SolrDocumentProcessor">
       <property name="documentPoster" ref="solrDocumentPoster"/>
       <property name="solrSchemaUrl" value="http://localhost:8983/solr/admin/get-file.jsp?file=schema.xml"/>
+      <property name="excludeInputFields">
+         <set>
+            <value>path</value>
+         </set>
+      </property>
+      <property name="serializer">
+         <bean class="no.trank.openpipe.solr.analysis.Base64TokenSerializer"/>
+      </property>
+      <property name="tokenizedFields">
+         <set>
+            <value>url</value>
+            <value>title</value>
+            <value>content</value>
+            <value>text</value>
+         </set>
+      </property>
    </bean>
+   
+   <bean id="solrAnalyzer" class="no.trank.openpipe.solr.step.SolrAnalyzerStep" abstract="true">
+      <property name="tokenizerFactory">
+         <bean class="org.apache.solr.analysis.WhitespaceTokenizerFactory"/>
+      </property>
+      <property name="filterFactories">
+         <list>
+            <bean class="no.trank.openpipe.solr.util.TokenFilterFactoryFactory" factory-method="createFactory">
+               <constructor-arg value="org.apache.solr.analysis.WordDelimiterFilterFactory" type="java.lang.String"/>
+               <constructor-arg>
+                  <map>
+                     <entry key="generateWordParts" value="1"/>
+                     <entry key="generateNumberParts" value="1"/>
+                     <entry key="catenateWords" value="1"/>
+                     <entry key="catenateNumbers" value="1"/>
+                     <entry key="catenateAll" value="0"/>
+                  </map>
+               </constructor-arg>
+            </bean>
+            <bean class="no.trank.openpipe.solr.util.TokenFilterFactoryFactory" factory-method="createFactory">
+               <constructor-arg value="org.apache.solr.analysis.LowerCaseFilterFactory" type="java.lang.String"/>
+               <constructor-arg>
+                  <map/>
+               </constructor-arg>
+            </bean>
+            <bean class="no.trank.openpipe.solr.util.TokenFilterFactoryFactory" factory-method="createFactory">
+               <constructor-arg value="org.apache.solr.analysis.RemoveDuplicatesTokenFilterFactory" type="java.lang.String"/>
+               <constructor-arg>
+                  <map/>
+               </constructor-arg>
+            </bean>
+         </list>
+      </property>
+   </bean>
+   
    
    <bean id="pipeline" class="no.trank.openpipe.api.Pipeline">
       <property name="pipelineSteps">
          <list>
             <ref bean="parseStep"/>
+            <bean class="no.trank.openpipe.step.CopyField">
+               <property name="fromFieldName" value="pathName"/>
+               <property name="toFieldName" value="id"/>
+               <property name="withAnnotations" value="false"/>
+            </bean>
+            <bean parent="solrAnalyzer">
+               <property name="fieldName" value="content"/>
+            </bean>
+            <bean parent="solrAnalyzer">
+               <property name="fieldName" value="title"/>
+            </bean>
             <ref bean="solrDocumentProcessor"/>
          </list>
       </property>
@@ -85,6 +148,7 @@
    <bean id="fileDocumentReader" class="no.trank.openpipe.reader.FileDocumentReader">
       <property name="directory" value="."/>
       <property name="maxDepth" value="-1"/>
+      <property name="regexPattern" value=".+(\.(doc|txt|od[pst]|pdf|ppt|xls))?"/>
    </bean>
 
    <bean id="pipelineApplicationBean" class="no.trank.openpipe.api.PipelineRunner">
