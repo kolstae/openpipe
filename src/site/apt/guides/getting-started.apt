@@ -114,8 +114,7 @@ Getting started
     <field name="url" type="text_op" indexed="true" stored="true"/>
     <field name="title" type="text_op" indexed="true" stored="true"/>
     <field name="content" type="text_op" indexed="true" stored="true"/>
-    <field name="text" type="text_op" indexed="true" stored="true"/>
-    <field name="lastModified" type="slong" indexed="true" stored="true"/>
+    <field name="lastModified" type="long" indexed="true" stored="true"/>
   </fields>
 +--------------------------------------------------------------------------------+
 
