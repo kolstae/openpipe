@@ -7,8 +7,8 @@
 Getting started
 ~~~~~~~~~~~~~~~
 
-  In order to start using OpenPipe for indexing to {{{http://lucene.apache.org/solr/}Solr}}. You need to set up 
-  Solr, there's a great {{{http://lucene.apache.org/solr/tutorial.html}tutorial}} on the Solr-site if you are new to 
+  In order to start using OpenPipe for indexing to {{{http://lucene.apache.org/solr/}Solr}}, you need to set up 
+  Solr. There's a great {{{http://lucene.apache.org/solr/tutorial.html}tutorial}} on the Solr site if you are new to 
   Solr.
   
   We'll demonstrate how to crawl your local filesystem, making it searchable with Solr.
@@ -131,8 +131,8 @@ Getting started
 +----------------------------------+
 
 
-* Setting up OpenPipe
-~~~~~~~~~~~~~~~~~~~~~
+** Setting up OpenPipe
+~~~~~~~~~~~~~~~~~~~~~~
 
   There are currently no binary releases of OpenPipe. Getting OpenPipe up and running requires that
   {{{http://subversion.tigris.org/}Subversion}} and {{{http://maven.apache.org/}Maven 2}} are available.
@@ -146,8 +146,41 @@ Getting started
 +----------------------------------+
 
 
-* Indexing
-~~~~~~~~~~
+** The pipeline
+~~~~~~~~~~~~~~~
+
+  Our example application is configured through Spring in <<openpipe/tutorial-intranet/src/main/resources>>.
+  It's put together roughly like this:
+
++----------------------------------+
++- pipelineApplicationBean [no.trank.openpipe.api.PipelineRunner]
+   +- fileDocumentReader [no.trank.openpipe.reader.FileDocumentReader]
+   +- pipeline [no.trank.openpipe.api.Pipeline]
+      +- parseStep [no.trank.openpipe.parse.step.DocumentParser]
+      +- copyField [no.trank.openpipe.step.CopyField]
+      +- solrAnalyzerContent [no.trank.openpipe.solr.step.SolrAnalyzerStep]
+      +- solrAnalyzerTitle [no.trank.openpipe.solr.step.SolrAnalyzerStep]
+      +- solrDocumentProcessor [no.trank.openpipe.solr.step.SolrDocumentProcessor]
++----------------------------------+
+
+  <pipelineApplicationBean> requests documents from <fileDocumentReader> and feeds them to the <pipeline>.
+  <fileDocumentReader> crawls a directory and looks for certain file extensions. The steps in the <pipeline>:
+
+*-----------------------+---------------------------------------------------------------------------------------------+
+| parseStep             | This steps looks at the file extension and parses the content accordingly.
+*-----------------------+---------------------------------------------------------------------------------------------+
+| copyField             | Copies the content of the field <pathName> to the field <id>.
+*-----------------------+---------------------------------------------------------------------------------------------+
+| solrAnalyzerContent   | Performs Solr tokenizing on the field <content>.
+*-----------------------+---------------------------------------------------------------------------------------------+
+| solrAnalyzerTitle     | Performs Solr tokenizing on the field <title>.
+*-----------------------+---------------------------------------------------------------------------------------------+
+| solrDocumentProcessor | Posts the document to {{http://localhost:8983/solr/update}}.
+*-----------------------+---------------------------------------------------------------------------------------------+
+
+
+** Indexing
+~~~~~~~~~~~
 
   We now have a live Solr index and OpenPipe available. Pick a directory on your hard drive that contains
   a nice batch of documents and run these steps:
