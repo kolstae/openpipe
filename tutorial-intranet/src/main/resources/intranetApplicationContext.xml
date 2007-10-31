@@ -85,7 +85,6 @@
             <value>url</value>
             <value>title</value>
             <value>content</value>
-            <value>text</value>
          </set>
       </property>
    </bean>
