@@ -2,6 +2,7 @@
  OpenPipe - Getting started
  -----
  Espen Amble Kolstad
+ Frode Johannesen
  -----
 
 Getting started
@@ -18,9 +19,9 @@ Getting started
 
   [[1]] {{{http://java.sun.com/javase/downloads/index.jsp}Java 1.6}} or higher.
 
-  [[2]] {{{{http://subversion.tigris.org/}Subversion}}
+  [[2]] {{{http://subversion.tigris.org/}Subversion}}
 
-  [[3]] {{{{http://maven.apache.org/}Maven 2}}
+  [[3]] {{{http://maven.apache.org/}Maven 2}}
 
   [[4]] {{{http://www.apache.org/dyn/closer.cgi/lucene/solr/}Solr version 1.2}} or higher.
       
