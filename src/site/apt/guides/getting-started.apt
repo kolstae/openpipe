@@ -6,20 +6,37 @@
 
 Getting started
 ~~~~~~~~~~~~~~~
+ 
+  This tutorial demonstrates how to crawl your local filesystem, making it searchable with Solr.
 
-  In order to start using OpenPipe for indexing to {{{http://lucene.apache.org/solr/}Solr}}, you need to set up 
-  Solr. There's a great {{{http://lucene.apache.org/solr/tutorial.html}tutorial}} on the Solr site if you are new to 
-  Solr.
+  If you are not familiar with Solr, we recommend their {{{http://lucene.apache.org/solr/tutorial.html}tutorial}}.
+  However, this tutorial does not require any prior knowledge of Solr.
   
-  We'll demonstrate how to crawl your local filesystem, making it searchable with Solr.
+
+* Requirements
+~~~~~~~~~~~~~~
+
+  [[1]] {{{http://java.sun.com/javase/downloads/index.jsp}Java 1.6}} or higher.
+
+  [[2]] {{{{http://subversion.tigris.org/}Subversion}}
+
+  [[3]] {{{{http://maven.apache.org/}Maven 2}}
+
+  [[4]] {{{http://www.apache.org/dyn/closer.cgi/lucene/solr/}Solr version 1.2}} or higher.
       
-      [Note:] This guide will only work for Solr version 1.2 or higher.
 
 * Setting up Solr
 ~~~~~~~~~~~~~~~~~
 
-  After you have the example up and running according to the tutorial, we'll have to make some changes to the schema as 
-  well as adding OpenPipe <<<solr-tokenizer.jar>>> to the <<<solr-webapp>>>.
+  Unpack a binary distribution of Solr:
+
++----------------------------------+
+  tar xfz apache-solr-1.2.0.tgz -C ~
+  mv ~/apache-solr-1.2.0 ~/solr
++----------------------------------+
+
+  We'll have to make some changes to the schema as well as adding OpenPipe <<<solr-tokenizer.jar>>> to the
+   <<<solr-webapp>>>.
   
   From this point forward we'll assume you installed Solr in <<<~/solr>>>. This gives schema file as 
   <<<~/solr/example/solr/conf/schema.xml>>> and the solr-webapp as <<<~/solr/example/webapps/solr.war>>>.
@@ -74,7 +91,7 @@ Getting started
 +--------------------------------------------------------------------------------------------------------+
 
   The <<<WhitespaceTokenizer>>> for <<<analyzer type="index">>> will be used when highlighting your search. While the
-  <<<analyzer type="query">>> is used for the query, which should be <compatible> to the OpenPipe config showed later.\
+  <<<analyzer type="query">>> is used for the query, which should be <compatible> with the OpenPipe config showed later.\
   Compared to the standard <<<schema.xml>>>:
 
 +--------------------------------------------------------------------------------------------------------+
@@ -134,8 +151,7 @@ Getting started
 ** Setting up OpenPipe
 ~~~~~~~~~~~~~~~~~~~~~~
 
-  There are currently no binary releases of OpenPipe. Getting OpenPipe up and running requires that
-  {{{http://subversion.tigris.org/}Subversion}} and {{{http://maven.apache.org/}Maven 2}} are available.
+  There are currently no binary releases of OpenPipe, 
   
   Follow these steps to acquire the latest version and build the modules:
 
