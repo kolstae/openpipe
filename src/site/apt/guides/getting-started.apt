@@ -184,7 +184,7 @@ Getting started
   <fileDocumentReader> crawls a directory and looks for certain file extensions. The steps in the <pipeline>:
 
 *-----------------------+---------------------------------------------------------------------------------------------+
-| parseStep             | This steps looks at the file extension and parses the content accordingly.
+| parseStep             | This step examines the file extension and parses the content accordingly.
 *-----------------------+---------------------------------------------------------------------------------------------+
 | copyField             | Copies the content of the field <pathName> to the field <id>.
 *-----------------------+---------------------------------------------------------------------------------------------+
