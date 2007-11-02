@@ -159,7 +159,7 @@ Getting started
 +----------------------------------+
   svn checkout http://svn.berlios.de/svnroot/repos/openpipe/openpipe/trunk openpipe
   cd openpipe
-  mvn package
+  mvn install
 +----------------------------------+
 
 
