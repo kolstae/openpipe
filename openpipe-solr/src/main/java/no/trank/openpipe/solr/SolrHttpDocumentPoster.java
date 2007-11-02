@@ -14,8 +14,6 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 
 import no.trank.openpipe.api.PipelineException;
-import no.trank.openpipe.api.document.Document;
-import no.trank.openpipe.api.document.DocumentOperation;
 
 /**
  * @version $Revision$
@@ -57,17 +55,13 @@ public class SolrHttpDocumentPoster {
       this.updateOptions = updateOptions;
    }
 
-   public void postDocument(String idFieldName, Document doc, HashMap<String, List<String>> solrOutputDoc) throws XMLStreamException, PipelineException {
-      if (DocumentOperation.DELETE_VALUE.equals(doc.getOperation())) {
-         deleteDocument(idFieldName, solrOutputDoc);
-      } else {
-         addDocument(solrOutputDoc);
-         if (++unpostedDocs >= docsPerPost) {
-            endAdd();
-         }
-         if (++uncommitedDocs >= docsPerCommit) {
-            commit();
-         }
+   public void add(HashMap<String, List<String>> solrOutputDoc, Map<String, String> attribs) throws XMLStreamException, PipelineException {
+      addDocument(solrOutputDoc, attribs);
+      if (++unpostedDocs >= docsPerPost) {
+         endAdd();
+      }
+      if (++uncommitedDocs >= docsPerCommit) {
+         commit();
       }
    }
 
@@ -92,25 +86,24 @@ public class SolrHttpDocumentPoster {
       }
    }
 
-   private void deleteDocument(String idFieldName, HashMap<String, List<String>> solrOutputDoc) throws PipelineException, XMLStreamException {
+   public void delete(List<String> fieldValueList) throws PipelineException, XMLStreamException {
       endAdd();
-      if (idFieldName == null) {
-         throw new PipelineException("Can not delete when I dont know the id field. Either set the solr schema url or set the property idFieldName.");
+      if (fieldValueList != null && !fieldValueList.isEmpty()) {
+         openPostStream();
+         solrDocumentWriter.deleteById(fieldValueList);
+         closePostStream();
       } else {
-         List<String> fieldValueList = solrOutputDoc.get(idFieldName);
-         if (fieldValueList != null && !fieldValueList.isEmpty()) {
-            openPostStream();
-            solrDocumentWriter.deleteById(fieldValueList);
-            closePostStream();
-         } else {
-            throw new PipelineException("Can not delete document. The id field is not set.");
-         }
+         throw new PipelineException("Can not delete document. The id field is not set.");
+      }
+      if (++uncommitedDocs >= docsPerCommit) {
+         commit();
       }
    }
 
-   private void addDocument(HashMap<String, List<String>> solrOutputDoc) throws XMLStreamException, PipelineException {
+   private void addDocument(HashMap<String, List<String>> solrOutputDoc, Map<String, String> attribs) 
+         throws XMLStreamException, PipelineException {
       startAdd();
-      solrDocumentWriter.startDoc();
+      solrDocumentWriter.startDoc(attribs);
       for (Map.Entry<String, List<String>> fieldEntry : solrOutputDoc.entrySet()) {
          for (String fieldValue : fieldEntry.getValue()) {
             solrDocumentWriter.writeField(fieldEntry.getKey(), fieldValue);

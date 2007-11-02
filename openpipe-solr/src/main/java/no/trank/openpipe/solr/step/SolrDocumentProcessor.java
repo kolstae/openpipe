@@ -33,6 +33,7 @@ import no.trank.openpipe.api.PipelineStepStatus;
 import no.trank.openpipe.api.PipelineStepStatusCode;
 import no.trank.openpipe.api.document.AnnotatedField;
 import no.trank.openpipe.api.document.Document;
+import no.trank.openpipe.api.document.DocumentOperation;
 import no.trank.openpipe.solr.SolrHttpDocumentPoster;
 import no.trank.openpipe.solr.analysis.TokenSerializer;
 import no.trank.openpipe.solr.xml.XmlInputStream;
@@ -55,6 +56,7 @@ public class SolrDocumentProcessor extends BasePipelineStep {
    private Set<String> tokenizedFields = Collections.emptySet();
    private TokenSerializer serializer;
    private SolrHttpDocumentPoster documentPoster;
+   private static final String BOOST_KEY = "boost";
 
    public SolrDocumentProcessor() {
       super("SolrPoster");
@@ -62,28 +64,49 @@ public class SolrDocumentProcessor extends BasePipelineStep {
 
    public PipelineStepStatus execute(Document doc) throws PipelineException {
       try {
-         final HashMap<String, List<String>> solrOutputDoc = new HashMap<String, List<String>>();
-         // Get what field we want to post to solr
-         for (String inputField : doc.getFieldNames()) {
-            if (!includeInputFields.isEmpty()) {
-               if (includeInputFields.contains(inputField)) {
-                  addField(doc, inputField, solrOutputDoc);
-               }
-            } else if (!excludeInputFields.isEmpty()) {
-               if (!excludeInputFields.contains(inputField)) {
-                  addField(doc, inputField, solrOutputDoc);
-               }
-            } else {
-               addField(doc, inputField, solrOutputDoc);
-            }
-         }
-
          // Post the document
-         documentPoster.postDocument(idFieldName, doc, solrOutputDoc);
+         if (DocumentOperation.DELETE_VALUE.equals(doc.getOperation())) {
+            if (idFieldName != null) {
+               documentPoster.delete(doc.getFieldValues(idFieldName));
+            } else {
+               log.warn("idFieldName not set -> delete not supported - ignoring");
+            }
+         } else {
+            final HashMap<String, List<String>> solrOutputDoc = new HashMap<String, List<String>>();
+            // Get what field we want to post to solr
+            for (String inputField : doc.getFieldNames()) {
+               if (!includeInputFields.isEmpty()) {
+                  if (includeInputFields.contains(inputField)) {
+                     addField(doc, inputField, solrOutputDoc);
+                  }
+               } else if (!excludeInputFields.isEmpty()) {
+                  if (!excludeInputFields.contains(inputField)) {
+                     addField(doc, inputField, solrOutputDoc);
+                  }
+               } else {
+                  addField(doc, inputField, solrOutputDoc);
+               }
+            }
+            documentPoster.add(solrOutputDoc, findDocAttributes(solrOutputDoc));
+         }
          return new PipelineStepStatus(PipelineStepStatusCode.CONTINUE);
       } catch (XMLStreamException e) {
          throw new PipelineException("Could not generate xml", e);
       }
+   }
+
+   private static Map<String, String> findDocAttributes(HashMap<String, List<String>> solrOutputDoc) {
+      final List<String> boostList = solrOutputDoc.remove(BOOST_KEY);
+      final Map<String, String> attribs;
+      if (boostList != null && !boostList.isEmpty()) {
+         if (boostList.size() > 1) {
+            log.warn("Got multiple boost values {} for document", boostList);
+         }
+         attribs = Collections.singletonMap(BOOST_KEY, boostList.get(0));
+      } else {
+         attribs = Collections.emptyMap();
+      }
+      return attribs;
    }
 
    @Override
@@ -195,7 +218,7 @@ public class SolrDocumentProcessor extends BasePipelineStep {
          } else {
             fieldValueList.addAll(doc.getFieldValues(inputField));
          }
-      } else {
+      } else if (log.isDebugEnabled()) {
          log.debug("Field '{}' does not exist in solr schema, and does not match a dynamic field. Skipped.", ouputField);
       }
    }
@@ -245,7 +268,7 @@ public class SolrDocumentProcessor extends BasePipelineStep {
                addDynamicField(name);
             }
          }
-         addField("boost");
+         addField(BOOST_KEY);
 
          if (idFieldName == null) {
             Node idNode = (Node) xpath.evaluate("/schema/uniqueKey", document, XPathConstants.NODE);
