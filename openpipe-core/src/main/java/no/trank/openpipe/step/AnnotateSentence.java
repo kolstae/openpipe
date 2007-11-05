@@ -2,16 +2,13 @@ package no.trank.openpipe.step;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import no.trank.openpipe.api.BasePipelineStep;
+import no.trank.openpipe.api.MultiInputFieldPipelineStep;
 import no.trank.openpipe.api.PipelineException;
-import no.trank.openpipe.api.PipelineStepStatus;
-import no.trank.openpipe.api.PipelineStepStatusCode;
 import no.trank.openpipe.api.document.AnnotatedField;
 import no.trank.openpipe.api.document.Annotation;
 import no.trank.openpipe.api.document.BaseAnnotation;
@@ -20,12 +17,11 @@ import no.trank.openpipe.api.document.Document;
 /**
  * @version $Revision$
  */
-public class AnnotateSentence extends BasePipelineStep {
+public class AnnotateSentence extends MultiInputFieldPipelineStep {
    private static final Logger log = LoggerFactory.getLogger(AnnotateSpace.class);
    public static final String SENTENCE = "sentence";
    private static final char[] CHARS_SENT = new char[] {'.', '!', '?'};
    private static final char[] CHARS_WS = new char[] {' ', '"', '\r', '\n', '\t'};
-   private List<String> fieldNames = Collections.emptyList();
 
    public AnnotateSentence() {
       super("AnnotateSentence");
@@ -42,16 +38,13 @@ public class AnnotateSentence extends BasePipelineStep {
    }
 
    @Override
-   public PipelineStepStatus execute(Document doc) {
-      for (String fieldName : fieldNames) {
-         process(doc, fieldName);
+   protected void process(Document doc, String fieldName, List<AnnotatedField> fieldValues) throws PipelineException {
+      for (AnnotatedField fieldValue : fieldValues) {
+         process(fieldName, fieldValue);
       }
-
-      return PipelineStepStatus.DEFAULT;
    }
 
-   private static void process(Document doc, String fieldName) {
-      final AnnotatedField field = doc.getField(fieldName);
+   private static void process(String fieldName, AnnotatedField field) {
       final String text = field.getValue();
       if (text == null) {
          log.debug("Field '{}' - null", fieldName);
@@ -86,20 +79,5 @@ public class AnnotateSentence extends BasePipelineStep {
 
    private static boolean isWhiteSpace(char c) {
       return Arrays.binarySearch(CHARS_WS, c) >= 0;
-   }
-
-   public void setFieldNames(List<String> fieldNames) {
-      this.fieldNames = fieldNames;
-   }
-
-   public List<String> getFieldNames() {
-      return fieldNames;
-   }
-
-   @Override
-   public void prepare() throws PipelineException {
-      if (fieldNames.isEmpty()) {
-         throw new PipelineException("No field-names configured");
-      }
    }
 }

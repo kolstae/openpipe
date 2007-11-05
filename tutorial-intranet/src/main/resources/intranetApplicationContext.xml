@@ -23,7 +23,7 @@
          </bean>
       </constructor-arg>
    </bean>
-   
+
    <bean id="parseStep" class="no.trank.openpipe.parse.step.DocumentParser">
       <property name="parsers">
          <map>
@@ -48,7 +48,7 @@
             <entry key="odt">
                <bean class="no.trank.openpipe.parse.oo.OOParser"/>
             </entry>
-               <entry key="pdf">
+            <entry key="pdf">
                <bean class="no.trank.openpipe.parse.pdf.PDFParser"/>
             </entry>
             <entry key="xml">
@@ -88,7 +88,7 @@
          </set>
       </property>
    </bean>
-   
+
    <bean id="solrAnalyzer" class="no.trank.openpipe.solr.step.SolrAnalyzerStep" abstract="true">
       <property name="tokenizerFactory">
          <bean class="org.apache.solr.analysis.WhitespaceTokenizerFactory"/>
@@ -114,7 +114,8 @@
                </constructor-arg>
             </bean>
             <bean class="no.trank.openpipe.solr.util.TokenFilterFactoryFactory" factory-method="createFactory">
-               <constructor-arg value="org.apache.solr.analysis.RemoveDuplicatesTokenFilterFactory" type="java.lang.String"/>
+               <constructor-arg value="org.apache.solr.analysis.RemoveDuplicatesTokenFilterFactory"
+                                type="java.lang.String"/>
                <constructor-arg>
                   <map/>
                </constructor-arg>
@@ -122,8 +123,7 @@
          </list>
       </property>
    </bean>
-   
-   
+
    <bean id="pipeline" class="no.trank.openpipe.api.Pipeline">
       <property name="pipelineSteps">
          <list>
@@ -134,10 +134,12 @@
                <property name="withAnnotations" value="false"/>
             </bean>
             <bean parent="solrAnalyzer">
-               <property name="fieldName" value="content"/>
-            </bean>
-            <bean parent="solrAnalyzer">
-               <property name="fieldName" value="title"/>
+               <property name="inputFields">
+                  <list>
+                     <value>content</value>
+                     <value>title</value>
+                  </list>
+               </property>
             </bean>
             <ref bean="solrDocumentProcessor"/>
          </list>

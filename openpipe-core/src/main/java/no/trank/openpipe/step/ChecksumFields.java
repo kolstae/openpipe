@@ -1,22 +1,22 @@
 package no.trank.openpipe.step;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
-import no.trank.openpipe.api.BasePipelineStep;
+import no.trank.openpipe.api.MultiInputFieldPipelineStep;
 import no.trank.openpipe.api.PipelineException;
 import no.trank.openpipe.api.PipelineStepStatus;
-import no.trank.openpipe.api.PipelineStepStatusCode;
+import no.trank.openpipe.api.document.AnnotatedField;
 import no.trank.openpipe.api.document.Document;
 import static no.trank.openpipe.util.HexUtil.toHexString;
 
 /**
  * @version $Revision$
  */
-public class ChecksumFields extends BasePipelineStep {
-   private List<String> fieldNames;
+public class ChecksumFields extends MultiInputFieldPipelineStep {
+   private final static Charset CHARSET = Charset.forName("UTF-8"); 
    private String outField;
    private String algorithm = "MD5";
    private MessageDigest messageDigest;
@@ -27,27 +27,17 @@ public class ChecksumFields extends BasePipelineStep {
 
    @Override
    public PipelineStepStatus execute(Document doc) throws PipelineException {
-      try {
-         messageDigest.reset();
-         for (String fieldName : fieldNames) {
-            final List<String> values = doc.getFieldValues(fieldName);
-            for (String value : values) {
-               messageDigest.update(value.getBytes("UTF-8"));
-            }
-         }
-         doc.setFieldValue(outField, toHexString(messageDigest.digest()));
-      } catch (UnsupportedEncodingException e) {
-         throw new PipelineException(e);
-      }
+      messageDigest.reset();
+      executeInputFields(doc);
+      doc.setFieldValue(outField, toHexString(messageDigest.digest()));
       return PipelineStepStatus.DEFAULT;
    }
 
-   public List<String> getFieldNames() {
-      return fieldNames;
-   }
-
-   public void setFieldNames(List<String> fieldNames) {
-      this.fieldNames = fieldNames;
+   @Override
+   protected void process(Document doc, String fieldName, List<AnnotatedField> fieldValues) throws PipelineException {
+      for (AnnotatedField fieldValue : fieldValues) {
+         messageDigest.update(fieldValue.getValue().getBytes(CHARSET));
+      }
    }
 
    public String getOutField() {
@@ -73,8 +63,9 @@ public class ChecksumFields extends BasePipelineStep {
 
    @Override
    public void prepare() throws PipelineException {
-      if (fieldNames == null || fieldNames.isEmpty()) {
-         throw new PipelineException("No field-names configured");
+      super.prepare();
+      if (outField == null) {
+         throw new PipelineException("No outField configured");
       }
       try {
          messageDigest = MessageDigest.getInstance(algorithm);
