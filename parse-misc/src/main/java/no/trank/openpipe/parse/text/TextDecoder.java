@@ -296,6 +296,7 @@ public class TextDecoder implements Closeable {
       return encoding;
    }
 
+   @Override
    public void close() throws IOException {
       decoderMap.clear();
       byteBuffer = null;

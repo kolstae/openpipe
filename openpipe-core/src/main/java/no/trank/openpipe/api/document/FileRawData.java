@@ -24,16 +24,19 @@ public class FileRawData implements RawData {
       return file;
    }
 
+   @Override
    public InputStream getInputStream() throws IOException {
       final FileInputStream fin = new FileInputStream(file);
       closeables.add(fin);
       return fin;
    }
 
+   @Override
    public int getLength() {
       return (int) file.length();
    }
 
+   @Override
    public void release() {
       released = true;
       for (Closeable closeable : closeables) {
@@ -46,6 +49,7 @@ public class FileRawData implements RawData {
       closeables.clear();
    }
 
+   @Override
    public boolean isReleased() {
       return released;
    }

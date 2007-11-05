@@ -42,6 +42,7 @@ public class JdbcPoller implements Runnable {
       return false;
    }
    
+   @Override
    public void run() {
       while(!shutdown) {
          log.info("polling database");

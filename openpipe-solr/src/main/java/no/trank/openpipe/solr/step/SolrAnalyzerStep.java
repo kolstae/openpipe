@@ -37,6 +37,7 @@ public class SolrAnalyzerStep extends BasePipelineStep {
       super("SolrAnalyzerStep");
    }
 
+   @Override
    public PipelineStepStatus execute(Document doc) throws PipelineException {
       try {
          final List<AnnotatedField> values = doc.getFields(fieldName);
@@ -86,6 +87,7 @@ public class SolrAnalyzerStep extends BasePipelineStep {
    public void finish(boolean success) throws PipelineException {
    }
 
+   @Override
    public String getRevision() {
       return "$Revision$";
    }

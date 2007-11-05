@@ -10,6 +10,7 @@ import org.apache.solr.analysis.BaseTokenizerFactory;
  */
 public class BinaryTokenDeserializerFactory extends BaseTokenizerFactory {
 
+   @Override
    public TokenStream create(Reader input) {
       return new BinaryTokenDeserializer(input);
    }

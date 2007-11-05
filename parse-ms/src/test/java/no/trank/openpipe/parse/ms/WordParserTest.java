@@ -16,10 +16,12 @@ public class WordParserTest extends AbstractMsParserTest {
       assertEquals("3", result.getProperties().get("revNumber"));
    }
    
+   @Override
    protected Class<? extends Parser> getParserClass() {
       return WordParser.class;
    }
    
+   @Override
    protected String getFileName() {
       return "test.doc";
    }

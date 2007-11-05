@@ -14,20 +14,24 @@ public class HtmlJdbcStats implements JdbcStats {
    private Timer total = new Timer(System.currentTimeMillis());
    private int totalRuns;
 
+   @Override
    public void startPreSql() {
       last.startPreSql();
    }
 
+   @Override
    public void startPostSql() {
       last.startPostSql();
    }
 
+   @Override
    public void stop() {
       last.stopPostSql();
       total.add(last);
       ++totalRuns;
    }
 
+   @Override
    public void incr(String operation) {
       if (ADD_VALUE.equals(operation)) {
          last.incrAddCount();
@@ -40,6 +44,7 @@ public class HtmlJdbcStats implements JdbcStats {
       }
    }
 
+   @Override
    public void startIt() {
       last.start();
    }

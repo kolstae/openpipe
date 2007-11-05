@@ -31,6 +31,7 @@ public class FileDocumentReader implements DocumentProducer {
    private FileFilter filter;
    private String regexPattern;
 
+   @Override
    public final void init() {
       if (!directory.isDirectory()) {
          throw new IllegalArgumentException("'" + directory + "' is not a directory");
@@ -44,18 +45,21 @@ public class FileDocumentReader implements DocumentProducer {
       reader = createReader();
    }
 
+   @Override
    public void close() {
       reader = null;
    }
 
    protected FileDocReader createReader() {
       return new FileDocReader() {
+         @Override
          public Document getDocument(File file) {
             return new Document(new FileRawData(file));
          }
       };
    }
 
+   @Override
    public Iterator<Document> iterator() {
       final int depth = maxDepth < 0 ? Integer.MAX_VALUE : maxDepth;
       return new FileIterator(directory, depth, new DocReader(reader, fileNameField, pathField), filter);
@@ -130,6 +134,7 @@ public class FileDocumentReader implements DocumentProducer {
          this.pathField = pathField;
       }
 
+      @Override
       public Document getDocument(File file) {
          final Document doc = reader.getDocument(file);
          if (fileNameField != null) {
@@ -179,6 +184,7 @@ public class FileDocumentReader implements DocumentProducer {
          return Arrays.asList(files).iterator();
       }
 
+      @Override
       public boolean hasNext() {
          findNextFile();
          return file != null;
@@ -204,6 +210,7 @@ public class FileDocumentReader implements DocumentProducer {
          return fileIt.hasNext();
       }
 
+      @Override
       public Document next() {
          if (!hasNext()) {
             throw new NoSuchElementException();
@@ -215,6 +222,7 @@ public class FileDocumentReader implements DocumentProducer {
          }
       }
 
+      @Override
       public void remove() {
          throw new UnsupportedOperationException();
       }
@@ -228,6 +236,7 @@ public class FileDocumentReader implements DocumentProducer {
          this.fileFilter = fileFilter;
       }
 
+      @Override
       public boolean accept(File file) {
          return !file.isDirectory() && fileFilter.accept(file);
       }

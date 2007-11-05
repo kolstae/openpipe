@@ -36,10 +36,12 @@ public class AnnotateSentence extends BasePipelineStep {
       Arrays.sort(CHARS_WS);
    }
    
+   @Override
    public String getRevision() {
       return "$Revision$";
    }
 
+   @Override
    public PipelineStepStatus execute(Document doc) {
       for (String fieldName : fieldNames) {
          process(doc, fieldName);

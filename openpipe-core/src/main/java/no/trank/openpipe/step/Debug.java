@@ -32,6 +32,7 @@ public class Debug extends BasePipelineStep {
       log = LoggerFactory.getLogger(Debug.class.getName() + "." + loggerName);
    }
 
+   @Override
    public PipelineStepStatus execute(Document doc) {
       if (log.isDebugEnabled()) {
          StringBuilder sb = new StringBuilder();
@@ -90,6 +91,7 @@ public class Debug extends BasePipelineStep {
       }
    }
 
+   @Override
    public String getRevision() {
       return "$Revision$";
    }

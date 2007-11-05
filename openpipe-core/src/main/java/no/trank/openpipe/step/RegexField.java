@@ -30,6 +30,7 @@ public class RegexField extends BasePipelineStep {
       super("RegexField");
    }
 
+   @Override
    public PipelineStepStatus execute(Document doc) throws PipelineException {
       if (fieldNameMap != null) {
          for(Map.Entry<String, String> pair : fieldNameMap.entrySet()) {
@@ -70,6 +71,7 @@ public class RegexField extends BasePipelineStep {
       return new PipelineStepStatus(PipelineStepStatusCode.CONTINUE);
    }
 
+   @Override
    public String getRevision() {
       return "$Revision$";
    }

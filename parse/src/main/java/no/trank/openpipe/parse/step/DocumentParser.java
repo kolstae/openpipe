@@ -43,6 +43,7 @@ public class DocumentParser extends BasePipelineStep {
       super("DocumentParser");
    }
 
+   @Override
    public PipelineStepStatus execute(Document doc) throws PipelineException {
       final RawData data = doc.getRawData();
       if (data == null) {
@@ -147,6 +148,7 @@ public class DocumentParser extends BasePipelineStep {
       }
    }
 
+   @Override
    public String getRevision() {
       return "$Revision$";
    }

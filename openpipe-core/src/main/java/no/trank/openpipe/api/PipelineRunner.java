@@ -25,6 +25,7 @@ public class PipelineRunner implements Runnable {
       this.documentProducer = documentProducer;
    }
 
+   @Override
    public void run() {
       boolean success = false;
       try {

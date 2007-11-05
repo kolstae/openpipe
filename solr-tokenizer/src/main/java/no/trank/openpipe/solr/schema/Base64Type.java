@@ -98,18 +98,22 @@ public class Base64Type extends TextField {
          this.in = in;
       }
 
+      @Override
       public String stringValue() {
          return val;
       }
 
+      @Override
       public Reader readerValue() {
          return BinaryTokenDeserializer.createDummyReader(in);
       }
 
+      @Override
       public byte[] binaryValue() {
          return null;
       }
       
+      @Override
       public TokenStream tokenStreamValue() {
          return new BinaryTokenDeserializer(in);
       }

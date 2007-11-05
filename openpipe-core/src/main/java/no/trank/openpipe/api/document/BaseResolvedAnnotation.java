@@ -29,6 +29,7 @@ public class BaseResolvedAnnotation extends BaseAnnotation implements ResolvedAn
     * 
     * @see #BaseResolvedAnnotation(Annotation, String) 
     */
+   @Override
    public String getValue() {
       if (value == null) {
          value = fieldValue.substring(getStartPos(), getEndPos());

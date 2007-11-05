@@ -21,6 +21,7 @@ public class RemoveFields extends BasePipelineStep {
       super("RemoveField");
    }
 
+   @Override
    public PipelineStepStatus execute(Document doc) {
       if(fieldNames != null) {
          for(String fieldName : fieldNames) {
@@ -34,6 +35,7 @@ public class RemoveFields extends BasePipelineStep {
       return new PipelineStepStatus(PipelineStepStatusCode.CONTINUE);
    }
 
+   @Override
    public String getRevision() {
       return "$Revision$";
    }

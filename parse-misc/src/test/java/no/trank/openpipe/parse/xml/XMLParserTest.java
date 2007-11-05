@@ -25,20 +25,24 @@ public class XMLParserTest extends TestCase {
    }
 
    private static class TestData implements ParseData {
+      @Override
       public InputStream getInputStream() throws IOException {
          final InputStream in = getClass().getResourceAsStream("/xml/test.xml");
          assertNotNull(in);
          return in;
       }
 
+      @Override
       public int getLength() {
          return 0;
       }
 
+      @Override
       public boolean includeProperties() {
          return true;
       }
 
+      @Override
       public String getFileName() {
          return "dummy.xml";
       }

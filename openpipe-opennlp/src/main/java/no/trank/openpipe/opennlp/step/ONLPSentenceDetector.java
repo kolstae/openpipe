@@ -31,6 +31,7 @@ public class ONLPSentenceDetector extends BasePipelineStep {
       super("Open NLP Sentence-detector");
    }
 
+   @Override
    public PipelineStepStatus execute(Document doc) throws PipelineException {
       for (String fieldName : fieldNames) {
          final AnnotatedField field = doc.getField(fieldName);
@@ -53,6 +54,7 @@ public class ONLPSentenceDetector extends BasePipelineStep {
       return list;
    }
 
+   @Override
    public String getRevision() {
       return "$Revision$";
    }

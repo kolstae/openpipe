@@ -26,6 +26,7 @@ public class ParserResultImpl implements ParserResult {
       this.text = text;
    }
 
+   @Override
    public String getTitle() {
       return title;
    }
@@ -39,6 +40,7 @@ public class ParserResultImpl implements ParserResult {
       this.title = title;
    }
 
+   @Override
    public String getText() {
       return text;
    }
@@ -52,6 +54,7 @@ public class ParserResultImpl implements ParserResult {
       this.text = text;
    }
 
+   @Override
    public Map<String, String> getProperties() {
       return properties;
    }

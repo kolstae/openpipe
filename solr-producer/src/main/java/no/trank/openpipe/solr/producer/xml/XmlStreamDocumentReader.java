@@ -40,8 +40,10 @@ public class XmlStreamDocumentReader implements Iterable<Document> {
     *
     * @return a document Iterator
     */
+   @Override
    public Iterator<Document> iterator() {
       return new Iterator<Document>() {
+         @Override
          public boolean hasNext() {
             try {
                while (!failure && nextDocument == null && reader.hasNext()) {
@@ -89,6 +91,7 @@ public class XmlStreamDocumentReader implements Iterable<Document> {
             throw new XMLStreamException("Unclosed <doc/> element");
          }
 
+         @Override
          public Document next() {
             if (!hasNext()) {
                throw new NoSuchElementException();
@@ -100,6 +103,7 @@ public class XmlStreamDocumentReader implements Iterable<Document> {
             }
          }
 
+         @Override
          public void remove() {
             throw new UnsupportedOperationException();
          }

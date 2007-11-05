@@ -61,20 +61,24 @@ public class OOParserTest extends TestCase {
          this.fileName = fileName;
       }
       
+      @Override
       public InputStream getInputStream() throws IOException {
          final InputStream in = getClass().getResourceAsStream("/oo/" + fileName);
          assertNotNull(in);
          return in;
       }
 
+      @Override
       public int getLength() {
          return 0;
       }
 
+      @Override
       public boolean includeProperties() {
          return true;
       }
 
+      @Override
       public String getFileName() {
          return fileName;
       }

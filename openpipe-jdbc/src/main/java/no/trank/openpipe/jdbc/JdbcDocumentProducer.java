@@ -32,6 +32,7 @@ public class JdbcDocumentProducer implements DocumentProducer {
    private DocumentMapper documentMapper;
    private List<? extends OperationPart> operationParts;
 
+   @Override
    public void init() {
       if (documentMapper == null) {
          log.debug("No documentMapper provided, using MetaDataDocumentMapper");
@@ -48,9 +49,11 @@ public class JdbcDocumentProducer implements DocumentProducer {
       }
    }
 
+   @Override
    public void close() {
    }
 
+   @Override
    public Iterator<Document> iterator() {
       // a wrapper iterator. handles pre and post sql.
       return new SqlIterator(jdbcTemplate, notEmpty(operationParts), jdbcStats, documentMapper);
@@ -154,11 +157,13 @@ public class JdbcDocumentProducer implements DocumentProducer {
          }
       }
 
+      @Override
       public boolean hasNext() {
          findPart();
          return docIt.hasNext();
       }
 
+      @Override
       public Document next() {
          if (!hasNext()) {
             throw new NoSuchElementException();
@@ -170,6 +175,7 @@ public class JdbcDocumentProducer implements DocumentProducer {
          return doc;
       }
 
+      @Override
       public void remove() {
          throw new UnsupportedOperationException();
       }
@@ -247,11 +253,13 @@ public class JdbcDocumentProducer implements DocumentProducer {
          prepSt = null;
       }
 
+      @Override
       public boolean hasNext() {
          findDoc();
          return doc != null;
       }
 
+      @Override
       public Document next() {
          if (!hasNext()) {
             throw new NoSuchElementException();
@@ -263,6 +271,7 @@ public class JdbcDocumentProducer implements DocumentProducer {
          }
       }
 
+      @Override
       public void remove() {
          throw new UnsupportedOperationException();
       }

@@ -36,6 +36,7 @@ public class PDFParser implements Parser, Closeable {
       writer = new SBWriter();
    }
 
+   @Override
    public ParserResult parse(ParseData data) throws IOException, ParserException {
       final PDDocument doc = PDDocument.load(data.getInputStream(), scratchFile);
       try {
@@ -58,6 +59,7 @@ public class PDFParser implements Parser, Closeable {
       }
    }
 
+   @Override
    public void close() throws IOException {
       scratchFile.release();
    }
@@ -150,6 +152,7 @@ public class PDFParser implements Parser, Closeable {
          ra = new RandomAccessFile(file, "rw");
       }
 
+      @Override
       public void close() throws IOException {
          pointer = 0;
          size = 0;
@@ -158,6 +161,7 @@ public class PDFParser implements Parser, Closeable {
          ra.seek(0);
       }
 
+      @Override
       public void seek(long position) throws IOException {
          final long raSeek = position - buf.length;
          if (raSeek > 0) {
@@ -169,6 +173,7 @@ public class PDFParser implements Parser, Closeable {
          }
       }
 
+      @Override
       public int read() throws IOException {
          if (pointer >= buf.length) {
             return ra.read();
@@ -178,6 +183,7 @@ public class PDFParser implements Parser, Closeable {
          return (int) buf[pointer++] & 0xff;
       }
 
+      @Override
       public int read(byte[] b, int offset, int length) throws IOException {
          final int len = Math.min(length, size - pointer);
          if (len > 0) {
@@ -193,6 +199,7 @@ public class PDFParser implements Parser, Closeable {
          return len;
       }
 
+      @Override
       public long length() throws IOException {
          if (size >= buf.length) {
             return buf.length + ra.length();
@@ -200,6 +207,7 @@ public class PDFParser implements Parser, Closeable {
          return size;
       }
 
+      @Override
       public void write(int b) throws IOException {
          if (pointer >= buf.length) {
             size = buf.length;
@@ -212,6 +220,7 @@ public class PDFParser implements Parser, Closeable {
          }
       }
 
+      @Override
       public void write(byte[] b, int offset, int length) throws IOException {
          final int len = Math.min(length, buf.length - pointer);
          if (len > 0) {

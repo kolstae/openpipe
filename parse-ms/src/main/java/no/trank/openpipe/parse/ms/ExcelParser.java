@@ -22,6 +22,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  * @version $Revision$
  */
 public class ExcelParser implements Parser {
+   @Override
    public ParserResult parse(ParseData data) throws IOException, ParserException {
       POIFSFileSystem fs = new POIFSFileSystem(data.getInputStream());
       

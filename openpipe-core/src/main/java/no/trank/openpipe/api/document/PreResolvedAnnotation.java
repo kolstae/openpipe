@@ -27,6 +27,7 @@ public class PreResolvedAnnotation extends BaseAnnotation implements ResolvedAnn
       this.value = value;
    }
 
+   @Override
    public String getValue() {
       return value;
    }

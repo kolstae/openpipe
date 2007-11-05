@@ -11,36 +11,45 @@ import java.util.ListIterator;
  */
 public class Iterators {
    private static final ListIterator EMPTY_ITERATOR = new ListIterator() {
+      @Override
       public boolean hasNext() {
          return false;
       }
 
+      @Override
       public Object next() {
          return null;
       }
 
+      @Override
       public boolean hasPrevious() {
          return false;
       }
 
+      @Override
       public Object previous() {
          return null;
       }
 
+      @Override
       public int nextIndex() {
          return 0;
       }
 
+      @Override
       public int previousIndex() {
          return -1;
       }
 
+      @Override
       public void remove() {
       }
 
+      @Override
       public void set(Object o) {
       }
 
+      @Override
       public void add(Object o) {
       }
    };
@@ -86,6 +95,7 @@ public class Iterators {
          }
       }
 
+      @Override
       public boolean hasNext() {
          boolean more = i.hasNext();
          while (!more && iterator.hasNext()) {
@@ -95,10 +105,12 @@ public class Iterators {
          return more;
       }
 
+      @Override
       public T next() {
          return i.next();
       }
 
+      @Override
       public void remove() {
          i.remove();
       }

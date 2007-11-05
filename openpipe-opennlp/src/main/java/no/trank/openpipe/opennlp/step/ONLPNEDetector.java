@@ -38,6 +38,7 @@ public class ONLPNEDetector extends BasePipelineStep {
       super("Open NLP NE-detector");
    }
 
+   @Override
    public PipelineStepStatus execute(Document doc) throws PipelineException {
       if (!nameFinders.isEmpty()) {
          for (String fieldName : fieldNames) {
@@ -126,6 +127,7 @@ public class ONLPNEDetector extends BasePipelineStep {
       return holderMap;
    }
 
+   @Override
    public String getRevision() {
       return "$Revision$";
    }

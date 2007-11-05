@@ -36,6 +36,7 @@ public class PipelineParseData implements ParseData {
     * {@inheritDoc}
     * This implementation delegates to {@link RawData#getInputStream()}.
     */
+   @Override
    public InputStream getInputStream() throws IOException {
       return data.getInputStream();
    }
@@ -44,14 +45,17 @@ public class PipelineParseData implements ParseData {
     * {@inheritDoc}
     * This implementation delegates to {@link RawData#getLength()}.
     */
+   @Override
    public int getLength() {
       return data.getLength();
    }
 
+   @Override
    public boolean includeProperties() {
       return includeProperties;
    }
 
+   @Override
    public String getFileName() {
       return fileName;
    }

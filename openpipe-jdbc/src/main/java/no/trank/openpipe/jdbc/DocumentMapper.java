@@ -24,5 +24,6 @@ public interface DocumentMapper extends ParameterizedRowMapper<Document> {
     */
    void reset(ResultSetMetaData metaData) throws SQLException;
 
+   @Override
    Document mapRow(ResultSet rs, int rowNum) throws SQLException;
 }

@@ -24,6 +24,7 @@ public class TextParser implements Parser, Closeable {
       this.decoder = decoder;
    }
 
+   @Override
    public ParserResult parse(ParseData data) throws IOException, ParserException {
       final String text = decode(data);
       if (text == null) {
@@ -40,6 +41,7 @@ public class TextParser implements Parser, Closeable {
       return decoder.decode(data);
    }
 
+   @Override
    public void close() throws IOException {
       decoder.close();
    }

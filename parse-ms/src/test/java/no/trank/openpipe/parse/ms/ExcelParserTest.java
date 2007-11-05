@@ -15,10 +15,12 @@ public class ExcelParserTest extends AbstractMsParserTest {
       assertEquals("Frode Johannesen", result.getProperties().get("author"));
    }
    
+   @Override
    protected Class<? extends Parser> getParserClass() {
       return ExcelParser.class;
    }
    
+   @Override
    protected String getFileName() {
       return "test.xls";
    }

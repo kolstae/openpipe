@@ -8,6 +8,7 @@ import java.util.Comparator;
  */
 public class FilesFirstComparator implements Comparator<File> {
 
+   @Override
    public int compare(File f1, File f2) {
       if (f1.isDirectory()) {
          if (f2.isDirectory()) {

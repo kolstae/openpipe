@@ -25,6 +25,7 @@ public class ChecksumFields extends BasePipelineStep {
       super("ChecksumFields");
    }
 
+   @Override
    public PipelineStepStatus execute(Document doc) throws PipelineException {
       try {
          messageDigest.reset();
@@ -65,6 +66,7 @@ public class ChecksumFields extends BasePipelineStep {
       this.algorithm = algorithm;
    }
 
+   @Override
    public String getRevision() {
       return "$Revision$";
    }

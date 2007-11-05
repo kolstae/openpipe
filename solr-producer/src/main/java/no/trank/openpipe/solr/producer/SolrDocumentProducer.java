@@ -41,6 +41,7 @@ public class SolrDocumentProducer implements Runnable {
    /**
     * Fires up jetty.
     */
+   @Override
    public void run() {
       log.info("Starting Solr producer");
       startJetty();

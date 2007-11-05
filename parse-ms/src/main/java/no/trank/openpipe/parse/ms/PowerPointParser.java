@@ -18,6 +18,7 @@ import no.trank.openpipe.parse.api.ParserResultImpl;
  */
 public class PowerPointParser implements Parser {
 
+   @Override
    public ParserResult parse(ParseData data) throws IOException, ParserException {
       final HSLFSlideShow doc = new HSLFSlideShow(data.getInputStream());
       final ParserResultImpl result = new ParserResultImpl();

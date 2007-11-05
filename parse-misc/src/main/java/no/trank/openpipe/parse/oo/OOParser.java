@@ -24,6 +24,7 @@ import no.trank.openpipe.parse.api.ParserResultImpl;
  */
 public class OOParser implements Parser, Closeable {
 
+   @Override
    public ParserResult parse(ParseData data) throws IOException, ParserException {
       ZipInputStream inputStream = new ZipInputStream(data.getInputStream());
 
@@ -56,6 +57,7 @@ public class OOParser implements Parser, Closeable {
       return result;
    }
 
+   @Override
    public void close() throws IOException {
    }
 
@@ -68,6 +70,7 @@ public class OOParser implements Parser, Closeable {
          // exhaust the stream, but don't close it
          reader = XMLInputFactory.newInstance().createXMLStreamReader(
                new FilterInputStream(zis) {
+                  @Override
                   public void close() {
                   };
                });
@@ -134,6 +137,7 @@ public class OOParser implements Parser, Closeable {
          // exhaust the stream, but don't close it
          reader = XMLInputFactory.newInstance().createXMLStreamReader(
                new FilterInputStream(zis) {
+                  @Override
                   public void close() {
                   };
                });

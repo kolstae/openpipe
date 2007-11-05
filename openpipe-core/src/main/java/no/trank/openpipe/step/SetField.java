@@ -19,6 +19,7 @@ public class SetField extends BasePipelineStep {
       super("SetField");
    }
 
+   @Override
    public PipelineStepStatus execute(Document doc) throws PipelineException {
       for (Map.Entry<String, String> entry : fieldValueMap.entrySet()) {
          if (overwrite || !doc.containsField(entry.getKey())) {
@@ -44,6 +45,7 @@ public class SetField extends BasePipelineStep {
       this.overwrite = overwrite;
    }
 
+   @Override
    public String getRevision() {
       return "$Revision$";
    }

@@ -27,6 +27,7 @@ public class HierarchicalSplitter extends BasePipelineStep {
       super("HierarchicalSplitter");
    }
 
+   @Override
    public PipelineStepStatus execute(Document doc) throws PipelineException {
       String text = doc.getFieldValue(fromFieldName);
       if(text != null && text.length() > 0) {
@@ -80,6 +81,7 @@ public class HierarchicalSplitter extends BasePipelineStep {
       return ret;
    }
    
+   @Override
    public String getRevision() {
       return "$Revision$";
    }

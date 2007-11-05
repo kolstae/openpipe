@@ -23,6 +23,7 @@ public class StripHtml extends BasePipelineStep {
       super("StripHtml");
    }
 
+   @Override
    public PipelineStepStatus execute(Document doc) throws PipelineException {
       if (fieldNameMap != null) {
          for(Map.Entry<String, String> pair : fieldNameMap.entrySet()) {
@@ -155,6 +156,7 @@ public class StripHtml extends BasePipelineStep {
       return ret.toString();
    }
 
+   @Override
    public String getRevision() {
       return "$Revision$";
    }

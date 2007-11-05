@@ -23,14 +23,17 @@ public class BaseSubPipeline implements SubPipeline {
       setPipelineSteps(pipelineSteps);
    }
 
+   @Override
    public List<? extends PipelineStep> getPipelineSteps() {
       return pipelineSteps;
    }
 
+   @Override
    public void setPipelineSteps(List<? extends PipelineStep> pipelineSteps) {
       this.pipelineSteps = pipelineSteps;
    }
 
+   @Override
    public boolean prepare() throws PipelineException {
       preparedSteps.clear();
       for (PipelineStep step : getPipelineSteps()) {
@@ -47,6 +50,7 @@ public class BaseSubPipeline implements SubPipeline {
       return true;
    }
 
+   @Override
    public void finish(boolean success) throws PipelineException {
       MultiPipelineException pipelineException = null;
       for (PipelineStep step : preparedSteps) {
@@ -71,6 +75,7 @@ public class BaseSubPipeline implements SubPipeline {
       }
    }
 
+   @Override
    public PipelineStatusCode executeSteps(Document document) throws PipelineException {
       PipelineStatusCode pipelineStatusCode = PipelineStatusCode.CONTINUE;
       for (PipelineStep pipelineStep : preparedSteps) {

@@ -24,6 +24,7 @@ public class Base64TokenSerializer implements TokenSerializer {
    private int compressionThreshold = 1024;
    private Deflater deflater;
 
+   @Override
    public String serialize(AnnotatedField field) {
       final AnnotationTokenStream stream = new AnnotationTokenStream(field);
       if (out == null) {
@@ -86,6 +87,7 @@ public class Base64TokenSerializer implements TokenSerializer {
       this.compressionThreshold = compressionThreshold;
    }
 
+   @Override
    public void close() {
       if (deflater != null) {
          deflater.end();

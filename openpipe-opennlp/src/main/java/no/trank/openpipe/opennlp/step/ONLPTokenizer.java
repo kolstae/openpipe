@@ -31,6 +31,7 @@ public class ONLPTokenizer extends BasePipelineStep {
       super("Open NLP Tokenizer");
    }
 
+   @Override
    public PipelineStepStatus execute(Document doc) throws PipelineException {
       for (String fieldName : fieldNames) {
          final AnnotatedField field = doc.getField(fieldName);
@@ -51,6 +52,7 @@ public class ONLPTokenizer extends BasePipelineStep {
       return list;
    }
 
+   @Override
    public String getRevision() {
       return "$Revision$";
    }
@@ -78,10 +80,12 @@ public class ONLPTokenizer extends BasePipelineStep {
          this.span = span;
       }
 
+      @Override
       public int getStartPos() {
          return span.getStart();
       }
 
+      @Override
       public int getEndPos() {
          return span.getEnd();
       }

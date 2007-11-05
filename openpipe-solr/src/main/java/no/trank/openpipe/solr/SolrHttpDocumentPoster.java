@@ -185,18 +185,22 @@ public class SolrHttpDocumentPoster {
          super(size);
       }
 
+      @Override
       public boolean isRepeatable() {
          return true;
       }
 
+      @Override
       public void writeRequest(OutputStream out) throws IOException {
          out.write(buf, 0, count);
       }
 
+      @Override
       public long getContentLength() {
          return count;
       }
 
+      @Override
       public String getContentType() {
          return "text/xml";
       }

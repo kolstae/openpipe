@@ -17,10 +17,12 @@ public class PowerPointParserTest extends AbstractMsParserTest {
       assertEquals("Frode Johannesen", result.getProperties().get("author"));
    }
    
+   @Override
    protected Class<? extends Parser> getParserClass() {
       return PowerPointParser.class;
    }
    
+   @Override
    protected String getFileName() {
       return "test.ppt";
    }

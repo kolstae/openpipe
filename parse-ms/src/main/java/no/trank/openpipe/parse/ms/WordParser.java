@@ -18,6 +18,7 @@ import no.trank.openpipe.parse.api.ParserResultImpl;
  */
 public class WordParser implements Parser {
 
+   @Override
    public ParserResult parse(ParseData data) throws IOException, ParserException {
       final HWPFDocument doc = new HWPFDocument(data.getInputStream());
       final ParserResultImpl result = new ParserResultImpl();

@@ -18,6 +18,7 @@ public class CopyField extends BasePipelineStep {
       super("CopyField");
    }
 
+   @Override
    public PipelineStepStatus execute(Document doc) {
       if (doc.containsField(fromFieldName) && (overwrite || !doc.containsField(toFieldName))) {
          if (withAnnotations) {
@@ -30,6 +31,7 @@ public class CopyField extends BasePipelineStep {
       return new PipelineStepStatus(PipelineStepStatusCode.CONTINUE);
    }
 
+   @Override
    public String getRevision() {
       return "$Revision$";
    }

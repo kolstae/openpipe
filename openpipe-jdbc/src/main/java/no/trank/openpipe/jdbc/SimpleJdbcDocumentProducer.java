@@ -104,22 +104,27 @@ public class SimpleJdbcDocumentProducer extends JdbcDocumentProducer {
          this.operation = operation;
       }
 
+      @Override
       public boolean isEmpty() {
          return preSql.isEmpty() && sqls.isEmpty() && postSql.isEmpty();
       }
 
+      @Override
       public String getOperation() {
          return operation;
       }
 
+      @Override
       public void doPreSql(JdbcTemplate jdbcTemplate) throws DataAccessException {
          execute(jdbcTemplate, preSql);
       }
 
+      @Override
       public void doPostSql(JdbcTemplate jdbcTemplate) throws DataAccessException {
          execute(jdbcTemplate, postSql);
       }
 
+      @Override
       public List<String> getSqls() {
          return sqls;
       }

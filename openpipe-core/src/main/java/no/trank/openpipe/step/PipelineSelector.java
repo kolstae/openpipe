@@ -35,6 +35,7 @@ public class PipelineSelector extends BasePipelineStep {
       super("PipelineSelector");
    }
 
+   @Override
    public PipelineStepStatus execute(Document doc) throws PipelineException {
       final SubPipeline pipeline = opMap.get(doc.getOperation());
       final PipelineStepStatus status;
@@ -102,6 +103,7 @@ public class PipelineSelector extends BasePipelineStep {
       return code != null ? code : defaultCode;
    }
 
+   @Override
    public String getRevision() {
       return "$Revision$";
    }

@@ -39,6 +39,7 @@ public class BaseAnnotatedField implements AnnotatedField {
       this.annotations.putAll(annotations);
    }
 
+   @Override
    public String getValue() {
       return value;
    }
@@ -52,10 +53,12 @@ public class BaseAnnotatedField implements AnnotatedField {
       this.value = value;
    }
 
+   @Override
    public Set<String> getAnnotationTypes() {
       return Collections.unmodifiableSet(annotations.keySet());
    }
 
+   @Override
    public boolean add(String type, List<? extends Annotation> annotations) {
       final boolean res = !this.annotations.containsKey(type);
       if (res) {
@@ -64,10 +67,12 @@ public class BaseAnnotatedField implements AnnotatedField {
       return res;
    }
 
+   @Override
    public void set(String type, List<? extends Annotation> annotations) {
       this.annotations.put(type, Collections.unmodifiableList(annotations));
    }
 
+   @Override
    public ListIterator<ResolvedAnnotation> iterator(String type) {
       final List<? extends Annotation> list = annotations.get(type);
       if (list != null && !list.isEmpty()) {
@@ -85,10 +90,12 @@ public class BaseAnnotatedField implements AnnotatedField {
          iterator = it;
       }
 
+      @Override
       public boolean hasNext() {
          return iterator.hasNext();
       }
 
+      @Override
       public ResolvedAnnotation next() {
          return toResolvedAnnotation(iterator.next());
       }
@@ -100,30 +107,37 @@ public class BaseAnnotatedField implements AnnotatedField {
          return new BaseResolvedAnnotation(annotation, fieldValue);
       }
 
+      @Override
       public boolean hasPrevious() {
          return iterator.hasPrevious();
       }
 
+      @Override
       public ResolvedAnnotation previous() {
          return toResolvedAnnotation(iterator.previous());
       }
 
+      @Override
       public int nextIndex() {
          return iterator.nextIndex();
       }
 
+      @Override
       public int previousIndex() {
          return iterator.previousIndex();
       }
 
+      @Override
       public void set(ResolvedAnnotation resolvedAnnotation) {
          throw new UnsupportedOperationException();
       }
 
+      @Override
       public void add(ResolvedAnnotation resolvedAnnotation) {
          throw new UnsupportedOperationException();
       }
 
+      @Override
       public void remove() {
          throw new UnsupportedOperationException();
       }

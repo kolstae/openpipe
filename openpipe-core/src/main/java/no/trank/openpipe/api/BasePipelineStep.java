@@ -23,19 +23,23 @@ public abstract class BasePipelineStep implements PipelineStep {
    /**
     * Does nothing. Override to implement. 
     */
+   @Override
    public void prepare() throws PipelineException {
    }
 
    /**
     * Does nothing. Override to implement.
     */
+   @Override
    public void finish(boolean success) throws PipelineException {
    }
 
+   @Override
    public String getName() {
       return name;
    }
 
+   @Override
    public void setName(String name) {
       this.name = name;
    }

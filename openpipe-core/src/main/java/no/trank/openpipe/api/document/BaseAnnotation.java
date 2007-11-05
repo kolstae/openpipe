@@ -23,6 +23,7 @@ public class BaseAnnotation implements Annotation {
       this.endPos = endPos;
    }
 
+   @Override
    public int getStartPos() {
       return startPos;
    }
@@ -38,6 +39,7 @@ public class BaseAnnotation implements Annotation {
       this.startPos = startPos;
    }
 
+   @Override
    public int getEndPos() {
       return endPos;
    }

@@ -14,14 +14,17 @@ public class TokenAnnotation extends Token implements ResolvedAnnotation, Clonea
       setPositionIncrement(token.getPositionIncrement());
    }
 
+   @Override
    public String getValue() {
       return termText();
    }
 
+   @Override
    public int getStartPos() {
       return startOffset();
    }
 
+   @Override
    public int getEndPos() {
       return endOffset();
    }

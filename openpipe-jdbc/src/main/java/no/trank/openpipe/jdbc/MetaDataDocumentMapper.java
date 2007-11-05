@@ -15,6 +15,7 @@ import no.trank.openpipe.api.document.Document;
 public class MetaDataDocumentMapper implements DocumentMapper {
    private String[] colNames;
 
+   @Override
    public void reset(ResultSetMetaData metaData) throws SQLException {
       final int columnCount = metaData.getColumnCount();
       colNames = new String[columnCount];
@@ -23,6 +24,7 @@ public class MetaDataDocumentMapper implements DocumentMapper {
       }
    }
 
+   @Override
    public Document mapRow(ResultSet rs, int rowNum) throws SQLException {
       final Document doc = new Document();
       for (int i = 0; i < colNames.length; i++) {

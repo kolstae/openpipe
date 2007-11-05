@@ -29,6 +29,7 @@ public class XMLParser implements Parser {
       this.factory = factory;
    }
 
+   @Override
    public ParserResult parse(ParseData data) throws IOException, ParserException {
       try {
          String encoding = null;

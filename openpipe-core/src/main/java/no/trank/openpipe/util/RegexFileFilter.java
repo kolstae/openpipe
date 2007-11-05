@@ -22,6 +22,7 @@ public class RegexFileFilter implements FileFilter {
       }
    }
 
+   @Override
    public boolean accept(File file) {
       final String name = file.getName();
       for (Pattern pattern : fileNamePatterns) {

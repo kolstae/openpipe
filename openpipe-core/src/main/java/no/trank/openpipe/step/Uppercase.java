@@ -23,6 +23,7 @@ public class Uppercase extends BasePipelineStep {
       super("Uppercase");
    }
 
+   @Override
    public PipelineStepStatus execute(Document doc) {
       if (fieldNameMap != null) {
          for(Map.Entry<String, String> pair : fieldNameMap.entrySet()) {
@@ -47,6 +48,7 @@ public class Uppercase extends BasePipelineStep {
       }
    }
 
+   @Override
    public String getRevision() {
       return "$Revision$";
    }

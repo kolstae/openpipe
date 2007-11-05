@@ -63,6 +63,7 @@ public class TextFileDocumentReader extends FileDocumentReader {
          this.charset = charset;
       }
 
+      @Override
       public Document getDocument(File file) {
          try {
             final Reader reader = new InputStreamReader(new FileInputStream(file), charset);

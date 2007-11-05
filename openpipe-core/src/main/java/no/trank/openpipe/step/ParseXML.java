@@ -42,6 +42,7 @@ public class ParseXML extends BasePipelineStep {
       super("ParseXML");
    }
 
+   @Override
    public PipelineStepStatus execute(Document doc) throws PipelineException {
       final List<String> list = doc.getFieldValues(fieldName);
       for (String text : list) {
@@ -112,6 +113,7 @@ public class ParseXML extends BasePipelineStep {
       }
    }
 
+   @Override
    public String getRevision() {
       return "$Revision$";
    }

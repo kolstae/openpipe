@@ -27,10 +27,12 @@ public class AnnotateSpace extends BasePipelineStep {
       super("AnnotateSpace");
    }
 
+   @Override
    public String getRevision() {
       return "$Revision$";
    }
 
+   @Override
    public PipelineStepStatus execute(Document doc) {
       if(!fieldNames.isEmpty()) {
          for (String fieldName : fieldNames) {
