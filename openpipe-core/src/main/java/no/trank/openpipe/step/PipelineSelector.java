@@ -90,8 +90,7 @@ public class PipelineSelector extends BasePipelineStep {
 
    private PipelineStepStatus handleSubPipeline(Document doc, SubPipeline pipeline) {
       final PipelineStepStatusCode statusCode = getStatusCode(doc.getOperation(), DIVERT_PIPELINE);
-      final PipelineStepStatus status = new PipelineStepStatus(statusCode);
-      status.setSubPipeline(pipeline);
+      final PipelineStepStatus status = new PipelineStepStatus(statusCode, pipeline);
       if (!statusCode.hasSubPipeline()) {
          log.warn("Sub-pipeline for operation {} found, but status {} is set", doc.getOperation(), statusCode);
       }

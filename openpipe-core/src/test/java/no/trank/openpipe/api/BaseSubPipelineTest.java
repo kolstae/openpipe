@@ -67,7 +67,7 @@ public class BaseSubPipelineTest extends TestCase {
          expect(ps.getRevision()).andReturn("$Revision: " + i + '$').anyTimes();
          if (docs != null) {
             for (Document doc : docs) {
-               expect(ps.execute(doc)).andReturn(new PipelineStepStatus(PipelineStepStatusCode.CONTINUE)).times(runs);
+               expect(ps.execute(doc)).andReturn(PipelineStepStatus.DEFAULT).times(runs);
             }
          }
          ps.finish(true);

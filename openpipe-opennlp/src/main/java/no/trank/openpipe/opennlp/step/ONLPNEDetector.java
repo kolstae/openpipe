@@ -52,7 +52,7 @@ public class ONLPNEDetector extends BasePipelineStep {
       } else {
          log.warn("{}: No nameFinders configured", getName());
       }
-      return new PipelineStepStatus(PipelineStepStatusCode.CONTINUE);
+      return PipelineStepStatus.DEFAULT;
    }
 
    private void processField(AnnotatedField field) {

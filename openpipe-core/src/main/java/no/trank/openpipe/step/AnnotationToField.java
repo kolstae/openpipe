@@ -35,7 +35,7 @@ public class AnnotationToField extends BasePipelineStep {
          throw new PipelineException("No annotations found for '" + fromFieldName + "':'" + annotationType + "'");
       }
 
-      return new PipelineStepStatus(PipelineStepStatusCode.CONTINUE);
+      return PipelineStepStatus.DEFAULT;
    }
 
    private List<String> buildNewValues(List<AnnotatedField> list) {

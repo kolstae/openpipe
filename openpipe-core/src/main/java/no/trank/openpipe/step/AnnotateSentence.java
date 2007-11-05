@@ -47,7 +47,7 @@ public class AnnotateSentence extends BasePipelineStep {
          process(doc, fieldName);
       }
 
-      return new PipelineStepStatus(PipelineStepStatusCode.CONTINUE);
+      return PipelineStepStatus.DEFAULT;
    }
 
    private static void process(Document doc, String fieldName) {

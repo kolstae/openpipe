@@ -62,7 +62,7 @@ public class ParseXMLXPath extends BasePipelineStep {
             handleException(e);
          }
       }
-      return new PipelineStepStatus(PipelineStepStatusCode.CONTINUE);
+      return PipelineStepStatus.DEFAULT;
    }
 
    private void handleException(Exception e) throws PipelineException {

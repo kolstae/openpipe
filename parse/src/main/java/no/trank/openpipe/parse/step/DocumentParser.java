@@ -74,7 +74,7 @@ public class DocumentParser extends BasePipelineStep {
             data.release();
          }
       }
-      return new PipelineStepStatus(PipelineStepStatusCode.CONTINUE);
+      return PipelineStepStatus.DEFAULT;
    }
 
    private boolean parseWithFallbacks(Document doc, ParseData data) {

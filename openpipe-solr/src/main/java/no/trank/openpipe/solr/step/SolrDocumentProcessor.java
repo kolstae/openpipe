@@ -118,7 +118,7 @@ public class SolrDocumentProcessor extends BasePipelineStep {
     * 
     * @param doc the document to process.
     * 
-    * @return <tt>new PipelineStepStatus(PipelineStepStatusCode.CONTINUE)</tt>.
+    * @return <tt>PipelineStepStatus.DEFAULT</tt>.
     * 
     * @throws PipelineException if an error occures during processing or posting.
     * 
@@ -152,7 +152,7 @@ public class SolrDocumentProcessor extends BasePipelineStep {
             }
             documentPoster.add(solrOutputDoc, findDocAttributes(solrOutputDoc));
          }
-         return new PipelineStepStatus(PipelineStepStatusCode.CONTINUE);
+         return PipelineStepStatus.DEFAULT;
       } catch (XMLStreamException e) {
          throw new PipelineException("Could not generate xml", e);
       }

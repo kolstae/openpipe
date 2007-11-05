@@ -39,7 +39,7 @@ public class ChecksumFields extends BasePipelineStep {
       } catch (UnsupportedEncodingException e) {
          throw new PipelineException(e);
       }
-      return new PipelineStepStatus(PipelineStepStatusCode.CONTINUE);
+      return PipelineStepStatus.DEFAULT;
    }
 
    public List<String> getFieldNames() {

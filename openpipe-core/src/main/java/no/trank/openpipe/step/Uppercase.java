@@ -31,7 +31,7 @@ public class Uppercase extends BasePipelineStep {
          }
       }
 
-      return new PipelineStepStatus(PipelineStepStatusCode.CONTINUE);
+      return PipelineStepStatus.DEFAULT;
    }
 
    private static void process(Document doc, String input, String output) {

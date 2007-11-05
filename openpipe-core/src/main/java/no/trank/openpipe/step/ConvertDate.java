@@ -40,9 +40,7 @@ public class ConvertDate extends BasePipelineStep {
          }
       }
 
-      PipelineStepStatus status = new PipelineStepStatus();
-      status.setStatusCode(PipelineStepStatusCode.CONTINUE);
-      return status;
+      return PipelineStepStatus.DEFAULT;
    }
 
    @Override

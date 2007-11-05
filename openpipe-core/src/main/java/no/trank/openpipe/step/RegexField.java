@@ -38,7 +38,7 @@ public class RegexField extends BasePipelineStep {
          }
       }
 
-      return new PipelineStepStatus(PipelineStepStatusCode.CONTINUE);
+      return PipelineStepStatus.DEFAULT;
    }
 
    public PipelineStepStatus process(Document doc, String fromFieldName, String toFieldName) throws PipelineException {
@@ -68,7 +68,7 @@ public class RegexField extends BasePipelineStep {
          doc.setFieldValues(toFieldName, outValues);
       }
 
-      return new PipelineStepStatus(PipelineStepStatusCode.CONTINUE);
+      return PipelineStepStatus.DEFAULT;
    }
 
    @Override

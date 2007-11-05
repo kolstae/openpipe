@@ -17,7 +17,7 @@ public interface PipelineStep {
     *
     * @param doc the document to process.
     * 
-    * @return a status telling what to do next. Usually <tt>new PipelineStepStatus(PipelineStepStatusCode.CONTINUE)</tt>
+    * @return a status telling what to do next. Usually <tt>PipelineStepStatus.DEFAULT</tt>
     * 
     * @throws PipelineException if the step fails execution.
     */

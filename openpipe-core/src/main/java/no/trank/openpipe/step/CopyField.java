@@ -28,7 +28,7 @@ public class CopyField extends BasePipelineStep {
          }
       }
 
-      return new PipelineStepStatus(PipelineStepStatusCode.CONTINUE);
+      return PipelineStepStatus.DEFAULT;
    }
 
    @Override

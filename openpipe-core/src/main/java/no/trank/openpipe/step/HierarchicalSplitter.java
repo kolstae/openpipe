@@ -44,7 +44,7 @@ public class HierarchicalSplitter extends BasePipelineStep {
          doc.removeField(toFieldName);
       }
       
-      return new PipelineStepStatus(PipelineStepStatusCode.CONTINUE);
+      return PipelineStepStatus.DEFAULT;
    }
 
    private List<String> resolveSplits(String text) {

@@ -41,7 +41,7 @@ public class ONLPSentenceDetector extends BasePipelineStep {
             log.debug("Field '{}' is null", fieldName);
          }
       }
-      return new PipelineStepStatus(PipelineStepStatusCode.CONTINUE);
+      return PipelineStepStatus.DEFAULT;
    }
 
    private static List<Annotation> buildAnn(int[] offsets) {

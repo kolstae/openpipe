@@ -57,7 +57,7 @@ public class ParseXML extends BasePipelineStep {
             }
          }
       }
-      return new PipelineStepStatus(PipelineStepStatusCode.CONTINUE);
+      return PipelineStepStatus.DEFAULT;
    }
 
    private void parseXML(Document doc, XMLEventReader reader) throws XMLStreamException {

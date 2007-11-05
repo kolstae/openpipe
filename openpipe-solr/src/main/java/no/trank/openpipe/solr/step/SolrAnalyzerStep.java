@@ -22,6 +22,8 @@ import no.trank.openpipe.solr.analysis.AnnotationTokenStream;
 import no.trank.openpipe.solr.analysis.TokenStreamAnnotation;
 
 /**
+ * A <tt>PipelineStep</tt> for running solr tokenizer-/analyzer-chains in OpenPipe.
+ * 
  * @version $Revision$
  */
 public class SolrAnalyzerStep extends BasePipelineStep {
@@ -47,7 +49,7 @@ public class SolrAnalyzerStep extends BasePipelineStep {
       } catch (IOException e) {
          throw new PipelineException(e);
       }
-      return new PipelineStepStatus(PipelineStepStatusCode.CONTINUE);
+      return PipelineStepStatus.DEFAULT;
    }
 
    private void processFilters(AnnotatedField value) throws IOException {

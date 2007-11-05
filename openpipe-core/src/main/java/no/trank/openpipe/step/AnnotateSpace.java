@@ -40,9 +40,7 @@ public class AnnotateSpace extends BasePipelineStep {
          }
       }
 
-      PipelineStepStatus status = new PipelineStepStatus();
-      status.setStatusCode(PipelineStepStatusCode.CONTINUE);
-      return status;
+      return PipelineStepStatus.DEFAULT;
    }
 
    private static void process(Document doc, String fieldName) {

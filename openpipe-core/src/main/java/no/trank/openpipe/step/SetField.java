@@ -26,7 +26,7 @@ public class SetField extends BasePipelineStep {
             doc.setFieldValue(entry.getKey(), entry.getValue());
          }
       }
-      return new PipelineStepStatus(PipelineStepStatusCode.CONTINUE);
+      return PipelineStepStatus.DEFAULT;
    }
 
    public Map<String, String> getFieldValueMap() {

@@ -60,7 +60,7 @@ public class Debug extends BasePipelineStep {
          }
          log.debug(sb.toString());
       }
-      return new PipelineStepStatus(PipelineStepStatusCode.CONTINUE);
+      return PipelineStepStatus.DEFAULT;
    }
 
    @Override
