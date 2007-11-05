@@ -157,11 +157,15 @@ public class SolrHttpDocumentPoster {
 
       // Flushing the data to solr
       try {
-         PostMethod postMethod = new PostMethod(postUrl);
-         postMethod.setRequestEntity(buf);
-         int status = httpClient.executeMethod(postMethod);
-         if (status < 200 || status >= 300) {
-            throw new PipelineException("Solr post returned status: " + status + "\n" + postMethod.getResponseBodyAsString());
+         final PostMethod postMethod = new PostMethod(postUrl);
+         try {
+            postMethod.setRequestEntity(buf);
+            int status = httpClient.executeMethod(postMethod);
+            if (status < 200 || status >= 300) {
+               throw new PipelineException("Solr post returned status: " + status + "\n" + postMethod.getResponseBodyAsString());
+            }
+         } finally {
+            postMethod.releaseConnection();
          }
       } catch (IOException e) {
          throw new PipelineException("Could not post document(s) to solr", e);

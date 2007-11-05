@@ -39,9 +39,58 @@ import no.trank.openpipe.solr.analysis.TokenSerializer;
 import no.trank.openpipe.solr.xml.XmlInputStream;
 
 /**
+ * A <tt>PipelineStep</tt> that posts a document to Solr.
+ * 
+ * <p>{@linkplain Document}s are converted to <a href="http://wiki.apache.org/solr/UpdateXmlMessages">solr-update-xml
+ * </a>. An URL to solr's schema.xml can be configured to validate field-names and dynamic fields. Typical URL being: 
+ * <tt>http://somehost:8983/solr/admin/get-file.jsp?file=schema.xml</tt></p>
+ * 
+ * <p>There are two ways control what fields are included in the XML: 
+ * {@link #setExcludeInputFields(Set) excludeInputFields} and {@link #setIncludeInputFields(Set) includeInputFields}. 
+ * When <tt>includeInputFields</tt> is a not-empty set, only field-names in this set is included in the XML. When 
+ * <tt>includeInputFields</tt> is an empty set and <tt>excludeInputFields</tt> is not empty, field-names in 
+ * <tt>excludeInputFields</tt> is excluded from the XML</p>
+ * 
+ * <p>It's possible to map a document field-name to a solr field-name using 
+ * {@link #setInputToOuputFieldMap(Map) inputToOuputFieldMap}. Mapping is applied after <tt>include</tt>-/
+ * <tt>excludeInputFields</tt></p>
+ * 
+ * <p>To set document boost (&lt;doc boost=&quot;2.0&quot;/&gt;), add a field that, after mapping, has the name 
+ * <tt>&quot;boost&quot;</tt>.</p>
+ * 
+ * <p><b>Note</b> Field boost is currently <em>not</em> supported</p>
+ * 
+ * <p><em>Example:</em>
+ * <pre>
+ * Document doc = new Document();
+ * doc.setOperation(DocumentOperation.ADD_VALUE);
+ * doc.setFieldValue("boost", "2.0");
+ * doc.setFieldValue("url", "http://this/is/a/url");
+ * doc.setFieldValue("title", "Title");
+ * doc.setFieldValue("text", "This is the text");
+ * doc.setFieldValue("ignored", "This text is ignored");
+ * ...
+ * SolrDocumentProcessor sdp = new SolrDocumentProcessor();
+ * sdp.setExcludeInputFields(Collections.singelton("ignored"));
+ * sdp.setInputToOuputFieldMap(Collections.singletonMap("url", "id"));
+ * sdp.execute(doc);
+ * </pre>
+ * gives the XML:
+ * <pre>
+ * &lt;add&gt;
+ *   &lt;doc boost="2.0"&gt;
+ *     &lt;field name="id"&gt;http://this/is/a/url&lt;/field&gt;
+ *     &lt;field name="title"&gt;Title&lt;/field&gt;
+ *     &lt;field name="text"&gt;This is the text&lt;/field&gt;
+ *   &lt;/doc&gt;
+ * &lt;/add&gt;
+ * </pre>
+ * </p>
+ * 
  * @version $Revision$
  */
 public class SolrDocumentProcessor extends BasePipelineStep {
+   protected static final String BOOST_KEY = "boost";
    private static final Logger log = LoggerFactory.getLogger(SolrDocumentProcessor.class);
 
    private final Set<String> solrFields = new HashSet<String>();
@@ -56,12 +105,26 @@ public class SolrDocumentProcessor extends BasePipelineStep {
    private Set<String> tokenizedFields = Collections.emptySet();
    private TokenSerializer serializer;
    private SolrHttpDocumentPoster documentPoster;
-   private static final String BOOST_KEY = "boost";
 
+   /**
+    * Creates a <tt>SolrDocumentProcessor</tt> with the name <tt>&quot;SolrPoster&quot;</tt>.
+    */
    public SolrDocumentProcessor() {
       super("SolrPoster");
    }
 
+   /**
+    * Converts a document to XML and posts it to solr.
+    * 
+    * @param doc the document to process.
+    * 
+    * @return <tt>new PipelineStepStatus(PipelineStepStatusCode.CONTINUE)</tt>.
+    * 
+    * @throws PipelineException if an error occures during processing or posting.
+    * 
+    * @see SolrDocumentProcessor
+    */
+   @Override
    public PipelineStepStatus execute(Document doc) throws PipelineException {
       try {
          // Post the document
@@ -109,8 +172,18 @@ public class SolrDocumentProcessor extends BasePipelineStep {
       return attribs;
    }
 
+   /**
+    * Loads <tt>schema.xml</tt> if {@link #getSolrSchemaUrl() solrSchemaUrl} is not <tt>null</tt>. 
+    * 
+    * @throws PipelineException if {@link #getDocumentPoster() documentPoster} is <tt>null</tt>, if schema.xml could not 
+    * be parsed or if {@link #getTokenizedFields() tokenizedFields} is <em>not</em> empty and 
+    * {@link #getSerializer() serializer} is <tt>null</tt>. 
+    */
    @Override
    public void prepare() throws PipelineException {
+      if (documentPoster == null) {
+         throw new PipelineException("No documentPoster configured");
+      }
       if (solrSchemaUrl != null) {
          try {
             loadIndexSchema(new URL(solrSchemaUrl));
@@ -118,8 +191,19 @@ public class SolrDocumentProcessor extends BasePipelineStep {
             throw new PipelineException(e);
          }
       }
+      addField(BOOST_KEY); // Needed even if there is no schemaUrl
+      if (!tokenizedFields.isEmpty()) {
+         if (serializer == null) {
+            throw new PipelineException("TokenizedFields set, but no serializer configured");
+         }
+      }
    }
 
+   /**
+    * Finishes this batch, by posting outstanding documents (if any) to solr. Cleans up any resources.
+    * 
+    * @throws PipelineException if post to solr failed.
+    */
    @Override
    public void finish(boolean success) throws PipelineException {
       if (serializer != null) {
@@ -200,6 +284,16 @@ public class SolrDocumentProcessor extends BasePipelineStep {
       this.serializer = serializer;
    }
 
+   /**
+    * Gets an <em>unmodifiable</em> set of field-names.
+    * 
+    * @return an <em>unmodifiable</em> set of field-names.
+    */
+   protected Set<String> getSolrFields() {
+      return Collections.unmodifiableSet(solrFields);
+   }
+
+   @Override
    public String getRevision() {
       return "$Revision$";
    }
@@ -248,11 +342,11 @@ public class SolrDocumentProcessor extends BasePipelineStep {
    private void loadIndexSchema(URL url) throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
       solrFields.clear();
       solrDynamicFields.clear();
-      InputStream inputStream = new XmlInputStream(url.openStream());
+      final InputStream in = new XmlInputStream(url.openStream());
       try {
 
          DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-         org.w3c.dom.Document document = builder.parse(inputStream);
+         org.w3c.dom.Document document = builder.parse(in);
 
          final XPath xpath = XPathFactory.newInstance().newXPath();
          final NodeList nodes = (NodeList) xpath.evaluate("/schema/fields/field | /schema/fields/dynamicField", document,
@@ -268,7 +362,6 @@ public class SolrDocumentProcessor extends BasePipelineStep {
                addDynamicField(name);
             }
          }
-         addField(BOOST_KEY);
 
          if (idFieldName == null) {
             Node idNode = (Node) xpath.evaluate("/schema/uniqueKey", document, XPathConstants.NODE);
@@ -277,7 +370,7 @@ public class SolrDocumentProcessor extends BasePipelineStep {
 
       } finally {
          try {
-            inputStream.close();
+            in.close();
          } catch (Exception e) {
             // Do nothing
          }
