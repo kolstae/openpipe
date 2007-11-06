@@ -1,16 +1,15 @@
 package no.trank.openpipe.step;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import no.trank.openpipe.api.BasePipelineStep;
 import no.trank.openpipe.api.PipelineException;
 import no.trank.openpipe.api.PipelineStepStatus;
-import no.trank.openpipe.api.PipelineStepStatusCode;
 import no.trank.openpipe.api.document.Document;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version $Revision$
@@ -170,10 +169,8 @@ public class StripHtml extends BasePipelineStep {
    }
       
    static class Entities {
-      static final Hashtable decoder = new Hashtable(300);
-      static final String[]  encoder = new String[0x100];
-
-      
+      static final Map<String, String> decoder = new HashMap<String, String>(300);
+      static final String[] encoder = new String[0x100];
       
       static String decodeAll(String s) {
          int next = s.indexOf('&');
@@ -249,9 +246,9 @@ public class StripHtml extends BasePipelineStep {
         return buffer.toString();
       }
 
-      @SuppressWarnings("unchecked")
       static void add(String entity, int value) {
-        decoder.put(entity, (new Character((char)value)).toString());
+        decoder.put(entity, Character.valueOf((char)value).toString());
+        
         if (value < 0x100)
           encoder[value] = entity;
       }
