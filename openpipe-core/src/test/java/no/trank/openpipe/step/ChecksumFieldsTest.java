@@ -20,7 +20,7 @@ public class ChecksumFieldsTest extends TestCase {
 
    public void testExecute() throws Exception {
       final ChecksumFields step = new ChecksumFields();
-      step.setFieldNames(Arrays.asList(IN_FIELD));
+      step.setInputFields(Arrays.asList(IN_FIELD));
       step.setOutField(OUT_FIELD);
       testAlgo(step, null);
       testAlgo(step, "SHA1");
