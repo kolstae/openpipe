@@ -49,11 +49,11 @@ public class ExcelParser implements Parser {
 
          HSSFSheet sheet = doc.getSheetAt(sheetNumber);
 
-         for (Iterator rowIterator = sheet.rowIterator(); rowIterator.hasNext(); ) {
+         for (Iterator<?> rowIterator = sheet.rowIterator(); rowIterator.hasNext(); ) {
             HSSFRow row = (HSSFRow) rowIterator.next();
 
             boolean firstCell = true;
-            for (Iterator cellIterator = row.cellIterator(); cellIterator.hasNext(); ) {
+            for (Iterator<?> cellIterator = row.cellIterator(); cellIterator.hasNext(); ) {
                HSSFCell cell = (HSSFCell) cellIterator.next();
                String cellText = getCellText(cell);
                if (cellText != null) {

@@ -102,7 +102,7 @@ public class POIUtils {
             try {
                if(pd.getReadMethod() != null && pd.getWriteMethod() != null) {
                   Type type = pd.getWriteMethod().getGenericParameterTypes()[0];
-                  Class c = type instanceof Class ? (Class)type : null;
+                  Class<?> c = type instanceof Class ? (Class<?>)type : null;
                   if(c != null && (c.isPrimitive() || c == String.class || c == Date.class || c == CustomProperties.class)) {
                      Object value = pd.getReadMethod().invoke(ob, new Object[0]);
                      // TODO: decide what to do with custom properties

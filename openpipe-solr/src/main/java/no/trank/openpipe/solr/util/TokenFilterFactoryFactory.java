@@ -11,7 +11,7 @@ public class TokenFilterFactoryFactory {
    
    public static TokenFilterFactory createFactory(String className, Map<String, String> args) {
       try {
-         final Class clazz = Thread.currentThread().getContextClassLoader().loadClass(className);
+         final Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass(className);
          if (TokenFilterFactory.class.isAssignableFrom(clazz)) {
             final Object obj = clazz.newInstance();
             if (obj instanceof TokenFilterFactory) {
