@@ -8,7 +8,6 @@ import java.util.ListIterator;
 import no.trank.openpipe.api.BasePipelineStep;
 import no.trank.openpipe.api.PipelineException;
 import no.trank.openpipe.api.PipelineStepStatus;
-import no.trank.openpipe.api.PipelineStepStatusCode;
 import no.trank.openpipe.api.document.AnnotatedField;
 import no.trank.openpipe.api.document.Document;
 import no.trank.openpipe.api.document.ResolvedAnnotation;

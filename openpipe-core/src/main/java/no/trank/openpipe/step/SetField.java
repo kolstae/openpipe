@@ -5,7 +5,6 @@ import java.util.Map;
 import no.trank.openpipe.api.BasePipelineStep;
 import no.trank.openpipe.api.PipelineException;
 import no.trank.openpipe.api.PipelineStepStatus;
-import no.trank.openpipe.api.PipelineStepStatusCode;
 import no.trank.openpipe.api.document.Document;
 
 /**

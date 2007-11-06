@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
+
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -16,14 +17,13 @@ import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import no.trank.openpipe.api.BasePipelineStep;
 import no.trank.openpipe.api.PipelineException;
 import no.trank.openpipe.api.PipelineStepStatus;
-import no.trank.openpipe.api.PipelineStepStatusCode;
 import no.trank.openpipe.api.document.Document;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
@@ -67,7 +67,7 @@ public class ParseXML extends BasePipelineStep {
          if (event.isStartElement()) {
             final StartElement elem = event.asStartElement();
             stack.push(elem.getName().getLocalPart());
-            final Iterator it = elem.getAttributes();
+            final Iterator<?> it = elem.getAttributes();
             while (it.hasNext()) {
                final Attribute a = (Attribute) it.next();
                final String tag = a.getName().getLocalPart();

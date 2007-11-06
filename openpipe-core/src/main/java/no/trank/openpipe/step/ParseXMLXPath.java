@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -16,18 +17,17 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import no.trank.openpipe.api.BasePipelineStep;
+import no.trank.openpipe.api.PipelineException;
+import no.trank.openpipe.api.PipelineStepStatus;
+import no.trank.openpipe.api.document.Document;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-
-import no.trank.openpipe.api.BasePipelineStep;
-import no.trank.openpipe.api.PipelineException;
-import no.trank.openpipe.api.PipelineStepStatus;
-import no.trank.openpipe.api.PipelineStepStatusCode;
-import no.trank.openpipe.api.document.Document;
 
 /**
  *
