@@ -50,6 +50,11 @@ public class FileDocumentReader implements DocumentProducer {
       reader = null;
    }
 
+   @Override
+   public void fail() {
+      close();
+   }
+
    protected FileDocReader createReader() {
       return new FileDocReader() {
          @Override

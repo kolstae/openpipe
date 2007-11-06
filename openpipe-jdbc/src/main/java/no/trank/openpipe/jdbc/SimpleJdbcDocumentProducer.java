@@ -58,6 +58,10 @@ public class SimpleJdbcDocumentProducer extends JdbcDocumentProducer {
       getPart(operation).setPostSql(sql);
    }
 
+   private void setFailSql(String operation, List<String> sql) {
+      getPart(operation).setFailSql(sql);      
+   }
+
    public void setAddPreSql(List<String> sql) {
       setPreSql(ADD_VALUE, sql);
    }
@@ -68,6 +72,10 @@ public class SimpleJdbcDocumentProducer extends JdbcDocumentProducer {
 
    public void setAddPostSql(List<String> sql) {
       setPostSql(ADD_VALUE, sql);
+   }
+
+   public void setAddFailSql(List<String> sql) {
+      setFailSql(ADD_VALUE, sql);
    }
 
    public void setModifyPreSql(List<String> sql) {
@@ -82,6 +90,10 @@ public class SimpleJdbcDocumentProducer extends JdbcDocumentProducer {
       setPostSql(MODIFY_VALUE, sql);
    }
 
+   public void setModifyFailSql(List<String> sql) {
+      setFailSql(MODIFY_VALUE, sql);
+   }
+
    public void setDeletePreSql(List<String> sql) {
       setPreSql(DELETE_VALUE, sql);
    }
@@ -94,11 +106,17 @@ public class SimpleJdbcDocumentProducer extends JdbcDocumentProducer {
       setPostSql(DELETE_VALUE, sql);
    }
 
+   public void setDeleteFailSql(List<String> sql) {
+      setFailSql(DELETE_VALUE, sql);
+   }
+
+
    private static class SqlOperationPart implements OperationPart {
       private final String operation;
       private List<String> preSql = Collections.emptyList();
       private List<String> sqls = Collections.emptyList();
       private List<String> postSql = Collections.emptyList();
+      private List<String> failSql = Collections.emptyList();
 
       public SqlOperationPart(String operation) {
          this.operation = operation;
@@ -125,6 +143,11 @@ public class SimpleJdbcDocumentProducer extends JdbcDocumentProducer {
       }
 
       @Override
+      public void doFailSql(JdbcTemplate jdbcTemplate) throws DataAccessException {
+         execute(jdbcTemplate, failSql);
+      }
+
+      @Override
       public List<String> getSqls() {
          return sqls;
       }
@@ -139,6 +162,10 @@ public class SimpleJdbcDocumentProducer extends JdbcDocumentProducer {
 
       public void setPostSql(List<String> postSql) {
          this.postSql = notNull(postSql);
+      }
+
+      public void setFailSql(List<String> failSql) {
+         this.failSql = notNull(failSql);
       }
    }
 }

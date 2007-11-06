@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -31,6 +32,7 @@ public class JdbcDocumentProducer implements DocumentProducer {
    private JdbcTemplate jdbcTemplate;
    private DocumentMapper documentMapper;
    private List<? extends OperationPart> operationParts;
+   private SqlIterator sqlIterator;
 
    @Override
    public void init() {
@@ -51,17 +53,32 @@ public class JdbcDocumentProducer implements DocumentProducer {
 
    @Override
    public void close() {
+      if (sqlIterator != null) {
+         sqlIterator.runPostSqls();
+      }
+   }
+
+   @Override
+   public void fail() {
+      if (sqlIterator != null) {
+         sqlIterator.runFailSqls();
+      }
    }
 
    @Override
    public Iterator<Document> iterator() {
-      // a wrapper iterator. handles pre and post sql.
-      return new SqlIterator(jdbcTemplate, notEmpty(operationParts), jdbcStats, documentMapper);
+      if (sqlIterator == null) {
+         // a wrapper iterator. handles pre and post sql.
+         sqlIterator = new SqlIterator(jdbcTemplate, notEmpty(operationParts), jdbcStats, documentMapper);
+         return sqlIterator;
+      } else {
+         throw new IllegalStateException("Iterator can only be fetched once");
+      }
    }
 
-   private static Iterator<OperationPart> notEmpty(List<? extends OperationPart> parts) {
+   private static List<OperationPart> notEmpty(List<? extends OperationPart> parts) {
       if (parts == null || parts.isEmpty()) {
-         return Iterators.emptyIterator();
+         return Collections.emptyList();
       }
       final List<OperationPart> list = new ArrayList<OperationPart>(parts.size());
       for (OperationPart part : parts) {
@@ -69,7 +86,7 @@ public class JdbcDocumentProducer implements DocumentProducer {
             list.add(part);
          }
       }
-      return list.iterator();
+      return list;
    }
 
    public List<? extends OperationPart> getOperationParts() {
@@ -114,23 +131,28 @@ public class JdbcDocumentProducer implements DocumentProducer {
 
       public void doPostSql(JdbcTemplate jdbcTemplate) throws DataAccessException;
 
+      public void doFailSql(JdbcTemplate jdbcTemplate) throws DataAccessException;
+      
       public List<String> getSqls();
+
    }
 
    private static class SqlIterator implements Iterator<Document> {
       private final JdbcTemplate jdbcTemplate;
+      private final List<OperationPart> parts;
       private final Iterator<OperationPart> partIt;
       private final JdbcStats stats;
       private final DocumentMapper mapper;
       private OperationPart part;
       private Iterator<Document> docIt = Iterators.emptyIterator();
 
-      public SqlIterator(JdbcTemplate jdbcTemplate, Iterator<OperationPart> parts, JdbcStats stats, 
+      public SqlIterator(JdbcTemplate jdbcTemplate, List<OperationPart> parts, JdbcStats stats,
             DocumentMapper mapper) throws DataAccessException {
          this.jdbcTemplate = jdbcTemplate;
-         partIt = parts;
+         this.parts = parts;
          this.stats = stats;
          this.mapper = mapper;
+         partIt = parts.iterator();
          findPart();
       }
 
@@ -147,12 +169,30 @@ public class JdbcDocumentProducer implements DocumentProducer {
 
       private void endPart() throws DataAccessException {
          if (!docIt.hasNext() && part != null) {
+            part = null;
+         }
+      }
+
+      public void runPostSqls() {
+         for (OperationPart operationPart : parts) {
             try {
                stats.startPostSql();
-               part.doPostSql(jdbcTemplate);
+               operationPart.doPostSql(jdbcTemplate);
                stats.stop();
-            } finally {
-               part = null;
+            } catch (RuntimeException e) {
+               log.error("Could not run post sql", e);
+            }
+         }
+      }
+
+      public void runFailSqls() {
+         for (OperationPart operationPart : parts) {
+            try {
+               stats.startFailSql();
+               operationPart.doFailSql(jdbcTemplate);
+               stats.stop();
+            } catch (RuntimeException e) {
+               log.error("Could not run fail sql", e);
             }
          }
       }
@@ -179,6 +219,7 @@ public class JdbcDocumentProducer implements DocumentProducer {
       public void remove() {
          throw new UnsupportedOperationException();
       }
+
    }
 
    private static class DocIterator implements Iterator<Document> {

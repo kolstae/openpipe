@@ -109,6 +109,10 @@ public class BaseSubPipeline implements SubPipeline {
    }
 
    private static String buildPipelineInfo(Document document, PipelineStep pipelineStep) {
-      return pipelineStep.getName() + pipelineStep.getRevision().replace('$', ' ') + "document operation: " + document.getOperation();
+      if (pipelineStep.getRevision() != null) {
+         return pipelineStep.getName() + pipelineStep.getRevision().replace('$', ' ') + "document operation: " + document.getOperation();
+      } else {
+         throw new NullPointerException(pipelineStep.getName() + " revision is null.");
+      }
    }
 }

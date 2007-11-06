@@ -16,4 +16,9 @@ public interface DocumentProducer extends Iterable<Document> {
     * Closes this document-producer, releasing any resources held.
     */
    void close();
+
+   /**
+    * Close this document-producer, and do any error handling.  
+    */
+   void fail();
 }

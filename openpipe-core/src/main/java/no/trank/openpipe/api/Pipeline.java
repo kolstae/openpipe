@@ -8,7 +8,7 @@ import no.trank.openpipe.api.document.Document;
  * @version $Revision$
  */
 public class Pipeline extends BaseSubPipeline {
-   private PipelineErrorHandler pipelineErrorHandler = new LoggingPipelineErrorHandler();
+   private PipelineExceptionHandler pipelineExceptionHandler = new DefaultPipelineExceptionHandler();
 
    public Pipeline() {
    }
@@ -17,26 +17,33 @@ public class Pipeline extends BaseSubPipeline {
       super(pipelineSteps);
    }
 
+   public PipelineExceptionHandler getPipelineExceptionHandler() {
+      return pipelineExceptionHandler;
+   }
+
+   public void setPipelineExceptionHandler(PipelineExceptionHandler pipelineExceptionHandler) {
+      if (pipelineExceptionHandler != null) {
+         this.pipelineExceptionHandler = pipelineExceptionHandler;
+      } else {
+         throw new NullPointerException("pipelineExceptionHandler can not be null");
+      }
+   }
+
    @Override
    public boolean prepare() {
       try {
          return super.prepare();
-      } catch (PipelineException e) {
-         pipelineErrorHandler.handleException(false, e);
-      } catch (RuntimeException e) {
-         pipelineErrorHandler.handleException(false, new PipelineException(e));
+      } catch (Exception e) {
+         return pipelineExceptionHandler.handlePrepareException(wrapToPiplineException(e)).isSuccess();
       }
-      return false;
    }
 
    @Override
    public void finish(boolean success) {
       try {
          super.finish(success);
-      } catch (PipelineException e) {
-         pipelineErrorHandler.handleException(true, e);
-      } catch (RuntimeException e) {
-         pipelineErrorHandler.handleException(true, new PipelineException(e));
+      } catch (Exception e) {
+         pipelineExceptionHandler.handleFinishException(wrapToPiplineException(e));
       }
    }
 
@@ -46,15 +53,13 @@ public class Pipeline extends BaseSubPipeline {
     * @param document document to be run through the pipeline
     * @return status
     */
-   public PipelineStatusCode execute(Document document) {
+   public PipelineFlow execute(Document document) {
       try {
-         return executeSteps(document);
-      } catch (PipelineException e) {
-         pipelineErrorHandler.handleException(document, e);
-      } catch (RuntimeException e) {
-         pipelineErrorHandler.handleException(document, new PipelineException(e));
+         executeSteps(document);
+         return PipelineFlowEnum.CONTINUE;
+      } catch (Exception e) {
+         return pipelineExceptionHandler.handleDocumentException(wrapToPiplineException(e), document);
       }
-      return PipelineStatusCode.FINISH;
    }
 
    /**
@@ -66,13 +71,15 @@ public class Pipeline extends BaseSubPipeline {
    public boolean execute(Iterable<Document> documents) {
       try {
          for (Document document : documents) {
-            execute(document);
+            PipelineFlow pipelineFlow = execute(document);
+            if (pipelineFlow.isStopPipeline()) {
+               return pipelineFlow.isSuccess();
+            }
          }
          return true;
       } catch (Exception e) {
-         pipelineErrorHandler.handleException(false, new PipelineException(e));
+         return pipelineExceptionHandler.handleProducerException(wrapToPiplineException(e)).isSuccess();
       }
-      return false;
    }
    
    /**
@@ -84,7 +91,8 @@ public class Pipeline extends BaseSubPipeline {
    public boolean run(Iterable<Document> documents) {
       boolean success = false;
       try {
-         if (prepare()) {
+         success = prepare();
+         if (success) {
             success = execute(documents);
          }
       } finally {
@@ -93,15 +101,13 @@ public class Pipeline extends BaseSubPipeline {
       return success;
    }
 
-   public PipelineErrorHandler getPipelineErrorHandler() {
-      return pipelineErrorHandler;
-   }
-
-   public void setPipelineErrorHandler(PipelineErrorHandler pipelineErrorHandler) {
-      if (pipelineErrorHandler != null) {
-         this.pipelineErrorHandler = pipelineErrorHandler;
+   private PipelineException wrapToPiplineException(Exception ex) {
+      PipelineException pex;
+      if (PipelineException.class.isAssignableFrom(ex.getClass())) {
+         pex = (PipelineException) ex;
       } else {
-         this.pipelineErrorHandler = new LoggingPipelineErrorHandler();
+         pex = new PipelineException(ex);
       }
+      return pex;
    }
 }

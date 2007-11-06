@@ -25,8 +25,14 @@ public class HtmlJdbcStats implements JdbcStats {
    }
 
    @Override
+   public void startFailSql() {
+      last.startFailSql();
+   }
+
+   @Override
    public void stop() {
       last.stopPostSql();
+      last.stopFailSql();
       total.add(last);
       ++totalRuns;
    }
@@ -82,6 +88,11 @@ public class HtmlJdbcStats implements JdbcStats {
             .append("    <td>").append(total.getPostSqlTime()).append("</td>")
             .append("  </tr>")
             .append("  <tr>")
+            .append("    <td>FailSQL Time</td>")
+            .append("    <td>").append(last.getFailSqlTime()).append("</td>")
+            .append("    <td>").append(total.getFailSqlTime()).append("</td>")
+            .append("  </tr>")
+            .append("  <tr>")
             .append("    <td>Add</td>")
             .append("    <td>").append(last.getAddCount()).append("</td>")
             .append("    <td>").append(total.getAddCount()).append("</td>")
@@ -123,6 +134,8 @@ public class HtmlJdbcStats implements JdbcStats {
       private long preSqlTime;
       private long postSqlStart;
       private long postSqlTime;
+      private long failSqlStart;
+      private long failSqlTime;
 
       private Timer() {
       }
@@ -146,6 +159,8 @@ public class HtmlJdbcStats implements JdbcStats {
          preSqlStart = 0;
          postSqlStart = 0;
          postSqlTime = -1;
+         failSqlStart = 0;
+         failSqlTime = -1;
          addCount = 0;
          modifyCount = 0;
          deleteCount = 0;
@@ -159,8 +174,18 @@ public class HtmlJdbcStats implements JdbcStats {
          postSqlStart = now;
       }
 
+      public void startFailSql() {
+         final long now = System.currentTimeMillis();
+         time = now - start;
+         failSqlStart = now;
+      }
+
       public void stopPostSql() {
          postSqlTime = System.currentTimeMillis() - postSqlStart;
+      }
+
+      public void stopFailSql() {
+         failSqlTime = System.currentTimeMillis() - failSqlStart;
       }
 
       public String getPreSqlTime() {
@@ -233,6 +258,10 @@ public class HtmlJdbcStats implements JdbcStats {
          deleteCount++;
       }
 
+      public long getFailSqlTime() {
+         return failSqlTime;
+      }
+
       public void add(Timer timer) {
          time += timer.time;
          otherCount += timer.otherCount;
@@ -242,5 +271,6 @@ public class HtmlJdbcStats implements JdbcStats {
          preSqlTime += timer.preSqlTime;
          postSqlTime += timer.postSqlTime;
       }
+
    }
 }

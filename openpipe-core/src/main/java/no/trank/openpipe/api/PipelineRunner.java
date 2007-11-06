@@ -31,14 +31,26 @@ public class PipelineRunner implements Runnable {
       try {
          documentProducer.init();
          try {
-            if (pipeline.prepare()) {
+            if (PipelineExceptionListener.class.isAssignableFrom(documentProducer.getClass())) {
+               pipeline.getPipelineExceptionHandler().addExceptionListener((PipelineExceptionListener) documentProducer);
+            }
+            success = pipeline.prepare();
+            if (success) {
                success = pipeline.execute(documentProducer);
             }
          } finally {
-            pipeline.finish(success); // Todo: Fix finsih(true/false) ???????
+            pipeline.finish(success);
          }
       } finally {
-         documentProducer.close();
+         if (PipelineExceptionListener.class.isAssignableFrom(documentProducer.getClass())) {
+            pipeline.getPipelineExceptionHandler().removeExceptionListener((PipelineExceptionListener) documentProducer);
+         }
+         if (success) {
+            documentProducer.close();
+         } else {
+            documentProducer.fail();
+         }
+
       }
    }
 }

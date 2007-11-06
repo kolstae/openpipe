@@ -24,4 +24,8 @@ public class NoopJdbcStats implements JdbcStats {
    @Override
    public void incr(String operation) {
    }
+
+   @Override
+   public void startFailSql() {
+   }
 }

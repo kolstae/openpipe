@@ -14,4 +14,6 @@ public interface JdbcStats {
    void stop();
 
    void incr(String operation);
+
+   void startFailSql();
 }
