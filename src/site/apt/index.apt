@@ -20,23 +20,23 @@ OpenPipe
   of these and other products for using them as a basis for an indexing pipeline for Solr. All of them were found to 
   have one or more of the following shortcomings:
   
-    * A to restrictive license
+    * A too restrictive license
     
-    * To targeted against specific use
+    * Too targeted against specific use
     
     * Unnecessary complex
 
 
-  Why separate the document preprocessing from the core Solr product, there are already a lot of analyzers, field 
+  Why separate the document preprocessing from the core Solr product, as there are already a lot of analyzers, field 
   copying functionality etc in Solr? There are several good answers to this functionality:
   
-    [[1]] Scalability: Document processing could be CPU intensiv (automatic classification, entity extraction, format 
-    conversion) and/or memory intensive (dictionary-based lemmatization in multiple languages, dictionary based entity 
+    [[1]] Scalability: Document processing could be CPU intensive (automatic classification, entity extraction, format 
+    conversion) and/or memory intensive (dictionary based lemmatization in multiple languages, dictionary based entity 
     extraction). By separating, the document processing could be scaled independently of the indexing by running 
-    multiple document processing nodes feeding ready processed content into the same index.
+    multiple document processing nodes feeding processed content into the same index.
     
     [[1]] Maintainability: If all kind of functionality is to be put into Solr itself, the product will be less easy to 
-    maintain and further development will be slowed down. Solr is also likely to get less stable. Solr should stay 
+    maintain, and further development will be slowed down. Solr is also likely to get less stable. Solr should stay 
     focused on core functionality.
     
     [[1]] Adaptability: Creating a pipeline step for specific needs is very simple. All you need to care about is a 
@@ -64,9 +64,9 @@ OpenPipe
 
 ** Subpipeline
 ~~~~~~~~~~~~~~
-  A subpipeline is just a pipeline being called from another pipeline. There might be 2 reasons for using subpipelines. 
+  A subpipeline is just a pipeline being called from another pipeline. There might be two reasons for using subpipelines. 
   If several pipelines have a lot of steps in common, the setup will be easier maintainable if a common subpipeline is 
-  used. Another reason for using subspipelines is that based on some attributes of the document, different subpipelines 
+  used. Another reason for using subpipelines is that based on some attributes of the document, different subpipelines 
   should be called.
 
 ** Producer
@@ -85,7 +85,7 @@ OpenPipe
   OpenPipe ships with a pipeline step for posting content to Solr.
 
   Some document processing functionality requires that the content of fields are analyzed up front. Therefore, we have 
-  made it possible to use Solrs internal analyzers within OpenPipe. Also, the output from some steps needs to pass 
+  made it possible to use Solr's internal analyzers within OpenPipe. Also, the output from some steps needs to pass 
   information like word positions to Solr. If for instance, you are doing lemmatization by expansion, you want all 
-  variations of a token to have the same word position in the index. UpdateXMLMessages dows not have support for such 
+  variations of a token to have the same word position in the index. UpdateXMLMessages do not have support for such 
   inline information. We have therefore made a binary format for transmitting documents from OpenPipe to Solr.
