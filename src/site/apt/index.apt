@@ -24,7 +24,7 @@ OpenPipe
     
     * Too targeted against specific use
     
-    * Unnecessary complex
+    * Unnecessarily complex
 
 
   Why separate the document preprocessing from the core Solr product, as there are already a lot of analyzers, field 
