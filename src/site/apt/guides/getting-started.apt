@@ -54,7 +54,8 @@ Getting started
   jar xf ../solr.war
 +----------------------------------+
   
-  Then download <<<solr-tokenizer.jar>>> from {{ftp://ftp.berlios.de/pub/openpipe/solr-tokenizer.jar}} and save it to
+  Then download <<<solr-tokenizer.jar>>> from
+  {{{ftp://ftp.berlios.de/pub/openpipe/solr-tokenizer.jar}solr-tokenizer.jar}} and save it to
   <<<~/solr/example/webapps/solr/WEB-INF/lib>>>.\
   <<Note>>: In order to index pre-tokenized documents with Solr we have submitted an issue with Solr:
   {{{http://issues.apache.org/jira/browse/SOLR-398}SOLR-398}}.
