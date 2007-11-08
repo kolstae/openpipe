@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.NoSuchElementException;
 
 /**
  * @version $Revision$
@@ -33,7 +34,7 @@ public class Iterators {
 
       @Override
       public Object next() {
-         return null;
+         throw new NoSuchElementException();
       }
 
       @Override
@@ -43,7 +44,7 @@ public class Iterators {
 
       @Override
       public Object previous() {
-         return null;
+         throw new NoSuchElementException();
       }
 
       @Override
