@@ -6,11 +6,11 @@
 
 OpenPipe
 ~~~~~~~~
-  OpenPipe is a scalable platform for manipulating a stream of documents. Pipelines are created from building bricks 
-  doing atomic operations on documents, like language detection, field manipulation, POS tagging, entity extraction or 
-  submitting the document to a search engine. OpenPipe was originally designed for indexing with the 
-  {{{http://lucene.apache.org/solr/}Solr}} full-text search engine, but could easily be adapted to any search engine or 
-  any other use case where documents need to be processed in various ways.
+  OpenPipe is an open source scalable platform for manipulating a stream of documents. Pipelines are created from
+  building bricks doing atomic operations on documents, like language detection, field manipulation, POS tagging,
+  entity extraction or submitting the document to a search engine. OpenPipe was originally designed for indexing with
+  the {{{http://lucene.apache.org/solr/}Solr}} full-text search engine, but could easily be adapted to any search engine
+  or any other use case where documents need to be processed in various ways.
 
 
   We did not invent the notion of a document pipeline. Several linguistic packages, like {{{http://gate.ac.uk/}GATE}} or 
@@ -89,3 +89,9 @@ OpenPipe
   information like word positions to Solr. If for instance, you are doing lemmatization by expansion, you want all 
   variations of a token to have the same word position in the index. UpdateXMLMessages does not have support for such 
   inline information. We have therefore made a binary format for transmitting documents from OpenPipe to Solr.
+
+* License
+~~~~~~~~~
+  Copyright 2007  T-Rank AS
+
+  OpenPipe is licensed under the {{{http://www.apache.org/licenses/LICENSE-2.0}Apache License, Version 2.0}}.
