@@ -26,7 +26,7 @@ import javax.xml.stream.events.Attribute;
  */
 public class UpdateOptions {
    // Add options
-   private boolean allowDups;
+   private boolean allowDups = false;
    private boolean overwritePending = !allowDups;
    private boolean overwriteCommitted = !allowDups;
    // Commit/Optimize options

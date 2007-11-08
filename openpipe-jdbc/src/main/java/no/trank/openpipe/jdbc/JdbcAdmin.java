@@ -34,9 +34,9 @@ public class JdbcAdmin extends HttpServlet {
 
    private static final Logger log = LoggerFactory.getLogger(JdbcAdmin.class);
    
-   private Server server;
-   private JdbcPoller jdbcPoller;
-   private HtmlJdbcStats jdbcStats;
+   private transient Server server;
+   private transient JdbcPoller jdbcPoller;
+   private transient HtmlJdbcStats jdbcStats;
    
    private boolean jettyEnabled;
    private boolean pollingEnabled;

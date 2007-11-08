@@ -25,6 +25,7 @@ import java.util.List;
  * @version $Revision$
  */
 public class MultiPipelineException extends PipelineException {
+   private static final long serialVersionUID = 8297986555121255948L;
    private List<Throwable> exceptions = Collections.emptyList();
 
    public MultiPipelineException() {

@@ -20,6 +20,8 @@ package no.trank.openpipe.parse.api;
  * @version $Revision$
  */
 public class ParserException extends RuntimeException {
+   private static final long serialVersionUID = -9124012214964079177L;
+
    public ParserException() {
    }
 

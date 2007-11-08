@@ -71,7 +71,7 @@ public class SimpleJdbcDocumentProducerTest extends TestCase {
          assertEquals(statusCounts[i], counts[i]);
          assertEquals(statusCounts[i], jdbcTemplate.queryForInt("SELECT s_count FROM status_count WHERE status = ?",
                new Object[]{i}));
-         List resultList = jdbcTemplate.queryForList("SELECT done_ts FROM status_ts WHERE status = ? AND processed = true",
+         List<?> resultList = jdbcTemplate.queryForList("SELECT done_ts FROM status_ts WHERE status = ? AND processed = true",
                      new Object[]{i},
                      Timestamp.class);
          assertEquals("Fail was called on the producer, postSql should not have been run.", 0, resultList.size());

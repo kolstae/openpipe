@@ -106,7 +106,7 @@ public class SolrXmlDocumentWriter {
    }
 
    public void writeField(final String fieldName, String fieldContent) throws XMLStreamException {
-      Iterator attributes = Arrays.asList(factory.createAttribute("name", fieldName)).iterator();
+      Iterator<?> attributes = Arrays.asList(factory.createAttribute("name", fieldName)).iterator();
       if (pretty) {
          writer.add(newLineInd);
       }

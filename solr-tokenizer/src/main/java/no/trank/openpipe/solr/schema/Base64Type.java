@@ -103,8 +103,9 @@ public class Base64Type extends TextField {
    }
 
    private static class Base64Field extends AbstractField {
+      private static final long serialVersionUID = -9010745535310873466L;
       private final String val;
-      private final InputStream in;
+      private transient final InputStream in;
 
       private Base64Field(String name, String val, Field.Store store, Field.Index index, Field.TermVector termVector, 
             InputStream in) {

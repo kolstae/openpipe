@@ -85,10 +85,10 @@ public class ONLPNEDetector extends MultiInputFieldPipelineStep {
    private static void findNE(ArrayList<String> words, ArrayList<ResolvedAnnotation> tokens, NameFinderHolder holder) {
       final NameFinder nameFinder = holder.getNameFinder();
       final Map<String, String> prevTags = holder.getPreviousTags();
-      final List tags = nameFinder.find(words, prevTags);
+      final List<?> tags = nameFinder.find(words, prevTags);
       Annotation startToken = null;
       final Iterator<String> wordIt = words.iterator();
-      for (ListIterator it = tags.listIterator(); it.hasNext();) {
+      for (ListIterator<?> it = tags.listIterator(); it.hasNext();) {
          final String tag = (String) it.next();
          prevTags.put(wordIt.next(), tag);
          if (startToken != null) {
