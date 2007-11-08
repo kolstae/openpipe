@@ -25,7 +25,7 @@ import java.util.ListIterator;
  * @version $Revision$
  */
 public class Iterators {
-   private static final ListIterator EMPTY_ITERATOR = new ListIterator() {
+   private static final ListIterator<?> EMPTY_ITERATOR = new ListIterator<Object>() {
       @Override
       public boolean hasNext() {
          return false;
@@ -92,7 +92,7 @@ public class Iterators {
 
    @SuppressWarnings({"unchecked"})
    public static <T> Iterator<T> notNullIterator(Iterable<T> it) {
-      return it == null ? EMPTY_ITERATOR : it.iterator();
+      return it == null ? (ListIterator<T>) EMPTY_ITERATOR : it.iterator();
    }
 
    private Iterators() {
