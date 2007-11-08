@@ -123,6 +123,9 @@ public class Iterators {
 
       @Override
       public T next() {
+         if (!i.hasNext()) {
+            throw new NoSuchElementException();
+         }
          return i.next();
       }
 
