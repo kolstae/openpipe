@@ -56,7 +56,7 @@ public abstract class MultiInputFieldPipelineStep extends BasePipelineStep {
     * 
     * @param doc the document to execute on.
     * 
-    * @throws PipelineException if thrown by {@link # process (Document, String, List)}.
+    * @throws PipelineException if thrown by {@link #process(Document, String, List)}.
     */
    protected void executeInputFields(Document doc) throws PipelineException {
       for (String fieldName : inputFields) {
