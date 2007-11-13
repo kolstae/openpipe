@@ -8,26 +8,20 @@
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
-   <bean id="steps" class="java.util.ArrayList">
-      <constructor-arg>
-         <list>
-            <value>no.trank.openpipe.step.AnnotateSentence</value>
-            <value>no.trank.openpipe.step.AnnotateSpace</value>
-            <value>no.trank.openpipe.step.AnnotationToField</value>
-            <value>no.trank.openpipe.step.ChecksumFields</value>
-            <value>no.trank.openpipe.step.ConvertDate</value>
-            <value>no.trank.openpipe.step.CopyField</value>
-            <value>no.trank.openpipe.step.Debug</value>
-            <value>no.trank.openpipe.step.HierarchicalSplitter</value>
-            <value>no.trank.openpipe.step.ParseXML</value>
-            <value>no.trank.openpipe.step.ParseXMLXPath</value>
-            <value>no.trank.openpipe.step.PipelineSelector</value>
-            <value>no.trank.openpipe.step.RegexField</value>
-            <value>no.trank.openpipe.step.RemoveFields</value>
-            <value>no.trank.openpipe.step.SetField</value>
-            <value>no.trank.openpipe.step.StripHtml</value>
-            <value>no.trank.openpipe.step.Uppercase</value>
-         </list>
-      </constructor-arg>
-   </bean>
+   <bean class="no.trank.openpipe.step.AnnotateSentence"/>
+   <bean class="no.trank.openpipe.step.AnnotateSpace"/>
+   <bean class="no.trank.openpipe.step.AnnotationToField"/>
+   <bean class="no.trank.openpipe.step.ChecksumFields"/>
+   <bean class="no.trank.openpipe.step.ConvertDate"/>
+   <bean class="no.trank.openpipe.step.CopyField"/>
+   <bean class="no.trank.openpipe.step.Debug"/>
+   <bean class="no.trank.openpipe.step.HierarchicalSplitter"/>
+   <bean class="no.trank.openpipe.step.ParseXML"/>
+   <bean class="no.trank.openpipe.step.ParseXMLXPath"/>
+   <bean class="no.trank.openpipe.step.PipelineSelector"/>
+   <bean class="no.trank.openpipe.step.RegexField"/>
+   <bean class="no.trank.openpipe.step.RemoveFields"/>
+   <bean class="no.trank.openpipe.step.SetField"/>
+   <bean class="no.trank.openpipe.step.StripHtml"/>
+   <bean class="no.trank.openpipe.step.Uppercase"/>
 </beans>
