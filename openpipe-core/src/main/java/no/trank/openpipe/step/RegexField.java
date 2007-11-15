@@ -30,6 +30,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * This step offers java regex functionality. 
+ * 
  * @version $Revision$
  */
 public class RegexField extends BasePipelineStep {
@@ -55,7 +57,7 @@ public class RegexField extends BasePipelineStep {
       return PipelineStepStatus.DEFAULT;
    }
 
-   public PipelineStepStatus process(Document doc, String fromFieldName, String toFieldName) throws PipelineException {
+   private PipelineStepStatus process(Document doc, String fromFieldName, String toFieldName) throws PipelineException {
       List<String> values = doc.getFieldValues(fromFieldName);
       List<String> outValues = new ArrayList<String>();
     
@@ -94,6 +96,12 @@ public class RegexField extends BasePipelineStep {
       return fromPattern != null ? fromPattern.pattern() : null;
    }
 
+   /**
+    * Compiles the regex pattern used for matching against the input field values.
+    * Note that {@link Matcher#find()} is called during the matching process, to allow for replace all effects. 
+    * 
+    * @param fromPattern the pattern to be compiled
+    */
    public void setFromPattern(String fromPattern) {
       this.fromPattern = Pattern.compile(fromPattern);
    }
@@ -102,6 +110,12 @@ public class RegexField extends BasePipelineStep {
       return toPattern;
    }
 
+   /**
+    * Sets the pattern that is applied when producing the output field values through calls to
+    * {@link Matcher#replaceAll(String)}.
+    * 
+    * @param toPattern the output pattern
+    */
    public void setToPattern(String toPattern) {
       this.toPattern = toPattern;
    }
@@ -110,6 +124,12 @@ public class RegexField extends BasePipelineStep {
       return copyOnMiss;
    }
 
+   /**
+    * Specifies whether the input field value should be copied to the output field if the input field value
+    * does not match the from pattern. 
+    * 
+    * @param copyOnMiss
+    */
    public void setCopyOnMiss(boolean copyOnMiss) {
       this.copyOnMiss = copyOnMiss;
    }
@@ -118,6 +138,11 @@ public class RegexField extends BasePipelineStep {
       return fieldNameMap;
    }
 
+   /**
+    * Sets the input/output field names.
+    * 
+    * @param fieldNameMap
+    */
    public void setFieldNameMap(Map<String, String> fieldNameMap) {
       this.fieldNameMap = fieldNameMap;
    }
