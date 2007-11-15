@@ -40,7 +40,7 @@ Getting started
    <<<solr-webapp>>>.
   
   From this point forward we'll assume you installed Solr in <<<~/solr>>>. This gives schema file as 
-  <<<~/solr/example/solr/conf/schema.xml>>> and the solr-webapp as <<<~/solr/example/webapps/solr.war>>>.
+  <<<~/solr/example/solr/conf/schema.xml>>> and the Solr webapp as <<<~/solr/example/webapps/solr.war>>>.
   
 ** Setting up libraries
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -72,7 +72,7 @@ Getting started
 *** FieldType
 ~~~~~~~~~~~~~
 
-  We need set up a fieldType that allows us to tokenize fields prior to submitting to Solr. The current implementation 
+  We need set up a field type that allows us to tokenize fields prior to submitting to Solr. The current implementation 
   uses a binary format encoded as {{{http://en.wikipedia.org/wiki/Base64}base64}} in the xml to Solr. 
   For more details on the binary format, see {{{../apidocs/no/trank/openpipe/solr/schema/Base64Type.html}Base64Type}}.
   
@@ -91,8 +91,8 @@ Getting started
   </fieldType>
 +--------------------------------------------------------------------------------------------------------+
 
-  The <<<WhitespaceTokenizer>>> for <<<analyzer type="index">>> will be used when highlighting your search. While the
-  <<<analyzer type="query">>> is used for the query, which should be <compatible> with the OpenPipe config showed later.\
+  Two analyzers have been configured. The <index> type analyzer is used when highlighting a search. The <query>
+  type analyzer, which should be compatible with the OpenPipe config showed later, is used for the query.\
   Compared to the standard <<<schema.xml>>>:
 
 +--------------------------------------------------------------------------------------------------------+
@@ -129,7 +129,6 @@ Getting started
 +--------------------------------------------------------------------------------+
   <fields>
     <field name="id" type="string" indexed="true" stored="true" required="true"/>
-    <field name="url" type="text_op" indexed="true" stored="true"/>
     <field name="title" type="text_op" indexed="true" stored="true"/>
     <field name="content" type="text_op" indexed="true" stored="true"/>
     <field name="lastModified" type="long" indexed="true" stored="true"/>

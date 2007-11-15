@@ -40,7 +40,6 @@
 
    <fields>
       <field name="id" type="string" indexed="true" stored="true" required="true"/>
-      <field name="url" type="text_op" indexed="true" stored="true"/>
       <field name="title" type="text_op" indexed="true" stored="true"/>
       <field name="content" type="text_op" indexed="true" stored="true"/>
       <field name="lastModified" type="long" indexed="true" stored="true"/>
