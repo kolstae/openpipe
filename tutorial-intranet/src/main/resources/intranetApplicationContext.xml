@@ -82,7 +82,6 @@
       </property>
       <property name="tokenizedFields">
          <set>
-            <value>url</value>
             <value>title</value>
             <value>content</value>
          </set>
@@ -132,6 +131,25 @@
                <property name="fromFieldName" value="pathName"/>
                <property name="toFieldName" value="id"/>
                <property name="withAnnotations" value="false"/>
+            </bean>
+            <bean class="no.trank.openpipe.step.RegexField">
+               <property name="fieldNameMap">
+                  <map>
+                     <entry key="id" value="url"/>
+                  </map>
+               </property>
+               <property name="fromPattern" value="^(.*)$"/>
+               <property name="toPattern" value="file://$1"/> 
+            </bean>
+            <bean class="no.trank.openpipe.step.RegexField">
+               <property name="fieldNameMap">
+                  <map>
+                     <entry key="url" value="url"/>
+                  </map>
+               </property>
+               <property name="fromPattern" value="%"/>
+               <property name="toPattern" value="%25"/> 
+               <property name="copyOnMiss" value="true"/>
             </bean>
             <bean parent="solrAnalyzer">
                <property name="inputFields">

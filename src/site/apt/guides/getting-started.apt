@@ -130,12 +130,14 @@ Getting started
   <fields>
     <field name="id" type="string" indexed="true" stored="true" required="true"/>
     <field name="title" type="text_op" indexed="true" stored="true"/>
+    <field name="url" type="string" indexed="false" stored="true"/>
     <field name="content" type="text_op" indexed="true" stored="true"/>
     <field name="lastModified" type="long" indexed="true" stored="true"/>
   </fields>
 +--------------------------------------------------------------------------------+
 
   For <<<id>>> we'll use the <path> of the document. <<<content>>> is the parsed content of the document.
+  <<<url>>> is a browser friendly version of the <path> of the document.
 
 ** Starting Solr
 ~~~~~~~~~~~~~~~~
@@ -174,8 +176,9 @@ Getting started
    +- pipeline [no.trank.openpipe.api.Pipeline]
       +- parseStep [no.trank.openpipe.parse.step.DocumentParser]
       +- copyField [no.trank.openpipe.step.CopyField]
-      +- solrAnalyzerContent [no.trank.openpipe.solr.step.SolrAnalyzerStep]
-      +- solrAnalyzerTitle [no.trank.openpipe.solr.step.SolrAnalyzerStep]
+      +- regexFieldPrepend [no.trank.openpipe.step.RegexField]
+      +- regexFieldEncode [no.trank.openpipe.step.RegexField]
+      +- solrAnalyzer [no.trank.openpipe.solr.step.SolrAnalyzerStep]
       +- solrDocumentProcessor [no.trank.openpipe.solr.step.SolrDocumentProcessor]
 +----------------------------------+
 
@@ -187,9 +190,11 @@ Getting started
 *-----------------------+---------------------------------------------------------------------------------------------+
 | copyField             | Copies the content of the field <pathName> to the field <id>.
 *-----------------------+---------------------------------------------------------------------------------------------+
-| solrAnalyzerContent   | Performs Solr tokenizing on the field <content>.
+| regexFieldPrepend     | Copies the the content of the field <id> to the field <url> and prepends it with <file://>.
 *-----------------------+---------------------------------------------------------------------------------------------+
-| solrAnalyzerTitle     | Performs Solr tokenizing on the field <title>.
+| regexFieldEncode      | Replaces <%> occurences in the field <url> with <%25>.
+*-----------------------+---------------------------------------------------------------------------------------------+
+| solrAnalyzer          | Performs Solr tokenizing on the fields <content> and <title>.
 *-----------------------+---------------------------------------------------------------------------------------------+
 | solrDocumentProcessor | Posts the document to {{http://localhost:8983/solr/update}}.
 *-----------------------+---------------------------------------------------------------------------------------------+
