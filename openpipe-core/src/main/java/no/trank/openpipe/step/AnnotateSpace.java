@@ -29,6 +29,8 @@ import no.trank.openpipe.api.document.BaseAnnotation;
 import no.trank.openpipe.api.document.Document;
 
 /**
+ * This step annotates occurences of single space characters.
+ * 
  * @version $Revision$
  */
 public class AnnotateSpace extends MultiInputFieldPipelineStep {

@@ -27,6 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * This step converts input text into uppercase.
+ * 
  * @version $Revision$
  */
 public class Uppercase extends BasePipelineStep {
@@ -67,10 +69,20 @@ public class Uppercase extends BasePipelineStep {
       return "$Revision$";
    }
 
+   /**
+    * Sets the names of the input/output field pairs.
+    * 
+    * @param fieldNameMap
+    */
    public void setFieldNameMap(Map<String, String> fieldNameMap) {
       this.fieldNameMap = fieldNameMap;
    }
 
+   /**
+    * Returns the names of the input/output field pairs.
+    * 
+    * @return the name map
+    */
    public Map<String, String> getFieldNameMap() {
       return fieldNameMap;
    }

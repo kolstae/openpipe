@@ -32,6 +32,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * This step converts date formats using {@link SimpleDateFormat}.
+ * 
  * @version $Revision$
  */
 public class ConvertDate extends BasePipelineStep {
@@ -111,30 +113,67 @@ public class ConvertDate extends BasePipelineStep {
       return "$Revision$";
    }
 
+   /**
+    * Returns the names of the input/output field pairs.
+    * 
+    * @return the name map
+    */
    public Map<String, String> getFieldNameMap() {
       return fieldNameMap;
    }
 
+   /**
+    * Sets the names of the input/output field pairs.
+    * 
+    * @param fieldNameMap
+    */
    public void setFieldNameMap(Map<String, String> fieldNameMap) {
       this.fieldNameMap = fieldNameMap;
    }
 
+   /**
+    * Sets the ordered map of from/to date format pairs. When applied to the input, consecutive pairs act as a fallback
+    * should the previous one generate an error. The step only errors if the last pair errors.
+    * 
+    * @param patternMap an ordered map containing the from/to format pairs
+    */
    public void setPatternMap(LinkedHashMap<String, String> patternMap) {
       this.patternMap = patternMap;
    }
 
+   /**
+    * Returns whether an exception will be thrown if an error occurs.
+    * 
+    * @return true if an exception will be thrown, false otherwise
+    */
    public boolean isFailOnError() {
       return failOnError;
    }
 
+   /**
+    * Sets whether an exception will be thrown if an error occurs.
+    * 
+    * @param failOnError
+    */
    public void setFailOnError(boolean failOnError) {
       this.failOnError = failOnError;
    }
+   
 
+   /**
+    * Returns whether a blank input field will be treated as an error.
+    * 
+    * @return true if a blank input field will be treated as an error, false otherwise
+    */
    public boolean isBlankError() {
       return blankError;
    }
 
+   /**
+    * Sets whether a blank input field will be treated as an error.
+    * 
+    * @param blankError
+    */
    public void setBlankError(boolean blankError) {
       this.blankError = blankError;
    }

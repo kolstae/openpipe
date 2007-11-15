@@ -134,12 +134,18 @@ public class RegexField extends BasePipelineStep {
       this.copyOnMiss = copyOnMiss;
    }
 
+   
+   /**
+    * Returns the names of the input/output field pairs.
+    * 
+    * @return the name map
+    */
    public Map<String, String> getFieldNameMap() {
       return fieldNameMap;
    }
 
    /**
-    * Sets the input/output field names.
+    * Sets the names of the input/output field pairs.
     * 
     * @param fieldNameMap
     */

@@ -15,19 +15,20 @@
  */
 package no.trank.openpipe.step;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import no.trank.openpipe.api.BasePipelineStep;
 import no.trank.openpipe.api.PipelineException;
 import no.trank.openpipe.api.PipelineStepStatus;
 import no.trank.openpipe.api.document.Document;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
+ * This step copies values from fields to other fields.
+ * 
  * @version $Revision$
  */
 public class CopyField extends BasePipelineStep {
@@ -76,26 +77,56 @@ public class CopyField extends BasePipelineStep {
       return "$Revision$";
    }
 
+   /**
+    * Returns the names of the input/output field pairs.
+    * 
+    * @return the name map
+    */
    public Map<String, String> getFieldNameMap() {
       return fieldNameMap;
    }
 
+   /**
+    * Sets the names of the input/output field pairs.
+    * 
+    * @param fieldNameMap
+    */
    public void setFieldNameMap(Map<String, String> fieldNameMap) {
       this.fieldNameMap = fieldNameMap;
    }
 
+   /**
+    * Returns whether any annotations associated with the input fields will be copied to the output fields.
+    * 
+    * @return true if the annotations will be copied, false otherwise
+    */
    public boolean isWithAnnotations() {
       return withAnnotations;
    }
 
+   /**
+    * Sets whether any annotations associated with the input fields will be copied to the output fields.
+    * 
+    * @param withAnnotations
+    */
    public void setWithAnnotations(boolean withAnnotations) {
       this.withAnnotations = withAnnotations;
    }
 
+   /**
+    * Returns whether the output fields will be overwritten if they already exist.
+    * 
+    * @return true if the output fields will be overwritten, false otherwise
+    */
    public boolean isOverwrite() {
       return overwrite;
    }
 
+   /**
+    * Sets whether the output fields will be overwritten if they already exist.
+    * 
+    * @param overwrite
+    */
    public void setOverwrite(boolean overwrite) {
       this.overwrite = overwrite;
    }
