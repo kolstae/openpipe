@@ -58,13 +58,13 @@ public class RegexField extends BasePipelineStep {
    public PipelineStepStatus process(Document doc, String fromFieldName, String toFieldName) throws PipelineException {
       List<String> values = doc.getFieldValues(fromFieldName);
       List<String> outValues = new ArrayList<String>();
-      
+    
       if (values == null || values.isEmpty()) {
          log.debug("Missing field '{}'", fromFieldName);
       } else {
          for (String value : values) {
             Matcher m = fromPattern.matcher(value);
-            if (m.matches()) {
+            if (m.find()) {
                log.debug("Field '{}' matches", fromFieldName);
                outValues.add(m.replaceAll(toPattern));
             } else {

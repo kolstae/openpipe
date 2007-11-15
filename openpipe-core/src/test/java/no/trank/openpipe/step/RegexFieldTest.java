@@ -100,4 +100,32 @@ public class RegexFieldTest extends TestCase {
       assertEquals(1, doc.getFieldValues("out").size());
       assertEquals("Oslo", doc.getFieldValues("out").get(0));
    }
+   
+   public void testPrepend() throws Exception {
+      Document doc = new Document();
+      
+      regexField.setFromPattern("^(.*)$");
+      regexField.setToPattern("file://$1");
+      regexField.setCopyOnMiss(false);
+      doc.addFieldValue("in", "/home/file.txt");
+
+      regexField.execute(doc);
+      assertEquals("file:///home/file.txt", doc.getFieldValue("out"));
+   }
+
+   public void testEncodePercentage() throws Exception {
+      Document doc = new Document();
+      
+      regexField.setFromPattern("%");
+      regexField.setToPattern("%25");
+      regexField.setCopyOnMiss(true);
+      doc.addFieldValue("in", "/home/file.txt");
+      doc.addFieldValue("in", "/home/fi%le%.txt");
+
+      regexField.execute(doc);
+      assertNotSame(null, doc.getFieldValues("out"));
+      assertEquals(2, doc.getFieldValues("out").size());
+      assertEquals("/home/file.txt", doc.getFieldValues("out").get(0));
+      assertEquals("/home/fi%25le%25.txt", doc.getFieldValues("out").get(1));
+   }
 }
