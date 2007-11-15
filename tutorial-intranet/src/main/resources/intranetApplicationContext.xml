@@ -128,8 +128,11 @@
          <list>
             <ref bean="parseStep"/>
             <bean class="no.trank.openpipe.step.CopyField">
-               <property name="fromFieldName" value="pathName"/>
-               <property name="toFieldName" value="id"/>
+               <property name="fieldNameMap">
+                  <map>
+                     <entry key="pathName" value="id"/>
+                  </map>
+               </property>
                <property name="withAnnotations" value="false"/>
             </bean>
             <bean class="no.trank.openpipe.step.RegexField">

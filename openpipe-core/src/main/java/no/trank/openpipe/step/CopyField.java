@@ -15,7 +15,15 @@
  */
 package no.trank.openpipe.step;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import no.trank.openpipe.api.BasePipelineStep;
+import no.trank.openpipe.api.PipelineException;
 import no.trank.openpipe.api.PipelineStepStatus;
 import no.trank.openpipe.api.document.Document;
 
@@ -23,8 +31,8 @@ import no.trank.openpipe.api.document.Document;
  * @version $Revision$
  */
 public class CopyField extends BasePipelineStep {
-   private String fromFieldName;
-   private String toFieldName;
+   private static final Logger log = LoggerFactory.getLogger(CopyField.class);
+   private Map<String, String> fieldNameMap;
    private boolean withAnnotations;
    private boolean overwrite = true;
 
@@ -33,13 +41,31 @@ public class CopyField extends BasePipelineStep {
    }
 
    @Override
-   public PipelineStepStatus execute(Document doc) {
-      if (doc.containsField(fromFieldName) && (overwrite || !doc.containsField(toFieldName))) {
+   public PipelineStepStatus execute(Document doc) throws PipelineException {
+      if (fieldNameMap != null) {
+         for(Map.Entry<String, String> pair : fieldNameMap.entrySet()) {
+            process(doc, pair.getKey(), pair.getValue());
+         }
+      }
+
+      return PipelineStepStatus.DEFAULT;
+   }
+
+   private PipelineStepStatus process(Document doc, String fromFieldName, String toFieldName) throws PipelineException {
+      List<String> values = doc.getFieldValues(fromFieldName);
+    
+      if (values == null || values.isEmpty()) {
+         log.debug("Missing field '{}'", fromFieldName);
+      } else if (overwrite || !doc.containsField(toFieldName)) {
          if (withAnnotations) {
             doc.setField(toFieldName, doc.getFields(fromFieldName));
+            log.debug("Copying field '{}' to '{}', with annotations", fromFieldName, toFieldName);
          } else {
             doc.setFieldValues(toFieldName, doc.getFieldValues(fromFieldName));
+            log.debug("Copying field '{}' to '{}'", fromFieldName, toFieldName);
          }
+      } else {
+         log.debug("Did not copy field '{}' to '{}' because overwrite was not set", fromFieldName, toFieldName);
       }
 
       return PipelineStepStatus.DEFAULT;
@@ -50,20 +76,12 @@ public class CopyField extends BasePipelineStep {
       return "$Revision$";
    }
 
-   public String getFromFieldName() {
-      return fromFieldName;
+   public Map<String, String> getFieldNameMap() {
+      return fieldNameMap;
    }
 
-   public void setFromFieldName(String fromFieldName) {
-      this.fromFieldName = fromFieldName;
-   }
-
-   public String getToFieldName() {
-      return toFieldName;
-   }
-
-   public void setToFieldName(String toFieldName) {
-      this.toFieldName = toFieldName;
+   public void setFieldNameMap(Map<String, String> fieldNameMap) {
+      this.fieldNameMap = fieldNameMap;
    }
 
    public boolean isWithAnnotations() {
