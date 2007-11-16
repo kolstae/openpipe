@@ -18,6 +18,7 @@ package no.trank.openpipe.config;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 import java.util.Collection;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +29,7 @@ import no.trank.openpipe.config.annotation.NotNull;
 import no.trank.openpipe.config.annotation.NullNotEmpty;
 
 /**
- * A utillity class for validating fields of an instance according to the annotations: {@link NotNull}, {@link NotEmpty}
+ * A utility class for validating fields of an instance according to the annotations: {@link NotNull}, {@link NotEmpty}
  * and {@link NullNotEmpty}.
  *
  * @version $Revision$
@@ -39,11 +40,11 @@ public class BeanValidator {
    /**
     * Validates fields of the given object, including fields of super classes.
     * <br>
-    * Currently {@link NotNull}, {@link NotEmpty} and {@link NullNotEmpty} is supported. {@link NotEmpty} and
-    * {@link NullNotEmpty} is supported for fields of type {@link CharSequence} and {@link Collection}, for unsupported
-    * types a warning is logged, but no exception is thrown.
+    * Currently {@link NotNull}, {@link NotEmpty} and {@link NullNotEmpty} are supported. {@link NotEmpty} and
+    * {@link NullNotEmpty} are supported for fields of type {@link CharSequence}, {@link Collection} and
+    * {@link Map}. For unsupported types a warning is logged, but no exception is thrown.
     *
-    * @param obj the object whos fields should be validated.
+    * @param obj the object whose fields should be validated.
     *
     * @throws PipelineException if {@link NotNull} is declared for a field that is <tt>null</tt>, or if {@link NotEmpty}
     * is declared for a field that is <tt>empty</tt> or <tt>null</tt>.
@@ -78,7 +79,10 @@ public class BeanValidator {
          return ((CharSequence) obj).length() <= 0;
       }
       if (obj instanceof Collection) {
-         return ((Collection) obj).isEmpty();
+         return ((Collection<?>) obj).isEmpty();
+      }
+      if (obj instanceof Map) {
+         return ((Map<?, ?>) obj).isEmpty();
       }
       log.warn("Empty check not supported for type: {}", obj.getClass().getName());
       return false;
