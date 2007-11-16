@@ -8,20 +8,20 @@
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
-   <bean class="no.trank.openpipe.step.AnnotateSentence"/>
-   <bean class="no.trank.openpipe.step.AnnotateSpace"/>
-   <bean class="no.trank.openpipe.step.AnnotationToField"/>
-   <bean class="no.trank.openpipe.step.ChecksumFields"/>
-   <bean class="no.trank.openpipe.step.ConvertDate"/>
-   <bean class="no.trank.openpipe.step.CopyField"/>
-   <bean class="no.trank.openpipe.step.Debug"/>
-   <bean class="no.trank.openpipe.step.HierarchicalSplitter"/>
-   <bean class="no.trank.openpipe.step.ParseXML"/>
-   <bean class="no.trank.openpipe.step.ParseXMLXPath"/>
-   <bean class="no.trank.openpipe.step.PipelineSelector"/>
-   <bean class="no.trank.openpipe.step.RegexField"/>
-   <bean class="no.trank.openpipe.step.RemoveFields"/>
-   <bean class="no.trank.openpipe.step.SetField"/>
-   <bean class="no.trank.openpipe.step.StripHtml"/>
-   <bean class="no.trank.openpipe.step.Uppercase"/>
+   <bean class="no.trank.openpipe.step.AnnotateSentence" scope="prototype"/>
+   <bean class="no.trank.openpipe.step.AnnotateSpace" scope="prototype"/>
+   <bean class="no.trank.openpipe.step.AnnotationToField" scope="prototype"/>
+   <bean class="no.trank.openpipe.step.ChecksumFields" scope="prototype"/>
+   <bean class="no.trank.openpipe.step.ConvertDate" scope="prototype"/>
+   <bean class="no.trank.openpipe.step.CopyField" scope="prototype"/>
+   <bean class="no.trank.openpipe.step.Debug" scope="prototype"/>
+   <bean class="no.trank.openpipe.step.HierarchicalSplitter" scope="prototype"/>
+   <bean class="no.trank.openpipe.step.ParseXML" scope="prototype"/>
+   <bean class="no.trank.openpipe.step.ParseXMLXPath" scope="prototype"/>
+   <bean class="no.trank.openpipe.step.PipelineSelector" scope="prototype"/>
+   <bean class="no.trank.openpipe.step.RegexField" scope="prototype"/>
+   <bean class="no.trank.openpipe.step.RemoveFields" scope="prototype"/>
+   <bean class="no.trank.openpipe.step.SetField" scope="prototype"/>
+   <bean class="no.trank.openpipe.step.StripHtml" scope="prototype"/>
+   <bean class="no.trank.openpipe.step.Uppercase" scope="prototype"/>
 </beans>

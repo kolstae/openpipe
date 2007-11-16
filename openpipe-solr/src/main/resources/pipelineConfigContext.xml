@@ -8,6 +8,6 @@
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
  
-   <bean class="no.trank.openpipe.solr.step.SolrAnalyzerStep"/>
-   <bean class="no.trank.openpipe.solr.step.SolrDocumentProcessor"/>
+   <bean class="no.trank.openpipe.solr.step.SolrAnalyzerStep" scope="prototype"/>
+   <bean class="no.trank.openpipe.solr.step.SolrDocumentProcessor" scope="prototype"/>
 </beans>

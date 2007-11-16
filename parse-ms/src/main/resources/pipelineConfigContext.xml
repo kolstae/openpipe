@@ -8,7 +8,7 @@
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
  
-   <bean class="no.trank.openpipe.parse.ms.ExcelParser"/>
-   <bean class="no.trank.openpipe.parse.ms.PowerPointParser"/>
-   <bean class="no.trank.openpipe.parse.ms.WordParser"/>
+   <bean class="no.trank.openpipe.parse.ms.ExcelParser" scope="prototype"/>
+   <bean class="no.trank.openpipe.parse.ms.PowerPointParser" scope="prototype"/>
+   <bean class="no.trank.openpipe.parse.ms.WordParser" scope="prototype"/>
 </beans>

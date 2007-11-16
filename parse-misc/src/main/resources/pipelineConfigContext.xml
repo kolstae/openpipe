@@ -8,8 +8,8 @@
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
  
-   <bean class="no.trank.openpipe.parse.oo.OOParser"/>
-   <bean class="no.trank.openpipe.parse.pdf.PDFParser"/>
-   <bean class="no.trank.openpipe.parse.text.TextParser"/>
-   <bean class="no.trank.openpipe.parse.xml.XMLParser"/>
+   <bean class="no.trank.openpipe.parse.oo.OOParser" scope="prototype"/>
+   <bean class="no.trank.openpipe.parse.pdf.PDFParser" scope="prototype"/>
+   <bean class="no.trank.openpipe.parse.text.TextParser" scope="prototype"/>
+   <bean class="no.trank.openpipe.parse.xml.XMLParser" scope="prototype"/>
 </beans>
