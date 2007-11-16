@@ -53,6 +53,7 @@ public class TextDecoder implements Closeable {
    private CharBuffer charBuffer;
    private ByteBuffer directByteBuffer;
    private ByteBuffer byteBuffer;
+   private String language;
 
    public TextDecoder() {
       this("UTF-8");
@@ -94,6 +95,7 @@ public class TextDecoder implements Closeable {
 
    public String decode(ParseData data) throws IOException {
       encoding = null;
+      language = null;
       final InputStream in = data.getInputStream();
       final FileChannel channel = getChannel(in);
       final StringBuilder buf = new StringBuilder(data.getLength());
@@ -224,7 +226,11 @@ public class TextDecoder implements Closeable {
          log.debug("Detector has confidence: {} encoding {} lang {}", 
                new Object[] {match.getConfidence(), match.getName(), match.getLanguage()});
       }
-      return match.getConfidence() > 50 ? match.getName() : null;
+      if (match.getConfidence() > 50) {
+         language = match.getLanguage();
+         return match.getName();
+      }
+      return null;
    }
 
    private static String decode(FileChannel channel, ByteBuffer bBuf, CharBuffer cBuf, StringBuilder buf, 
@@ -309,6 +315,10 @@ public class TextDecoder implements Closeable {
 
    public String getEncoding() {
       return encoding;
+   }
+
+   public String getLanguage() {
+      return language;
    }
 
    @Override

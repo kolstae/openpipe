@@ -18,6 +18,7 @@ package no.trank.openpipe.parse.text;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
 
 import no.trank.openpipe.parse.api.ParseData;
 import no.trank.openpipe.parse.api.Parser;
@@ -47,7 +48,15 @@ public class TextParser implements Parser, Closeable {
       }
       final ParserResultImpl result = new ParserResultImpl(text);
       if (data.includeProperties()) {
-         result.setProperties(Collections.singletonMap("encoding", decoder.getEncoding()));
+         final String lang = decoder.getLanguage();
+         if (lang != null) {
+            final HashMap<String, String> props = new HashMap<String, String>();
+            props.put("encoding", decoder.getEncoding());
+            props.put("language", lang);
+            result.setProperties(props);
+         } else {
+            result.setProperties(Collections.singletonMap("encoding", decoder.getEncoding()));
+         }
       }
       return result;
    }
