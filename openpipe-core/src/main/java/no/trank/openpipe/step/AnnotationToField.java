@@ -26,13 +26,17 @@ import no.trank.openpipe.api.PipelineStepStatus;
 import no.trank.openpipe.api.document.AnnotatedField;
 import no.trank.openpipe.api.document.Document;
 import no.trank.openpipe.api.document.ResolvedAnnotation;
+import no.trank.openpipe.config.annotation.NotEmpty;
 
 /**
  * @version $Revision$
  */
 public class AnnotationToField extends BasePipelineStep {
+   @NotEmpty
    private String fromFieldName;
+   @NotEmpty
    private String annotationType;
+   @NotEmpty
    private String toFieldName;
    private boolean failOnEmpty;
 
@@ -64,13 +68,6 @@ public class AnnotationToField extends BasePipelineStep {
          return newValues;
       }
       return Collections.emptyList();
-   }
-
-   @Override
-   public void prepare() throws PipelineException {
-      if (fromFieldName == null || annotationType == null || toFieldName == null) {
-         throw new PipelineException("Field names / annotation type not configured");
-      }
    }
 
    @Override

@@ -20,11 +20,13 @@ import java.util.List;
 
 import no.trank.openpipe.api.document.AnnotatedField;
 import no.trank.openpipe.api.document.Document;
+import no.trank.openpipe.config.annotation.NotEmpty;
 
 /**
  * @version $Revision$
  */
 public abstract class MultiInputFieldPipelineStep extends BasePipelineStep {
+   @NotEmpty
    private List<String> inputFields = Collections.emptyList();
 
    /**
@@ -82,18 +84,6 @@ public abstract class MultiInputFieldPipelineStep extends BasePipelineStep {
          throws PipelineException;
 
    /**
-    * Checks if {@link #getInputFields() inputFields} is empty. 
-    * 
-    * @throws PipelineException if {@link #getInputFields() inputFields} is empty.
-    */
-   @Override
-   public void prepare() throws PipelineException {
-      if (inputFields.isEmpty()) {
-         throw new PipelineException("No input-fields configured");
-      }
-   }
-
-   /**
     * Gets the input-fields for this step.
     * 
     * @return the input-fields for this step. <em>Must</em> not be <tt>null</tt>.
@@ -108,11 +98,7 @@ public abstract class MultiInputFieldPipelineStep extends BasePipelineStep {
     * @param inputFields the input-fields for this step.
     */
    public void setInputFields(List<String> inputFields) {
-      if (inputFields != null) {
-         this.inputFields = inputFields;
-      } else {
-         this.inputFields = Collections.emptyList();
-      }
+      this.inputFields = inputFields;
    }
 
    /**

@@ -34,6 +34,8 @@ import static no.trank.openpipe.api.PipelineStepStatusCode.CONTINUE;
 import static no.trank.openpipe.api.PipelineStepStatusCode.DIVERT_PIPELINE;
 import no.trank.openpipe.api.SubPipeline;
 import no.trank.openpipe.api.document.Document;
+import no.trank.openpipe.config.annotation.NotEmpty;
+import no.trank.openpipe.config.annotation.NotNull;
 
 /**
  * A {@link PipelineStep} that selects a sub-pipeline and 
@@ -42,7 +44,9 @@ import no.trank.openpipe.api.document.Document;
  */
 public class PipelineSelector extends BasePipelineStep {
    private static final Logger log = LoggerFactory.getLogger(PipelineSelector.class);
+   @NotEmpty
    private Map<String, List<PipelineStep>> operationMap = Collections.emptyMap();
+   @NotNull
    private Map<String, PipelineStepStatusCode> statusCodeMap = Collections.emptyMap();
    private Map<String, SubPipeline> opMap = new HashMap<String, SubPipeline>();
 
@@ -70,6 +74,8 @@ public class PipelineSelector extends BasePipelineStep {
 
    @Override
    public void prepare() throws PipelineException {
+      super.prepare();
+
       opMap.clear();
       for (Map.Entry<String,List<PipelineStep>> entry : operationMap.entrySet()) {
          final BaseSubPipeline pipeline = new BaseSubPipeline(entry.getValue());

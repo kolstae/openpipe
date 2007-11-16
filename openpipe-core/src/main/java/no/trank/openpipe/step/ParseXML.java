@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
-
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -32,13 +31,15 @@ import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import no.trank.openpipe.api.BasePipelineStep;
 import no.trank.openpipe.api.PipelineException;
 import no.trank.openpipe.api.PipelineStepStatus;
 import no.trank.openpipe.api.document.Document;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import no.trank.openpipe.config.annotation.NotEmpty;
+import no.trank.openpipe.config.annotation.NotNull;
 
 /**
  * 
@@ -48,8 +49,11 @@ public class ParseXML extends BasePipelineStep {
    private static final Logger log = LoggerFactory.getLogger(ParseXML.class);
    private static final Pattern WS_PATTERN = Pattern.compile("\\s+");
    private XMLInputFactory factory;
+   @NotEmpty
    private String fieldName;
+   @NotNull
    private Set<String> ignoredTags = Collections.emptySet();
+   @NotNull
    private Map<String, String> tagToFieldName = Collections.emptyMap();
    private boolean failOnXMLError = true;
 
@@ -118,6 +122,8 @@ public class ParseXML extends BasePipelineStep {
 
    @Override
    public void prepare() throws PipelineException {
+      super.prepare();
+      
       if (factory == null) {
          factory = XMLInputFactory.newInstance();
       }

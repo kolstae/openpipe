@@ -16,7 +16,6 @@
 package no.trank.openpipe.opennlp.step;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -33,13 +32,15 @@ import no.trank.openpipe.api.document.Annotation;
 import no.trank.openpipe.api.document.BaseAnnotation;
 import no.trank.openpipe.api.document.Document;
 import no.trank.openpipe.api.document.ResolvedAnnotation;
+import no.trank.openpipe.config.annotation.NotEmpty;
 
 /**
  * @version $Revision$
  */
 public class ONLPNEDetector extends MultiInputFieldPipelineStep {
    public static final String TYPE_NE = "opennlp.ne.";
-   private Map<String, NameFinder> nameFinders = Collections.emptyMap();
+   @NotEmpty
+   private Map<String, NameFinder> nameFinders = null;
 
    public ONLPNEDetector() {
       super("Open NLP NE-detector");
@@ -49,14 +50,6 @@ public class ONLPNEDetector extends MultiInputFieldPipelineStep {
    protected void process(Document doc, String fieldName, List<AnnotatedField> fieldValues) throws PipelineException {
       for (AnnotatedField fieldValue : fieldValues) {
          processField(fieldValue);
-      }
-   }
-
-   @Override
-   public void prepare() throws PipelineException {
-      super.prepare();
-      if (nameFinders.isEmpty()) {
-         throw new PipelineException("No nameFinders configured");
       }
    }
 
@@ -142,11 +135,7 @@ public class ONLPNEDetector extends MultiInputFieldPipelineStep {
    }
 
    public void setNameFinders(Map<String, NameFinder> nameFinders) {
-      if (nameFinders != null) {
-         this.nameFinders = nameFinders;
-      } else {
-         this.nameFinders = Collections.emptyMap();
-      }
+      this.nameFinders = nameFinders;
    }
 
    private static final class NameFinderHolder {

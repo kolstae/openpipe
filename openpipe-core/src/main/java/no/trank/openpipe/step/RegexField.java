@@ -21,13 +21,15 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import no.trank.openpipe.api.BasePipelineStep;
 import no.trank.openpipe.api.PipelineException;
 import no.trank.openpipe.api.PipelineStepStatus;
 import no.trank.openpipe.api.document.Document;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import no.trank.openpipe.config.annotation.NotEmpty;
+import no.trank.openpipe.config.annotation.NotNull;
 
 /**
  * This step offers java regex functionality. 
@@ -36,9 +38,11 @@ import org.slf4j.LoggerFactory;
  */
 public class RegexField extends BasePipelineStep {
    private static Logger log = LoggerFactory.getLogger(RegexField.class);
-   
+   @NotEmpty
    private Map<String, String> fieldNameMap;
+   @NotNull
    private Pattern fromPattern;
+   @NotNull
    private String toPattern;
    private boolean copyOnMiss;
 
@@ -48,10 +52,8 @@ public class RegexField extends BasePipelineStep {
 
    @Override
    public PipelineStepStatus execute(Document doc) throws PipelineException {
-      if (fieldNameMap != null) {
-         for(Map.Entry<String, String> pair : fieldNameMap.entrySet()) {
-            process(doc, pair.getKey(), pair.getValue());
-         }
+      for(Map.Entry<String, String> pair : fieldNameMap.entrySet()) {
+         process(doc, pair.getKey(), pair.getValue());
       }
 
       return PipelineStepStatus.DEFAULT;

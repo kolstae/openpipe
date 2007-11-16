@@ -18,19 +18,21 @@ package no.trank.openpipe.step;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import no.trank.openpipe.api.BasePipelineStep;
 import no.trank.openpipe.api.PipelineException;
 import no.trank.openpipe.api.PipelineStepStatus;
 import no.trank.openpipe.api.document.Document;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import no.trank.openpipe.config.annotation.NotEmpty;
 
 /**
  * @version $Revision$
  */
 public class StripHtml extends BasePipelineStep {
    private static Logger log = LoggerFactory.getLogger(StripHtml.class);
+   @NotEmpty
    private Map<String, String> fieldNameMap;
 
    public StripHtml() {
@@ -39,10 +41,8 @@ public class StripHtml extends BasePipelineStep {
 
    @Override
    public PipelineStepStatus execute(Document doc) throws PipelineException {
-      if (fieldNameMap != null) {
-         for(Map.Entry<String, String> pair : fieldNameMap.entrySet()) {
-            process(doc, pair.getKey(), pair.getValue());
-         }
+      for(Map.Entry<String, String> pair : fieldNameMap.entrySet()) {
+         process(doc, pair.getKey(), pair.getValue());
       }
 
       return PipelineStepStatus.DEFAULT;
@@ -234,7 +234,7 @@ public class StripHtml extends BasePipelineStep {
           Character c = (char) Integer.parseInt(entity.substring(start), radix);
           return c.toString();
         } else {
-          String s = (String)decoder.get(entity);
+          String s = decoder.get(entity);
           if (s != null)
             return s;
           else return "";

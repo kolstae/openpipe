@@ -31,6 +31,7 @@ import no.trank.openpipe.api.PipelineException;
 import no.trank.openpipe.api.document.AnnotatedField;
 import no.trank.openpipe.api.document.Annotation;
 import no.trank.openpipe.api.document.Document;
+import no.trank.openpipe.config.annotation.NotNull;
 import no.trank.openpipe.solr.analysis.AnnotationTokenStream;
 import no.trank.openpipe.solr.analysis.TokenStreamAnnotation;
 
@@ -42,6 +43,7 @@ import no.trank.openpipe.solr.analysis.TokenStreamAnnotation;
 public class SolrAnalyzerStep extends MultiInputFieldPipelineStep {
    private TokenizerFactory tokenizerFactory;
    private List<TokenFilterFactory> filterFactories = Collections.emptyList();
+   @NotNull
    private Set<String> annotations = Collections.emptySet();
 
    /**

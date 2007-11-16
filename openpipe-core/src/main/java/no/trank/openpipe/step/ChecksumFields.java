@@ -25,6 +25,8 @@ import no.trank.openpipe.api.PipelineException;
 import no.trank.openpipe.api.PipelineStepStatus;
 import no.trank.openpipe.api.document.AnnotatedField;
 import no.trank.openpipe.api.document.Document;
+import no.trank.openpipe.config.BeanValidator;
+import no.trank.openpipe.config.annotation.NotEmpty;
 import static no.trank.openpipe.util.HexUtil.toHexString;
 
 /**
@@ -32,7 +34,9 @@ import static no.trank.openpipe.util.HexUtil.toHexString;
  */
 public class ChecksumFields extends MultiInputFieldPipelineStep {
    private final static Charset CHARSET = Charset.forName("UTF-8"); 
+   @NotEmpty
    private String outField;
+   @NotEmpty
    private String algorithm = "MD5";
    private MessageDigest messageDigest;
 
@@ -78,10 +82,7 @@ public class ChecksumFields extends MultiInputFieldPipelineStep {
 
    @Override
    public void prepare() throws PipelineException {
-      super.prepare();
-      if (outField == null) {
-         throw new PipelineException("No outField configured");
-      }
+      BeanValidator.validate(this);
       try {
          messageDigest = MessageDigest.getInstance(algorithm);
       } catch (NoSuchAlgorithmException e) {

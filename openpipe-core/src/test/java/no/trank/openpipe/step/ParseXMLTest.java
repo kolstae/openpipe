@@ -15,49 +15,40 @@
  */
 package no.trank.openpipe.step;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import junit.framework.TestCase;
 
-import no.trank.openpipe.api.PipelineException;
 import no.trank.openpipe.api.document.Document;
 
 /**
  * @version $Revision$
  */
 public class ParseXMLTest extends TestCase {
-   private ParseXML xml;
 
    public void testParse() throws Exception {
       final Document doc = new Document();
-//      doc.setFieldValue("xml", FileIO.readFile("/home/espen/projects/sandbox/pipeline-parent/pom.xml"));
-      doc.setFieldValue("xml", "<project><test abc=\"attrib\">dillbert</test></project>");
+      ParseXML xml = new ParseXML();
+      doc.setFieldValue("xml", "<project><test abc=\"attrib\">Text that should be included</test><ignored>Ignored text</ignored></project>");
       xml.setFieldName("xml");
-      final Set<String> ignoredTags = new HashSet<String>(Arrays.asList("modelVersion", "name", "id"));
+      final Set<String> ignoredTags = Collections.singleton("ignored");
       xml.setIgnoredTags(ignoredTags);
       final HashMap<String, String> tagToFieldName = new HashMap<String, String>();
-      tagToFieldName.put("artifactId", "depMod");
+      tagToFieldName.put("test", "testField");
       xml.setTagToFieldName(tagToFieldName);
+      xml.prepare();
       xml.execute(doc);
       doc.removeField("xml");
-      new Debug().execute(doc);
-//      for (String tag : ignoredTags) {
-//         assertTrue(doc.getFieldValues(tag).isEmpty());
-//      }
-//      for (Map.Entry<String, String> e : tagToFieldName.entrySet()) {
-//         assertTrue(doc.getFieldValues(e.getKey()).isEmpty());
-//         assertFalse(doc.getFieldValues(e.getValue()).isEmpty());
-//      }
-   }
-
-   @Override
-   protected void setUp() throws PipelineException {
-      xml = new ParseXML();
-      xml.prepare();
-      
+      for (String tag : ignoredTags) {
+         assertTrue(doc.getFieldValues(tag).isEmpty());
+      }
+      for (Map.Entry<String, String> e : tagToFieldName.entrySet()) {
+         assertTrue(doc.getFieldValues(e.getKey()).isEmpty());
+         assertFalse(doc.getFieldValues(e.getValue()).isEmpty());
+      }
    }
 }
  

@@ -21,11 +21,13 @@ import no.trank.openpipe.api.BasePipelineStep;
 import no.trank.openpipe.api.PipelineException;
 import no.trank.openpipe.api.PipelineStepStatus;
 import no.trank.openpipe.api.document.Document;
+import no.trank.openpipe.config.annotation.NotEmpty;
 
 /**
  * @version $Revision$
  */
 public class SetField extends BasePipelineStep {
+   @NotEmpty
    private Map<String, String> fieldValueMap;
    private boolean overwrite = true;
 

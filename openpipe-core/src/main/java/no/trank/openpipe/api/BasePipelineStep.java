@@ -15,12 +15,16 @@
  */
 package no.trank.openpipe.api;
 
+import no.trank.openpipe.config.BeanValidator;
+import no.trank.openpipe.config.annotation.NotEmpty;
+
 /**
  * A convenient base-implementation of a {@link PipelineStep}.
  *
  * @version $Revision$
  */
 public abstract class BasePipelineStep implements PipelineStep {
+   @NotEmpty
    private String name;
 
    /**
@@ -36,10 +40,13 @@ public abstract class BasePipelineStep implements PipelineStep {
    }
 
    /**
-    * Does nothing. Override to implement. 
+    * Calls {@link BeanValidator#validate(Object) BeanValidator.validate(this)}.
+    *
+    * @throws PipelineException see {@link BeanValidator#validate(Object)}.
     */
    @Override
    public void prepare() throws PipelineException {
+      BeanValidator.validate(this);
    }
 
    /**

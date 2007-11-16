@@ -18,23 +18,29 @@ package no.trank.openpipe.step;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import no.trank.openpipe.api.BasePipelineStep;
 import no.trank.openpipe.api.PipelineException;
 import no.trank.openpipe.api.PipelineStepStatus;
 import no.trank.openpipe.api.document.Document;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import no.trank.openpipe.config.annotation.NotEmpty;
+import no.trank.openpipe.config.annotation.NotNull;
 
 /**
  * @version $Revision$
  */
 public class HierarchicalSplitter extends BasePipelineStep {
    private static Logger log = LoggerFactory.getLogger(HierarchicalSplitter.class);
+   @NotEmpty
    private String fromFieldName;
+   @NotEmpty
    private String toFieldName;
    private int numLevels;
+   @NotNull
    private String levelSplit;
+   @NotNull
    private String alternativeSplit;
 
    public HierarchicalSplitter() {

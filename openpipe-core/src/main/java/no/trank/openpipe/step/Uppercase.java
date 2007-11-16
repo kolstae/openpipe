@@ -19,12 +19,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import no.trank.openpipe.api.BasePipelineStep;
 import no.trank.openpipe.api.PipelineStepStatus;
 import no.trank.openpipe.api.document.Document;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import no.trank.openpipe.config.annotation.NotEmpty;
 
 /**
  * This step converts input text into uppercase.
@@ -33,6 +34,7 @@ import org.slf4j.LoggerFactory;
  */
 public class Uppercase extends BasePipelineStep {
    private static final Logger log = LoggerFactory.getLogger(Uppercase.class);
+   @NotEmpty
    private Map<String, String> fieldNameMap;
 
    public Uppercase() {
@@ -41,10 +43,8 @@ public class Uppercase extends BasePipelineStep {
 
    @Override
    public PipelineStepStatus execute(Document doc) {
-      if (fieldNameMap != null) {
-         for(Map.Entry<String, String> pair : fieldNameMap.entrySet()) {
-            process(doc, pair.getKey(), pair.getValue());
-         }
+      for(Map.Entry<String, String> pair : fieldNameMap.entrySet()) {
+         process(doc, pair.getKey(), pair.getValue());
       }
 
       return PipelineStepStatus.DEFAULT;

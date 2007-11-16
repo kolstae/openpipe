@@ -33,6 +33,9 @@ import no.trank.openpipe.api.PipelineStepStatus;
 import no.trank.openpipe.api.PipelineStepStatusCode;
 import no.trank.openpipe.api.document.Document;
 import no.trank.openpipe.api.document.RawData;
+import no.trank.openpipe.config.annotation.NotEmpty;
+import no.trank.openpipe.config.annotation.NotNull;
+import no.trank.openpipe.config.annotation.NullNotEmpty;
 import no.trank.openpipe.parse.api.ParseData;
 import no.trank.openpipe.parse.api.Parser;
 import no.trank.openpipe.parse.api.ParserResult;
@@ -44,11 +47,17 @@ import no.trank.openpipe.parse.api.PipelineParseData;
 public class DocumentParser extends BasePipelineStep {
    private static final Logger log = LoggerFactory.getLogger(DocumentParser.class);
    private final Set<String> loggedExt = new HashSet<String>();
+   @NotEmpty
    private String fileNameField = "fileName";
+   @NotNull
    private Map<String, Parser> parsers = Collections.emptyMap();
+   @NotNull
    private List<Parser> fallbackParsers = Collections.emptyList();
+   @NotNull
    private Set<String> ignoredFileExtensions = Collections.emptySet();
+   @NotEmpty
    private String textField;
+   @NullNotEmpty
    private String titleField;
    private boolean includeProperties;
    private boolean failOnParseFailure;
@@ -136,9 +145,8 @@ public class DocumentParser extends BasePipelineStep {
 
    @Override
    public void prepare() throws PipelineException {
-      if (textField == null) {
-         throw new PipelineException("textField cannot be null", getName());
-      }
+      super.prepare();
+      
       if (parsers.isEmpty() && fallbackParsers.isEmpty()) {
          throw new PipelineException("No parser configured", getName());
       }
@@ -181,9 +189,7 @@ public class DocumentParser extends BasePipelineStep {
    }
 
    public void setParsers(Map<String, Parser> parsers) {
-      if (parsers != null) {
-         this.parsers = parsers;
-      }
+      this.parsers = parsers;
    }
 
    public List<Parser> getFallbackParsers() {
@@ -191,9 +197,7 @@ public class DocumentParser extends BasePipelineStep {
    }
 
    public void setFallbackParsers(List<Parser> fallbackParsers) {
-      if (fallbackParsers != null) {
-         this.fallbackParsers = fallbackParsers;
-      }
+      this.fallbackParsers = fallbackParsers;
    }
 
    public Set<String> getIgnoredFileExtensions() {
@@ -201,9 +205,7 @@ public class DocumentParser extends BasePipelineStep {
    }
 
    public void setIgnoredFileExtensions(Set<String> ignoredFileExtensions) {
-      if (ignoredFileExtensions != null) {
-         this.ignoredFileExtensions = ignoredFileExtensions;
-      }
+      this.ignoredFileExtensions = ignoredFileExtensions;
    }
 
    public String getTextField() {

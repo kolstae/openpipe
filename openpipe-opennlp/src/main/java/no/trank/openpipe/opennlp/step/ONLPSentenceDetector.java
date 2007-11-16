@@ -26,6 +26,7 @@ import no.trank.openpipe.api.document.AnnotatedField;
 import no.trank.openpipe.api.document.Annotation;
 import no.trank.openpipe.api.document.BaseAnnotation;
 import no.trank.openpipe.api.document.Document;
+import no.trank.openpipe.config.annotation.NotNull;
 
 /**
 
@@ -33,6 +34,7 @@ import no.trank.openpipe.api.document.Document;
  */
 public class ONLPSentenceDetector extends MultiInputFieldPipelineStep {
    public static final String TYPE_SENTENCE = "opennlp.sentence";
+   @NotNull
    private SentenceDetector detector;
 
    public ONLPSentenceDetector() {
@@ -43,15 +45,6 @@ public class ONLPSentenceDetector extends MultiInputFieldPipelineStep {
    protected void process(Document doc, String fieldName, List<AnnotatedField> fieldValues) throws PipelineException {
       for (AnnotatedField fieldValue : fieldValues) {
          fieldValue.add(TYPE_SENTENCE, buildAnn(detector.sentPosDetect(fieldValue.getValue())));
-      }
-   }
-
-   @Override
-   public void prepare() throws PipelineException {
-      super.prepare();
-      
-      if (detector == null) {
-         throw new PipelineException("No detector configured");
       }
    }
 

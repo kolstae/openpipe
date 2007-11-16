@@ -26,6 +26,7 @@ import no.trank.openpipe.api.PipelineException;
 import no.trank.openpipe.api.document.AnnotatedField;
 import no.trank.openpipe.api.document.Annotation;
 import no.trank.openpipe.api.document.Document;
+import no.trank.openpipe.config.annotation.NotNull;
 
 /**
 
@@ -33,6 +34,7 @@ import no.trank.openpipe.api.document.Document;
  */
 public class ONLPTokenizer extends MultiInputFieldPipelineStep {
    public static final String TYPE_TOKENIZE = "opennlp.tokenize";
+   @NotNull
    private Tokenizer tokenizer;
 
    public ONLPTokenizer() {
@@ -43,15 +45,6 @@ public class ONLPTokenizer extends MultiInputFieldPipelineStep {
    protected void process(Document doc, String fieldName, List<AnnotatedField> fieldValues) throws PipelineException {
       for (AnnotatedField fieldValue : fieldValues) {
          fieldValue.add(TYPE_TOKENIZE, buildAnn(tokenizer.tokenizePos(fieldValue.getValue())));
-      }
-   }
-
-   @Override
-   public void prepare() throws PipelineException {
-      super.prepare();
-      
-      if (tokenizer == null) {
-         throw new PipelineException("No tokenizer configured");
       }
    }
 

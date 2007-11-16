@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -32,17 +31,18 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import no.trank.openpipe.api.BasePipelineStep;
-import no.trank.openpipe.api.PipelineException;
-import no.trank.openpipe.api.PipelineStepStatus;
-import no.trank.openpipe.api.document.Document;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+
+import no.trank.openpipe.api.BasePipelineStep;
+import no.trank.openpipe.api.PipelineException;
+import no.trank.openpipe.api.PipelineStepStatus;
+import no.trank.openpipe.api.document.Document;
+import no.trank.openpipe.config.annotation.NotEmpty;
 
 /**
  *
@@ -51,7 +51,9 @@ import org.xml.sax.SAXException;
 public class ParseXMLXPath extends BasePipelineStep {
    private static final Logger log = LoggerFactory.getLogger(ParseXML.class);
    private static final Pattern WS_PATTERN = Pattern.compile("\\s+");
+   @NotEmpty
    private String fieldName;
+   @NotEmpty
    private Map<String, String> xPathToFieldName = Collections.emptyMap();
    private List<XPathFieldName> xPaths;
    private boolean failOnXMLError = true;
@@ -131,6 +133,8 @@ public class ParseXMLXPath extends BasePipelineStep {
 
    @Override
    public void prepare() throws PipelineException {
+      super.prepare();
+
       if (builder == null) {
          try {
             builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -140,9 +144,6 @@ public class ParseXMLXPath extends BasePipelineStep {
       }
       if (xPath == null) {
          xPath = XPathFactory.newInstance().newXPath();
-      }
-      if (xPathToFieldName.isEmpty()) {
-         throw new PipelineException("No xpaths configured");
       }
       try {
          compileXPaths();
