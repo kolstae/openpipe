@@ -20,27 +20,24 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
+
+import no.trank.openpipe.api.MultiInputOutputFieldPipelineStep;
+import no.trank.openpipe.api.PipelineException;
+import no.trank.openpipe.api.document.AnnotatedField;
+import no.trank.openpipe.api.document.Document;
+import no.trank.openpipe.config.annotation.NotEmpty;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import no.trank.openpipe.api.BasePipelineStep;
-import no.trank.openpipe.api.PipelineException;
-import no.trank.openpipe.api.PipelineStepStatus;
-import no.trank.openpipe.api.document.Document;
-import no.trank.openpipe.config.annotation.NotEmpty;
 
 /**
  * This step converts date formats using {@link SimpleDateFormat}.
  *
  * @version $Revision$
  */
-public class ConvertDate extends BasePipelineStep {
+public class ConvertDate extends MultiInputOutputFieldPipelineStep {
    private static Logger log = LoggerFactory.getLogger(ConvertDate.class);
-   @NotEmpty
-   private Map<String, String> fieldNameMap;
    @NotEmpty
    private LinkedHashMap<String, String> patternMap;
    private List<FormatPair> formats;
@@ -48,16 +45,7 @@ public class ConvertDate extends BasePipelineStep {
    private boolean blankError;
 
    public ConvertDate() {
-      super("ConvertDate");
-   }
-
-   @Override
-   public PipelineStepStatus execute(Document doc) throws PipelineException {
-      for (Map.Entry<String, String> pair : fieldNameMap.entrySet()) {
-         process(doc, pair.getKey(), pair.getValue());
-      }
-
-      return PipelineStepStatus.DEFAULT;
+      super("ConvertDate", false);
    }
 
    @Override
@@ -75,40 +63,45 @@ public class ConvertDate extends BasePipelineStep {
    }
 
    @Override
+   protected void process(Document doc, String inputFieldName, List<AnnotatedField> inputFields, String outputFieldName)
+         throws PipelineException {
+      if (!inputFields.isEmpty()) {
+         List<String> output = new ArrayList<String>();
+         for (AnnotatedField field : inputFields) {
+            try {
+               output.add(getOutputValue(inputFieldName, field.getValue()));
+            } catch (ParseException e) {
+               if (failOnError) {
+                  throw new PipelineException("Could not parse date " + field.getValue());
+               }
+            }
+         }
+         
+         doc.setFieldValues(outputFieldName, output);
+      } else if (blankError) {
+         throw new PipelineException("Field '" + inputFieldName + "' is empty");
+      }
+   }      
+
+   @Override
    public void finish(boolean success) throws PipelineException {
       formats = null;
    }
-
-   private void process(Document doc, String input, String output) throws PipelineException {
-      String old = doc.getFieldValue(input);
-      if (old != null && old.length() > 0) {
-
-         for (FormatPair format : formats) {
-            try {
-               final SimpleDateFormat from = format.getFrom();
-               final SimpleDateFormat to = format.getTo();
-
-               doc.setFieldValue(output, to.format(from.parse(old)));
-
-               if (log.isDebugEnabled()) {
-                  log.debug("Parsed field '" + input + "' with pattern '" + from.toPattern() +
-                        ". Wrote field '" + output + "' with pattern '" + to.toPattern());
-               }
-
-               return;
-            } catch (ParseException e) {
-               // Doing nothing
-            }
+   
+   private String getOutputValue(String fromFieldName, String fromValue) throws ParseException {
+      for (FormatPair format : formats) {
+         final SimpleDateFormat from = format.getFrom();
+         final SimpleDateFormat to = format.getTo();
+            
+         String ret = to.format(from.parse(fromValue));
+         if (log.isDebugEnabled()) {
+            log.debug("Parsed field '" + fromFieldName + "' with pattern '" + from.toPattern() +
+                      ". Output pattern: '" + to.toPattern() + "'");
          }
-
-         if (failOnError) {
-            throw new PipelineException("Could not parse date " + old);
-         } else {
-            log.debug("Was not able to parse field '{}'", input);
-         }
-      } else if (blankError) {
-         throw new PipelineException("Field '" + input + "' is " + (old == null ? "null" : "''"));
+         return ret;
       }
+      
+      return null; // will never be reached
    }
 
    @Override
@@ -117,23 +110,10 @@ public class ConvertDate extends BasePipelineStep {
    }
 
    /**
-    * Returns the names of the input/output field pairs.
-    *
-    * @return the name map
+    * Gets the ordered map of from/to date format pairs.
+    * 
+    * @return the pattern map
     */
-   public Map<String, String> getFieldNameMap() {
-      return fieldNameMap;
-   }
-
-   /**
-    * Sets the names of the input/output field pairs.
-    *
-    * @param fieldNameMap
-    */
-   public void setFieldNameMap(Map<String, String> fieldNameMap) {
-      this.fieldNameMap = fieldNameMap;
-   }
-
    public LinkedHashMap<String, String> getPatternMap() {
       return patternMap;
    }
@@ -149,7 +129,7 @@ public class ConvertDate extends BasePipelineStep {
    }
 
    /**
-    * Returns whether an exception will be thrown if an error occurs.
+    * Gets whether an exception will be thrown if an error occurs.
     *
     * @return true if an exception will be thrown, false otherwise
     */
@@ -166,9 +146,8 @@ public class ConvertDate extends BasePipelineStep {
       this.failOnError = failOnError;
    }
 
-
    /**
-    * Returns whether a blank input field will be treated as an error.
+    * Gets whether a blank input field will be treated as an error.
     *
     * @return true if a blank input field will be treated as an error, false otherwise
     */

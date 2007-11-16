@@ -16,60 +16,49 @@
 package no.trank.openpipe.step;
 
 import java.util.List;
-import java.util.Map;
+
+import no.trank.openpipe.api.MultiInputOutputFieldPipelineStep;
+import no.trank.openpipe.api.PipelineException;
+import no.trank.openpipe.api.document.AnnotatedField;
+import no.trank.openpipe.api.document.Document;
+import no.trank.openpipe.config.annotation.NotEmpty;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import no.trank.openpipe.api.BasePipelineStep;
-import no.trank.openpipe.api.PipelineException;
-import no.trank.openpipe.api.PipelineStepStatus;
-import no.trank.openpipe.api.document.Document;
-import no.trank.openpipe.config.annotation.NotEmpty;
 
 /**
  * This step copies values from fields to other fields.
  *
  * @version $Revision$
  */
-public class CopyField extends BasePipelineStep {
+public class CopyField extends MultiInputOutputFieldPipelineStep {
    private static final Logger log = LoggerFactory.getLogger(CopyField.class);
    @NotEmpty
-   private Map<String, String> fieldNameMap;
    private boolean withAnnotations;
    private boolean overwrite = true;
 
    public CopyField() {
-      super("CopyField");
+      super("CopyField", false);
    }
 
    @Override
-   public PipelineStepStatus execute(Document doc) throws PipelineException {
-      for(Map.Entry<String, String> pair : fieldNameMap.entrySet()) {
-         process(doc, pair.getKey(), pair.getValue());
-      }
-
-      return PipelineStepStatus.DEFAULT;
-   }
-
-   private PipelineStepStatus process(Document doc, String fromFieldName, String toFieldName) throws PipelineException {
-      List<String> values = doc.getFieldValues(fromFieldName);
-
-      if (values == null || values.isEmpty()) {
-         log.debug("Missing field '{}'", fromFieldName);
-      } else if (overwrite || !doc.containsField(toFieldName)) {
+   protected void process(Document doc, String inputFieldName, List<AnnotatedField> inputFields, String outputFieldName)
+         throws PipelineException {
+      if (overwrite || !doc.containsField(outputFieldName)) {
+         if (inputFields.isEmpty()) {
+            log.debug("Missing field '{}'", inputFieldName);
+         }
+         
          if (withAnnotations) {
-            doc.setField(toFieldName, doc.getFields(fromFieldName));
-            log.debug("Copying field '{}' to '{}', with annotations", fromFieldName, toFieldName);
+            doc.setField(outputFieldName, inputFields);
+            log.debug("Copying field '{}' to '{}', with annotations", inputFieldName, outputFieldName);
          } else {
-            doc.setFieldValues(toFieldName, doc.getFieldValues(fromFieldName));
-            log.debug("Copying field '{}' to '{}'", fromFieldName, toFieldName);
+            doc.setFieldValues(outputFieldName, doc.getFieldValues(inputFieldName));
+            log.debug("Copying field '{}' to '{}'", inputFieldName, outputFieldName);
          }
       } else {
-         log.debug("Did not copy field '{}' to '{}' because overwrite was not set", fromFieldName, toFieldName);
+         log.debug("Did not copy field '{}' to '{}' because overwrite was not set", inputFieldName, outputFieldName);
       }
-
-      return PipelineStepStatus.DEFAULT;
    }
 
    @Override
@@ -78,25 +67,7 @@ public class CopyField extends BasePipelineStep {
    }
 
    /**
-    * Returns the names of the input/output field pairs.
-    *
-    * @return the name map
-    */
-   public Map<String, String> getFieldNameMap() {
-      return fieldNameMap;
-   }
-
-   /**
-    * Sets the names of the input/output field pairs.
-    *
-    * @param fieldNameMap
-    */
-   public void setFieldNameMap(Map<String, String> fieldNameMap) {
-      this.fieldNameMap = fieldNameMap;
-   }
-
-   /**
-    * Returns whether any annotations associated with the input fields will be copied to the output fields.
+    * Gets whether any annotations associated with the input fields will be copied to the output fields.
     *
     * @return true if the annotations will be copied, false otherwise
     */
@@ -114,7 +85,7 @@ public class CopyField extends BasePipelineStep {
    }
 
    /**
-    * Returns whether the output fields will be overwritten if they already exist.
+    * Gets whether the output fields will be overwritten if they already exist.
     *
     * @return true if the output fields will be overwritten, false otherwise
     */

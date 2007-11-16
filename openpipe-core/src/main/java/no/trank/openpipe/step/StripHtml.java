@@ -15,52 +15,50 @@
  */
 package no.trank.openpipe.step;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import no.trank.openpipe.api.MultiInputOutputFieldPipelineStep;
+import no.trank.openpipe.api.PipelineException;
+import no.trank.openpipe.api.document.AnnotatedField;
+import no.trank.openpipe.api.document.Document;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import no.trank.openpipe.api.BasePipelineStep;
-import no.trank.openpipe.api.PipelineException;
-import no.trank.openpipe.api.PipelineStepStatus;
-import no.trank.openpipe.api.document.Document;
-import no.trank.openpipe.config.annotation.NotEmpty;
-
 /**
  * @version $Revision$
  */
-public class StripHtml extends BasePipelineStep {
+public class StripHtml extends MultiInputOutputFieldPipelineStep {
    private static Logger log = LoggerFactory.getLogger(StripHtml.class);
-   @NotEmpty
-   private Map<String, String> fieldNameMap;
 
    public StripHtml() {
-      super("StripHtml");
+      super("StripHtml", true);
    }
 
    @Override
-   public PipelineStepStatus execute(Document doc) throws PipelineException {
-      for(Map.Entry<String, String> pair : fieldNameMap.entrySet()) {
-         process(doc, pair.getKey(), pair.getValue());
-      }
-
-      return PipelineStepStatus.DEFAULT;
-   }
-
-   private static void process(Document doc, String input, String output) {
-      final String text = doc.getFieldValue(input);
-      if (text == null) {
-         log.debug("Field '{}' - null; Output field: '{}'", input, output);
-      } else {
+   protected void process(Document doc, String inputFieldName, List<AnnotatedField> inputFields, String outputFieldName)
+         throws PipelineException {
+      List<String> outValues = new ArrayList<String>();
+      
+      for (AnnotatedField field : inputFields) {
+         final String text = field.getValue();
          String outText = text;
          outText = stripComments(outText);
          outText = stripTags(outText);
          outText = trim(outText);
          outText = Entities.decodeAll(outText);
          
-         log.debug("Field '{}' length: {}; Output field '{}' length: {}", new Object[] { input, text.length(), output, outText.length() } );
-         doc.setFieldValue(output, outText);
+         log.debug("Field '{}' length: {}; Output field '{}' length: {}", new Object[] { inputFieldName, text.length(), outputFieldName, outText.length() } );
+         outValues.add(outText);
+      }
+      
+      if (outValues.isEmpty()) {
+         doc.removeField(outputFieldName);
+      } else {
+         doc.setFieldValues(outputFieldName, outValues);
       }
    }
 
@@ -173,14 +171,6 @@ public class StripHtml extends BasePipelineStep {
    @Override
    public String getRevision() {
       return "$Revision$";
-   }
-   
-   public void setFieldNameMap(Map<String, String> fieldNameMap) {
-      this.fieldNameMap = fieldNameMap;
-   }
-
-   public Map<String, String> getFieldNameMap() {
-      return fieldNameMap;
    }
       
    static class Entities {

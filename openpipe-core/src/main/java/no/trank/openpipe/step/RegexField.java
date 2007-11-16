@@ -17,29 +17,25 @@ package no.trank.openpipe.step;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import no.trank.openpipe.api.MultiInputOutputFieldPipelineStep;
+import no.trank.openpipe.api.PipelineException;
+import no.trank.openpipe.api.document.AnnotatedField;
+import no.trank.openpipe.api.document.Document;
+import no.trank.openpipe.config.annotation.NotNull;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import no.trank.openpipe.api.BasePipelineStep;
-import no.trank.openpipe.api.PipelineException;
-import no.trank.openpipe.api.PipelineStepStatus;
-import no.trank.openpipe.api.document.Document;
-import no.trank.openpipe.config.annotation.NotEmpty;
-import no.trank.openpipe.config.annotation.NotNull;
 
 /**
  * This step offers java regex functionality. 
  * 
  * @version $Revision$
  */
-public class RegexField extends BasePipelineStep {
+public class RegexField extends MultiInputOutputFieldPipelineStep {
    private static Logger log = LoggerFactory.getLogger(RegexField.class);
-   @NotEmpty
-   private Map<String, String> fieldNameMap;
    @NotNull
    private Pattern fromPattern;
    @NotNull
@@ -47,46 +43,31 @@ public class RegexField extends BasePipelineStep {
    private boolean copyOnMiss;
 
    public RegexField() {
-      super("RegexField");
+      super("RegexField", true);
    }
 
-   @Override
-   public PipelineStepStatus execute(Document doc) throws PipelineException {
-      for(Map.Entry<String, String> pair : fieldNameMap.entrySet()) {
-         process(doc, pair.getKey(), pair.getValue());
-      }
-
-      return PipelineStepStatus.DEFAULT;
-   }
-
-   private PipelineStepStatus process(Document doc, String fromFieldName, String toFieldName) throws PipelineException {
-      List<String> values = doc.getFieldValues(fromFieldName);
+   protected void process(Document doc, String inputFieldName, List<AnnotatedField> inputFields, String outputFieldName)
+         throws PipelineException {
       List<String> outValues = new ArrayList<String>();
     
-      if (values == null || values.isEmpty()) {
-         log.debug("Missing field '{}'", fromFieldName);
-      } else {
-         for (String value : values) {
-            Matcher m = fromPattern.matcher(value);
-            if (m.find()) {
-               log.debug("Field '{}' matches", fromFieldName);
-               outValues.add(m.replaceAll(toPattern));
-            } else {
-               log.debug("Field '{}' does not match", fromFieldName);
-               if (copyOnMiss) {
-                  outValues.add(value);
-               }
+      for (AnnotatedField field : inputFields) {
+         Matcher m = fromPattern.matcher(field.getValue());
+         if (m.find()) {
+            log.debug("Field '{}' matches", inputFieldName);
+            outValues.add(m.replaceAll(toPattern));
+         } else {
+            log.debug("Field '{}' does not match", inputFieldName);
+            if (copyOnMiss) {
+               outValues.add(field.getValue());
             }
          }
       }
       
       if (outValues.isEmpty()) {
-         doc.removeField(toFieldName);
+         doc.removeField(outputFieldName);
       } else {
-         doc.setFieldValues(toFieldName, outValues);
+         doc.setFieldValues(outputFieldName, outValues);
       }
-
-      return PipelineStepStatus.DEFAULT;
    }
 
    @Override
@@ -94,6 +75,11 @@ public class RegexField extends BasePipelineStep {
       return "$Revision$";
    }
 
+   /**
+    * Gets the regex pattern used for matching against the input field values.
+    * 
+    * @return the regex pattern
+    */
    public String getFromPattern() {
       return fromPattern != null ? fromPattern.pattern() : null;
    }
@@ -108,6 +94,11 @@ public class RegexField extends BasePipelineStep {
       this.fromPattern = Pattern.compile(fromPattern);
    }
 
+   /**
+    * Gets the pattern that is applied when producing the output field values.
+    * 
+    * @return the pattern
+    */
    public String getToPattern() {
       return toPattern;
    }
@@ -122,6 +113,13 @@ public class RegexField extends BasePipelineStep {
       this.toPattern = toPattern;
    }
 
+   /**
+    * Returns whether the input field value should be copied to the output field if the input field value does not
+    * match the from pattern.
+    * 
+    * @return true if the input field value should be copied to the output field if the input field value does not
+    *         match the from pattern, false otherwise
+    */
    public boolean isCopyOnMiss() {
       return copyOnMiss;
    }
@@ -134,24 +132,5 @@ public class RegexField extends BasePipelineStep {
     */
    public void setCopyOnMiss(boolean copyOnMiss) {
       this.copyOnMiss = copyOnMiss;
-   }
-
-   
-   /**
-    * Returns the names of the input/output field pairs.
-    * 
-    * @return the name map
-    */
-   public Map<String, String> getFieldNameMap() {
-      return fieldNameMap;
-   }
-
-   /**
-    * Sets the names of the input/output field pairs.
-    * 
-    * @param fieldNameMap
-    */
-   public void setFieldNameMap(Map<String, String> fieldNameMap) {
-      this.fieldNameMap = fieldNameMap;
    }
 }

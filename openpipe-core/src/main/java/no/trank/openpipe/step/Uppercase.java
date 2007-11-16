@@ -17,73 +17,48 @@ package no.trank.openpipe.step;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+
+import no.trank.openpipe.api.MultiInputOutputFieldPipelineStep;
+import no.trank.openpipe.api.PipelineException;
+import no.trank.openpipe.api.document.AnnotatedField;
+import no.trank.openpipe.api.document.Document;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import no.trank.openpipe.api.BasePipelineStep;
-import no.trank.openpipe.api.PipelineStepStatus;
-import no.trank.openpipe.api.document.Document;
-import no.trank.openpipe.config.annotation.NotEmpty;
 
 /**
  * This step converts input text into uppercase.
  * 
  * @version $Revision$
  */
-public class Uppercase extends BasePipelineStep {
+public class Uppercase extends MultiInputOutputFieldPipelineStep {
    private static final Logger log = LoggerFactory.getLogger(Uppercase.class);
-   @NotEmpty
-   private Map<String, String> fieldNameMap;
 
    public Uppercase() {
-      super("Uppercase");
+      super("Uppercase", false);
    }
 
    @Override
-   public PipelineStepStatus execute(Document doc) {
-      for(Map.Entry<String, String> pair : fieldNameMap.entrySet()) {
-         process(doc, pair.getKey(), pair.getValue());
+   protected void process(Document doc, String inputFieldName, List<AnnotatedField> inputFields, String outputFieldName)
+         throws PipelineException {
+      if (inputFields.isEmpty()) {
+         doc.removeField(outputFieldName);
       }
-
-      return PipelineStepStatus.DEFAULT;
-   }
-
-   private static void process(Document doc, String input, String output) {
-      if (!doc.containsField(input)) {
-         log.debug("Field '{}' - null; Output field: '{}'", input, output);
-      } else {
-         final List<String> values = doc.getFieldValues(input);
-         final ArrayList<String> newValues = new ArrayList<String>(values.size());
-         for (String text : values) {
-            log.debug("Field '{}' length: {}; Output field: '{}'", new Object[] { input, text.length(), output } );
-            newValues.add(text.toUpperCase());
+      else {
+         final ArrayList<String> outValues = new ArrayList<String>(inputFields.size());
+         
+         for (AnnotatedField field : inputFields) {
+            final String text = field.getValue();
+            log.debug("Field '{}' length: {}; Output field: '{}'",
+                      new Object[] { inputFieldName, text.length(), outputFieldName } );
+            outValues.add(text.toUpperCase());
          }
-         doc.setFieldValues(output, newValues);
+         doc.setFieldValues(outputFieldName, outValues);
       }
    }
 
    @Override
    public String getRevision() {
       return "$Revision$";
-   }
-
-   /**
-    * Sets the names of the input/output field pairs.
-    * 
-    * @param fieldNameMap
-    */
-   public void setFieldNameMap(Map<String, String> fieldNameMap) {
-      this.fieldNameMap = fieldNameMap;
-   }
-
-   /**
-    * Returns the names of the input/output field pairs.
-    * 
-    * @return the name map
-    */
-   public Map<String, String> getFieldNameMap() {
-      return fieldNameMap;
    }
 }
