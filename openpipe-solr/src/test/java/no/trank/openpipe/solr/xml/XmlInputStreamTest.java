@@ -46,4 +46,17 @@ public class XmlInputStreamTest extends TestCase {
          assertEquals(testString.charAt(i), b[i]);
       }
    }
+   
+   public void testSkip() throws Exception {
+      String testString = "<xml tralala>";
+      InputStream is = new XmlInputStream(new ByteArrayInputStream(("   " + testString).getBytes()));
+      
+      is.skip(1);
+      byte[] b = new byte[4096];
+      assertEquals(testString.length()-1, is.read(b, 0, b.length));
+      
+      for(int i = 1; i < testString.length(); ++i) {
+         assertEquals(testString.charAt(i), b[i-1]);
+      }
+   }
 }

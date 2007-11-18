@@ -15,31 +15,33 @@
  */
 package no.trank.openpipe.solr.xml;
 
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 /**
+ * <code>XmlInputStream</code> is a {@link FilterInputStream} implementation that trims leading whitespace characters.
+ * 
  * @version $Revision$
  */
-public class XmlInputStream extends InputStream {
+public class XmlInputStream extends FilterInputStream {
    private boolean skipping;
-   private InputStream inputStream;
    
    public XmlInputStream(InputStream inputStream) {
-      this.inputStream = inputStream; 
+      super(inputStream); 
       skipping = true;
    }
 
    @Override
    public int read() throws IOException {
-      int ret = inputStream.read();
+      int ret = in.read();
       
       while(skipping && ret >= 0) {
          if(ret != ' ' && ret != '\t' && ret != '\n') {
             skipping = false;
          }
          else {
-            ret = inputStream.read();
+            ret = in.read();
          }
       }
       
@@ -63,7 +65,7 @@ public class XmlInputStream extends InputStream {
          }
       }
       
-      int ret = inputStream.read(b, off, len);
+      int ret = in.read(b, off, len);
       
       if(ret == -1) {
          return one ? 1 : -1;
@@ -86,15 +88,5 @@ public class XmlInputStream extends InputStream {
       }
       
       return ret;
-   }
-   
-   @Override
-   public int available() throws IOException {
-      return inputStream.available();
-   }
-
-   @Override
-   public void close() throws IOException {
-      inputStream.close();
    }
 }
