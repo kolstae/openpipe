@@ -43,8 +43,6 @@ import java.util.Set;
 public class IdentityHashSet<E>
       extends AbstractSet<E>
       implements Set<E>, Cloneable, java.io.Serializable {
-   static final long serialVersionUID = -5024744406713321676L;
-
    private transient IdentityHashMap<E, Object> map;
 
    // Dummy value to associate with an Object in the backing Map

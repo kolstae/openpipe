@@ -19,8 +19,6 @@ package no.trank.openpipe.solr;
  * @version $Revision$
  */
 public class SolrDocumentPostException extends Exception {
-   private static final long serialVersionUID = 2601728472833942436L;
-
    /**
     * Constructs a new exception with <code>null</code> as its detail message.
     * The cause is not initialized, and may subsequently be initialized by a

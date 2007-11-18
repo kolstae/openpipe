@@ -42,7 +42,6 @@ import org.slf4j.LoggerFactory;
  * @version $Revision$
  */
 public class SolrUpdateServlet extends HttpServlet {
-   private static final long serialVersionUID = 2086572939284017929L;
    private static final Logger log = LoggerFactory.getLogger(SolrUpdateServlet.class);
 
    private Pipeline pipeline;

@@ -19,7 +19,6 @@ package no.trank.openpipe.api;
  * @version $Revision$
  */
 public class PipelineException extends Exception {
-   private static final long serialVersionUID = -6173006561779823086L;
    private String pipelineStepName;
 
    public PipelineException() {

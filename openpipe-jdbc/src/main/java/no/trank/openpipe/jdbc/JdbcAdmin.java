@@ -30,8 +30,6 @@ import org.slf4j.LoggerFactory;
  * @version $Revision$
  */
 public class JdbcAdmin extends HttpServlet {
-   private static final long serialVersionUID = 7503537802693274153L;
-
    private static final Logger log = LoggerFactory.getLogger(JdbcAdmin.class);
    
    private transient Server server;
