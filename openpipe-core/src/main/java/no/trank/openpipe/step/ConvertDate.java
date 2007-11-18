@@ -131,7 +131,7 @@ public class ConvertDate extends MultiInputOutputFieldPipelineStep {
    /**
     * Gets whether an exception will be thrown if an error occurs.
     *
-    * @return true if an exception will be thrown, false otherwise
+    * @return <code>true</code> if an exception will be thrown, <code>false</code> otherwise
     */
    public boolean isFailOnError() {
       return failOnError;
@@ -149,7 +149,7 @@ public class ConvertDate extends MultiInputOutputFieldPipelineStep {
    /**
     * Gets whether a blank input field will be treated as an error.
     *
-    * @return true if a blank input field will be treated as an error, false otherwise
+    * @return <code>true</code> if a blank input field will be treated as an error, <code>false</code> otherwise
     */
    public boolean isBlankError() {
       return blankError;

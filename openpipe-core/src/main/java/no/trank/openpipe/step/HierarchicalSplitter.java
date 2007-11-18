@@ -28,6 +28,78 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * This step splits input text according to a few simple rules and outputs the combinations to a multi valued field:
+ * 
+ * <p><ul>
+ *    <li>The property <code>levelSplit</code> is used to split the text into separate levels.</li>
+ *    <li>The property <code>alternativeSplit</code> is used to split the text on a level into alternatives.</li>
+ *    <li>The property <code>numLevels</code> is used to stop the output after a set number of levels.</li>
+ * </ul>
+ *  
+ * 
+ * <p><h4>Examples</h4>
+ * 
+ * <table>
+ *    <tr>
+ *       <td><code>levelSplit</code>:</td>
+ *       <td>/</td>
+ *    </tr>
+ *    <tr>
+ *       <td><code>alternativeSplit</code>:</td>
+ *       <td>¦</td>
+ *    </tr>
+ *    <tr>
+ *       <td><code>numLevels</code>:</td>
+ *       <td>0 (no restriction)</td>
+ *    </tr>
+ *    <tr>
+ *       <td>Input:</td>
+ *       <td>a/b¦c/d</td>
+ *    </tr>
+ *    <tr>
+ *       <td valign="top">Output:</td>
+ *       <td>
+ *          <ul>
+ *             <li>a</li>
+ *             <li>a/b</li>
+ *             <li>a/c</li>
+ *             <li>a/b/d</li>
+ *             <li>a/c/d</li>
+ *          </ul>
+ *       </td>
+ *    </tr>
+ * </table>
+ *
+ *
+ * <p><table>
+ *    <tr>
+ *       <td><code>levelSplit</code>:</td>
+ *       <td>/</td>
+ *    </tr>
+ *    <tr>
+ *       <td><code>alternativeSplit</code>:</td>
+ *       <td>¦</td>
+ *    </tr>
+ *    <tr>
+ *       <td><code>numLevels</code>:</td>
+ *       <td>2</td>
+ *    </tr>
+ *    <tr>
+ *       <td>Input:</td>
+ *       <td>a/b¦c/d</td>
+ *    </tr>
+ *    <tr>
+ *       <td valign="top">Output:</td>
+ *       <td>
+ *          <ul>
+ *             <li>a</li>
+ *             <li>a/b</li>
+ *             <li>a/c</li>
+ *          </ul>
+ *       </td>
+ *    </tr>
+ * </table>
+ * 
  * @version $Revision$
  */
 public class HierarchicalSplitter extends MultiInputOutputFieldPipelineStep {
@@ -108,26 +180,56 @@ public class HierarchicalSplitter extends MultiInputOutputFieldPipelineStep {
       return "$Revision$";
    }
 
+   /**
+    * Gets the split used to separate the alternatives within a level of the input.
+    * 
+    * @return the split
+    */
    public String getAlternativeSplit() {
       return alternativeSplit;
    }
 
+   /**
+    * Sets the split used to separate the alternatives within a level of the input.
+    * 
+    * @param alternativeSplit the split
+    */
    public void setAlternativeSplit(String alternativeSplit) {
       this.alternativeSplit = alternativeSplit;
    }
 
+   /**
+    * Gets the split used to separate the levels in the input.
+    * 
+    * @return the split
+    */
    public String getLevelSplit() {
       return levelSplit;
    }
 
+   /**
+    * Sets the split used to separate the levels in the input.
+    * 
+    * @param levelSplit
+    */
    public void setLevelSplit(String levelSplit) {
       this.levelSplit = levelSplit;
    }
 
+   /**
+    * Gets the max number of levels in the output.
+    * 
+    * @return the number of levels
+    */
    public int getNumLevels() {
       return numLevels;
    }
 
+   /**
+    * Sets the max number of levels in the output. There is no restriction if not set. 
+    * 
+    * @param numLevels the number of levels
+    */
    public void setNumLevels(int numLevels) {
       this.numLevels = numLevels;
    }

@@ -44,7 +44,6 @@ public abstract class MultiInputOutputFieldPipelineStep extends BasePipelineStep
     *
     * @see PipelineStep#getName()
     * @see PipelineStep#setName(String)
-    * @see #is
     */
    public MultiInputOutputFieldPipelineStep(String name, boolean skipEmptyInput) {
       super(name);

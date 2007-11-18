@@ -26,6 +26,8 @@ import no.trank.openpipe.api.document.AnnotatedField;
 import no.trank.openpipe.api.document.Document;
 
 /**
+ * This step removes fields from documents.
+ * 
  * @version $Revision$
  */
 public class RemoveFields extends MultiInputFieldPipelineStep {

@@ -21,19 +21,22 @@ import no.trank.openpipe.api.MultiInputOutputFieldPipelineStep;
 import no.trank.openpipe.api.PipelineException;
 import no.trank.openpipe.api.document.AnnotatedField;
 import no.trank.openpipe.api.document.Document;
-import no.trank.openpipe.config.annotation.NotEmpty;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * This step copies values from fields to other fields.
+ * 
+ * <p><ul>
+ *    <li>The property <code>withAnnotations</code> indicates whether annotations will be copied.</li>
+ *    <li>The property <code>overwrite</code> indicates whether non-empty output fields will be overwritten.</li>
+ * </ul>
  *
  * @version $Revision$
  */
 public class CopyField extends MultiInputOutputFieldPipelineStep {
    private static final Logger log = LoggerFactory.getLogger(CopyField.class);
-   @NotEmpty
    private boolean withAnnotations;
    private boolean overwrite = true;
 
@@ -69,7 +72,7 @@ public class CopyField extends MultiInputOutputFieldPipelineStep {
    /**
     * Gets whether any annotations associated with the input fields will be copied to the output fields.
     *
-    * @return true if the annotations will be copied, false otherwise
+    * @return <code>true</code> if the annotations will be copied, <code>false</code> otherwise
     */
    public boolean isWithAnnotations() {
       return withAnnotations;
@@ -87,7 +90,7 @@ public class CopyField extends MultiInputOutputFieldPipelineStep {
    /**
     * Gets whether the output fields will be overwritten if they already exist.
     *
-    * @return true if the output fields will be overwritten, false otherwise
+    * @return <code>true</code> if the output fields will be overwritten, <code>false</code> otherwise
     */
    public boolean isOverwrite() {
       return overwrite;

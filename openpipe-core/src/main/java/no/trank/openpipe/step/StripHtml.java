@@ -29,6 +29,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * This step strips html from input text in four steps:
+ *
+ * <p><ul>
+ *    <li>Html comments are removed.</li>
+ *    <li>Html tags are removed.</li>
+ *    <li>Blocks of whitespace are replaced with a single space character.</li>
+ *    <li>Html entities are decoded.</li>
+ * </ul>
+ * 
  * @version $Revision$
  */
 public class StripHtml extends MultiInputOutputFieldPipelineStep {

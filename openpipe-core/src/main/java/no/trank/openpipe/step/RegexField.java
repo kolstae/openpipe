@@ -114,11 +114,11 @@ public class RegexField extends MultiInputOutputFieldPipelineStep {
    }
 
    /**
-    * Returns whether the input field value should be copied to the output field if the input field value does not
+    * Gets whether the input field value should be copied to the output field if the input field value does not
     * match the from pattern.
     * 
-    * @return true if the input field value should be copied to the output field if the input field value does not
-    *         match the from pattern, false otherwise
+    * @return <code>true</code> if the input field value should be copied to the output field if the input field value
+    *         does not match the from pattern, <code>false</code> otherwise
     */
    public boolean isCopyOnMiss() {
       return copyOnMiss;

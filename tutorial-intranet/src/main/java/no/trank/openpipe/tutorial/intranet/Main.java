@@ -25,6 +25,15 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
+ * The intranet tutorial starting point. Collects documents from a directory and posts them to a Solr index.
+ * 
+ * <p>Starts a Spring XML application context with definitions from <code>classpath:intranetApplicationContext.xml</code>
+ * <p>Takes one or two command line arguments:
+ * <ul>
+ *    <li>the path to the documents
+ *    <li>[optional] the URL to the Solr application (default: http://localhost:8983/solr)
+ * </ul>
+ * 
  * @version $Revision:670 $
  */
 public class Main {
