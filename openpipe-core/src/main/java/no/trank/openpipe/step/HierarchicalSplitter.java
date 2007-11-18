@@ -18,25 +18,20 @@ package no.trank.openpipe.step;
 import java.util.ArrayList;
 import java.util.List;
 
+import no.trank.openpipe.api.MultiInputOutputFieldPipelineStep;
+import no.trank.openpipe.api.PipelineException;
+import no.trank.openpipe.api.document.AnnotatedField;
+import no.trank.openpipe.api.document.Document;
+import no.trank.openpipe.config.annotation.NotNull;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import no.trank.openpipe.api.BasePipelineStep;
-import no.trank.openpipe.api.PipelineException;
-import no.trank.openpipe.api.PipelineStepStatus;
-import no.trank.openpipe.api.document.Document;
-import no.trank.openpipe.config.annotation.NotEmpty;
-import no.trank.openpipe.config.annotation.NotNull;
 
 /**
  * @version $Revision$
  */
-public class HierarchicalSplitter extends BasePipelineStep {
+public class HierarchicalSplitter extends MultiInputOutputFieldPipelineStep {
    private static Logger log = LoggerFactory.getLogger(HierarchicalSplitter.class);
-   @NotEmpty
-   private String fromFieldName;
-   @NotEmpty
-   private String toFieldName;
    private int numLevels;
    @NotNull
    private String levelSplit;
@@ -44,27 +39,34 @@ public class HierarchicalSplitter extends BasePipelineStep {
    private String alternativeSplit;
 
    public HierarchicalSplitter() {
-      super("HierarchicalSplitter");
+      super("HierarchicalSplitter", false);
    }
 
    @Override
-   public PipelineStepStatus execute(Document doc) throws PipelineException {
-      String text = doc.getFieldValue(fromFieldName);
-      if(text != null && text.length() > 0) {
-         List<String> values = resolveSplits(text);
-         if(values.isEmpty()) {
-            doc.removeField(toFieldName);
-         }
-         else {
-            doc.setFieldValues(toFieldName, values);
-         }
+   protected void process(Document doc, String inputFieldName, List<AnnotatedField> inputFields, String outputFieldName)
+         throws PipelineException {
+      if(inputFields.isEmpty()) {
+         log.debug("Missing field '{}'", inputFieldName);
+         doc.removeField(outputFieldName);
       }
       else {
-         log.debug("Missing field '{}'", fromFieldName);
-         doc.removeField(toFieldName);
+         List<String> outValues = new ArrayList<String>();
+         for(AnnotatedField field : inputFields) {
+            String text = field.getValue();
+            if(text != null && text.length() > 0) {
+               List<String> values = resolveSplits(text);
+               if(!values.isEmpty()) {
+                  outValues.addAll(values);
+               }
+            }
+         }
+
+         if (outValues.isEmpty()) {
+            doc.removeField(outputFieldName);
+         } else {
+            doc.setFieldValues(outputFieldName, outValues);
+         }
       }
-      
-      return PipelineStepStatus.DEFAULT;
    }
 
    private List<String> resolveSplits(String text) {
@@ -114,14 +116,6 @@ public class HierarchicalSplitter extends BasePipelineStep {
       this.alternativeSplit = alternativeSplit;
    }
 
-   public String getFromFieldName() {
-      return fromFieldName;
-   }
-
-   public void setFromFieldName(String fromFieldName) {
-      this.fromFieldName = fromFieldName;
-   }
-
    public String getLevelSplit() {
       return levelSplit;
    }
@@ -136,13 +130,5 @@ public class HierarchicalSplitter extends BasePipelineStep {
 
    public void setNumLevels(int numLevels) {
       this.numLevels = numLevels;
-   }
-
-   public String getToFieldName() {
-      return toFieldName;
-   }
-
-   public void setToFieldName(String toFieldName) {
-      this.toFieldName = toFieldName;
    }
 }

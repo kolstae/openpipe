@@ -15,7 +15,9 @@
  */
 package no.trank.openpipe.step;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import junit.framework.TestCase;
 
@@ -30,8 +32,9 @@ public class HierarchicalSplitterTest extends TestCase {
    @Override
    protected void setUp() throws Exception {
       hierarchicalSplitter = new HierarchicalSplitter();
-      hierarchicalSplitter.setFromFieldName("in");
-      hierarchicalSplitter.setToFieldName("out");
+      Map<String, String> fieldNameMap = new HashMap<String, String>();
+      fieldNameMap.put("in", "out");
+      hierarchicalSplitter.setFieldNameMap(fieldNameMap);
       hierarchicalSplitter.setLevelSplit("/");
       hierarchicalSplitter.setAlternativeSplit("¦");
    }
