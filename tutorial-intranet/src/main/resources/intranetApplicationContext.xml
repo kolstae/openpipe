@@ -124,6 +124,13 @@
    </bean>
 
    <bean id="pipeline" class="no.trank.openpipe.api.Pipeline">
+      <property name="pipelineExceptionHandler">
+         <bean class="no.trank.openpipe.api.DefaultPipelineExceptionHandler">
+            <property name="exceptionListeners">
+               <bean class="no.trank.openpipe.api.LoggingPipelineExceptionListener"/>
+            </property>
+         </bean>
+      </property>
       <property name="pipelineSteps">
          <list>
             <ref bean="parseStep"/>
