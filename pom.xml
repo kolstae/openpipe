@@ -29,6 +29,7 @@
       <module>openpipe-jdbc</module>
       <module>openpipe-solr</module>
       <module>openpipe-opennlp</module>
+      <module>openpipe-lang</module>
       <module>parse</module>
       <module>parse-ms</module>
       <module>parse-misc</module>
@@ -286,6 +287,7 @@
                   <link>http://lucene.apache.org/solr/api/</link>
                   <link>http://lucene.apache.org/java/docs/api/</link>
                   <link>http://static.springframework.org/spring/docs/2.0.x/api</link>
+                  <link>http://icu-project.org/apiref/icu4j/</link>
                </links>
                <groups>
                   <group>

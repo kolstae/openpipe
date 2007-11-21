@@ -1,0 +1,70 @@
+Getting started
+
+This tutorial demonstrates how to crawl your local filesystem, making it searchable with Solr.
+
+If you are not familiar with Solr, we recommend their tutorial. However, this tutorial does not require any prior knowledge of Solr.
+Requirements
+
+   1. Java 1.6 or higher.
+   2. Subversion
+   3. Maven 2
+   4. Solr version 1.2 or higher.
+
+Setting up Solr
+
+Unpack a binary distribution of Solr:
+
+We'll have to make some changes to the schema as well as adding OpenPipe solr-tokenizer.jar to the solr-webapp.
+
+From this point forward we'll assume you installed Solr in ~/solr. This gives schema file as ~/solr/example/solr/conf/schema.xml and the solr-webapp as ~/solr/example/webapps/solr.war.
+Setting up libraries
+
+In order to add libraries to solr-webapp we need to unjar ~/solr/example/webapps/solr.war:
+
+Then download solr-tokenizer.jar and save it to ~/solr/example/webapps/solr/WEB-INF/lib.
+Note: In order to index pre-tokenized documents with Solr we have submitted an issue with Solr: SOLR-398. Until this has been accepted into Solr, you'll have to replace ~/solr/example/webapps/solr/WEB-INF/lib/apache-solr-1.2.0.jar with this patched version solr-1.2.0-SOLR-398.jar.
+Setting up schema.xml
+
+We'll need a different schema, since we're indexing something quite different than the example docs.
+
+Replace ~/solr/example/solr/conf/schema.xml with this.
+FieldType
+
+We need set up a fieldType that allows us to tokenize fields prior to submitting to Solr. The current implementation uses a binary format encoded as base64 in the xml to Solr. For more details on the binary format, see Base64Type.
+
+The WhitespaceTokenizer for analyzer type="index" will be used when highlighting your search. While the analyzer type="query" is used for the query, which should be compatible with the OpenPipe config showed later.
+Compared to the standard schema.xml:
+
+We have removed the SynonymFilter, StopFilter and EnglishPorterFilter (for simplicity).
+Fields
+
+The fields we set up are as follows:
+
+For id we'll use the path of the document. content is the parsed content of the document.
+Starting Solr
+
+Before we set up OpenPipe and start feeding documents, Solr needs to be to be up and running:
+
+Setting up OpenPipe
+
+There are currently no binary releases of OpenPipe,
+
+Follow these steps to acquire the latest version and build the modules:
+
+The pipeline
+
+Our example application is configured through Spring in openpipe/tutorial-intranet/src/main/resources. It's put together roughly like this:
+
+pipelineApplicationBean requests documents from fileDocumentReader and feeds them to the pipeline. fileDocumentReader crawls a directory and looks for certain file extensions. The steps in the pipeline:
+parseStep   This step examines the file extension and parses the content accordingly.
+copyField   Copies the content of the field pathName to the field id.
+solrAnalyzerContent  Performs Solr tokenizing on the field content.
+solrAnalyzerTitle Performs Solr tokenizing on the field title.
+solrDocumentProcessor   Posts the document to http://localhost:8983/solr/update.
+Indexing
+
+We now have a live Solr index and OpenPipe available. Pick a directory on your hard drive that contains a nice batch of documents and run these steps:
+
+Searching
+
+Go to http://localhost:8983/solr/admin/. Type id:[* TO *] in the Query String field. Hit the Search button. This search result represents all the indexed documents. Only the first 10 are displayed.
