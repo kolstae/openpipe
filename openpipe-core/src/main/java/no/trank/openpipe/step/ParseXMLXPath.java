@@ -46,10 +46,10 @@ import no.trank.openpipe.config.annotation.NotEmpty;
 
 /**
  * Uses XPath to extract fields form a xml formatted field.
- *
+ * <p/>
  * Typical usage would be to set the fieldName(setFieldName()) to where the xml formatted text. Supply the
- * XPath -> field map in setXPathToFieldName(...).<br/><br/>
- *
+ * XPath -> field map in setXPathToFieldName(...).
+ * <p/>
  * This would put the content of the fields that matches the XPath(s) into new fields with the supplied names.
  *
  * @version $Revision$
@@ -181,6 +181,7 @@ public class ParseXMLXPath extends BasePipelineStep {
 
    /**
     * Sets the field name where the source xml is stored in the document.
+    *
     * @param fieldName the field name where the source xml is stored in the document.
     */
    public void setFieldName(String fieldName) {
@@ -216,7 +217,7 @@ public class ParseXMLXPath extends BasePipelineStep {
 
    /**
     * Sets the XPath instance used for looking up XPath matches.
-    *
+    * <p/>
     * I none are set this class will construct one using: XPathFactory.newInstance().newXPath();
     *
     * @param xPath the XPath instance used for looking up XPath matches.
@@ -236,7 +237,7 @@ public class ParseXMLXPath extends BasePipelineStep {
 
    /**
     * Sets if this step should fail if an xml parser error occurs.
-    *
+    * <p/>
     * Default is true
     *
     * @param failOnXMLError true if this step should fail if an xml parser error occurs.
@@ -256,10 +257,9 @@ public class ParseXMLXPath extends BasePipelineStep {
    }
 
    /**
-    /**
-     * Sets the xml DocumentBuilder instance to use for xml parsing.
-     *
-     * If this is not set, the step will construct one using: DocumentBuilderFactory.newInstance().newDocumentBuilder();
+    * Sets the xml DocumentBuilder instance to use for xml parsing.
+    * <p/>
+    * If this is not set, the step will construct one using: DocumentBuilderFactory.newInstance().newDocumentBuilder();
     *
     * @param builder the xml DocumentBuilder instance to use for xml parsing.
     */
