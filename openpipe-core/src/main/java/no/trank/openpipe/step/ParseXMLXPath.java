@@ -45,6 +45,12 @@ import no.trank.openpipe.api.document.Document;
 import no.trank.openpipe.config.annotation.NotEmpty;
 
 /**
+ * Uses XPath to extract fields form a xml formatted field.
+ *
+ * Typical usage would be to set the fieldName(setFieldName()) to where the xml formatted text. Supply the
+ * XPath -> field map in setXPathToFieldName(...).<br/><br/>
+ *
+ * This would put the content of the fields that matches the XPath(s) into new fields with the supplied names.
  *
  * @version $Revision$
  */
@@ -164,42 +170,99 @@ public class ParseXMLXPath extends BasePipelineStep {
       return "$Revision$";
    }
 
+   /**
+    * Gets the field name where the source xml is stored in the document.
+    *
+    * @return the field name where the source xml is stored in the document.
+    */
    public String getFieldName() {
       return fieldName;
    }
 
+   /**
+    * Sets the field name where the source xml is stored in the document.
+    * @param fieldName the field name where the source xml is stored in the document.
+    */
    public void setFieldName(String fieldName) {
       this.fieldName = fieldName;
    }
 
+   /**
+    * Gets the XPath to field name mappings.
+    *
+    * @return a map of XPath to field names
+    */
    public Map<String, String> getXPathToFieldName() {
       return xPathToFieldName;
    }
 
+   /**
+    * Sets the XPath to field name mappings.
+    *
+    * @param xPathToFieldName a map of XPath to field names
+    */
    public void setXPathToFieldName(Map<String, String> xPathToFieldName) {
       this.xPathToFieldName = xPathToFieldName;
    }
 
+   /**
+    * Gets the XPath instance used for looking up XPath matches.
+    *
+    * @return XPath instance used for looking up XPath matches
+    */
    public XPath getXPath() {
       return xPath;
    }
 
+   /**
+    * Sets the XPath instance used for looking up XPath matches.
+    *
+    * I none are set this class will construct one using: XPathFactory.newInstance().newXPath();
+    *
+    * @param xPath the XPath instance used for looking up XPath matches.
+    */
    public void setXPath(XPath xPath) {
       this.xPath = xPath;
    }
 
+   /**
+    * Gets if this step should fail if an xml parser error occurs.
+    *
+    * @return true if this step should fail if an xml parser error occurs.
+    */
    public boolean isFailOnXMLError() {
       return failOnXMLError;
    }
 
+   /**
+    * Sets if this step should fail if an xml parser error occurs.
+    *
+    * Default is true
+    *
+    * @param failOnXMLError true if this step should fail if an xml parser error occurs.
+    */
    public void setFailOnXMLError(boolean failOnXMLError) {
       this.failOnXMLError = failOnXMLError;
    }
 
+
+   /**
+    * Gets the xml DocumentBuilder instance to use for xml parsing.
+    *
+    * @return the xml DocumentBuilder instance to use for xml parsing.
+    */
    public DocumentBuilder getBuilder() {
       return builder;
    }
 
+   /**
+    /**
+     * Sets the xml DocumentBuilder instance to use for xml parsing.
+     *
+     * If this is not set, the step will construct one using: DocumentBuilderFactory.newInstance().newDocumentBuilder();
+    *
+    * @param builder the xml DocumentBuilder instance to use for xml parsing.
+    */
    public void setBuilder(DocumentBuilder builder) {
       this.builder = builder;
    }

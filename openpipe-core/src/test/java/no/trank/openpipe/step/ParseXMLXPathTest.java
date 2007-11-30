@@ -30,20 +30,37 @@ public class ParseXMLXPathTest extends TestCase {
 
    public void testParse() throws Exception {
       final Document doc = new Document();
-//      doc.setFieldValue("xml", FileIO.readFile("/home/espen/projects/sandbox/pipeline-parent/pom.xml"));
-      doc.setFieldValue("xml", "<project><test abc=\"attrib\">dillbert</test></project>");
+      doc.setFieldValue("xml", getTestXml());
       xml.setFieldName("xml");
       final HashMap<String, String> xpaths = new HashMap<String, String>();
-      xpaths.put("/project//dependencies/*[groupId='no.trank.pipeline']", "groupId");
+      xpaths.put("page/title", "title");
+      xpaths.put("page/id", "id");
+      xpaths.put("page/revision/text", "text");
+
       xml.setXPathToFieldName(xpaths);
       xml.prepare();
       xml.execute(doc);
-      doc.removeField("xml");
-      new Debug().execute(doc);
-//      for (Map.Entry<String, String> e : xpaths.entrySet()) {
-//         assertTrue(doc.getFieldValues(e.getKey()).isEmpty());
-//         assertFalse(doc.getFieldValues(e.getValue()).isEmpty());
-//      }
+
+      assertEquals("Arbeiderpartiet", doc.getFieldValue("title"));
+      assertEquals("1", doc.getFieldValue("id"));
+      assertEquals("#REDIRECT [[Det norske Arbeiderparti]]", doc.getFieldValue("text"));
+   }
+
+   private String getTestXml() {
+      return "  <page>\n" +
+            "    <title>Arbeiderpartiet</title>\n" +
+            "    <id>1</id>\n" +
+            "    <revision>\n" +
+            "      <id>201289</id>\n" +
+            "      <timestamp>2004-01-07T11:00:14Z</timestamp>\n" +
+            "      <contributor>\n" +
+            "        <username>Samuelsen</username>\n" +
+            "        <id>6</id>\n" +
+            "      </contributor>\n" +
+            "      <comment>#REDIRECT [[Det norske Arbeiderparti]]</comment>\n" +
+            "      <text xml:space=\"preserve\">#REDIRECT [[Det norske Arbeiderparti]]</text>\n" +
+            "    </revision>\n" +
+            "  </page>";
    }
 
    @Override
