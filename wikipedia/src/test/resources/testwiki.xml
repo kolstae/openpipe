@@ -1,0 +1,76 @@
+<mediawiki xmlns="http://www.mediawiki.org/xml/export-0.3/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.3/ http://www.mediawiki.org/xml/export-0.3.xsd" version="0.3" xml:lang="no">
+  <siteinfo>
+    <sitename>Wikipedia</sitename>
+    <base>http://no.wikipedia.org/wiki/Hovedside</base>
+    <generator>MediaWiki 1.11alpha</generator>
+    <case>first-letter</case>
+      <namespaces>
+      <namespace key="-2">Medium</namespace>
+      <namespace key="-1">Spesial</namespace>
+      <namespace key="0" />
+      <namespace key="1">Diskusjon</namespace>
+      <namespace key="2">Bruker</namespace>
+      <namespace key="3">Brukerdiskusjon</namespace>
+      <namespace key="4">Wikipedia</namespace>
+      <namespace key="5">Wikipedia-diskusjon</namespace>
+      <namespace key="6">Bilde</namespace>
+      <namespace key="7">Bildediskusjon</namespace>
+      <namespace key="8">MediaWiki</namespace>
+      <namespace key="9">MediaWiki-diskusjon</namespace>
+      <namespace key="10">Mal</namespace>
+      <namespace key="11">Maldiskusjon</namespace>
+      <namespace key="12">Hjelp</namespace>
+      <namespace key="13">Hjelpdiskusjon</namespace>
+      <namespace key="14">Kategori</namespace>
+      <namespace key="15">Kategoridiskusjon</namespace>
+      <namespace key="100">Portal</namespace>
+      <namespace key="100">Portal</namespace>
+      <namespace key="101">Portaldiskusjon</namespace>
+    </namespaces>
+  </siteinfo>
+  <page>
+    <title>Arbeiderpartiet</title>
+    <id>1</id>
+    <revision>
+      <id>201289</id>
+      <timestamp>2004-01-07T11:00:14Z</timestamp>
+      <contributor>
+        <username>Samuelsen</username>
+        <id>6</id>
+      </contributor>
+      <comment>#REDIRECT [[Det norske Arbeiderparti]]</comment>
+      <text xml:space="preserve">#REDIRECT [[Det norske Arbeiderparti]]</text>
+    </revision>
+  </page>
+    <page>
+    <title>Brus med ananassmak</title>
+    <id>4</id>
+    <revision>
+      <id>2518733</id>
+      <timestamp>2007-07-26T09:09:37Z</timestamp>
+      <contributor>
+        <username>Hxhbot</username>
+        <id>17743</id>
+      </contributor>
+      <minor />
+      <comment>robot  Tilføyer: [[nn:Brus med ananassmak]]</comment>
+      <text xml:space="preserve">'''Oskar Syltes [[brus]] med [[ananas]]smak''', i dagligtale kalt '''ananasbrus''', er en syntetisk fruktbrus fra [[Oskar Sylte Mineralvannfa
+brikk]]. Den har en dyp oransjebrun farge, med hint av ananas.
+
+Brusen har bidratt sterkt til profileringen av Oskar Sylte gjennom årene, og er like gammel som bedriften selv. Den har vært produsert etter samme oppskrift i 75 år, og er sp
+esielt populær blant utflyttede [[romsdal]]inger. Da [[Ormen Lange-feltet|Ormen Lange]]-vedtaket i [[Stortinget]] ble feiret på [[statsminister]] [[Kjell Magne Bondevik]]s ko
+ntor, ble det skålet i ananasbrus. Også [[Sverige]]s statsminister [[Göran Persson]] ble begeistret for brusen. Han skrøt av den etter et nordisk statsministermøte i [[Molde]
+] i [[2002]], og fikk med seg en kasse ananasbrus hjem.
+
+Brusen finnes nå også i en light-versjon søtet med [[aspartam]] og [[acesulfam K]].
+
+==Se også==
+*[[Oskar Sylte Mineralvannfabrikk]]
+
+[[Kategori:Leskedrikker]]
+[[Kategori:Norsk drikke]]
+
+[[nn:Brus med ananassmak]]</text>
+    </revision>
+  </page>
+</mediawiki>
