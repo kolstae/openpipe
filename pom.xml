@@ -36,6 +36,7 @@
       <module>solr-producer</module>
       <module>solr-tokenizer</module>
       <module>tutorial-intranet</module>
+      <module>wikipedia</module>
    </modules>
    <repositories>
       <repository>
