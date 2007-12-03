@@ -34,7 +34,6 @@ import no.trank.openpipe.api.PipelineException;
  * @version $Revision$
  */
 public class SolrHttpDocumentPoster {
-   private int docsPerCommit = 10000;
    private int docsPerPost = 0;
    private int unpostedDocs = 0;
    private int uncommitedDocs = 0;
@@ -54,10 +53,6 @@ public class SolrHttpDocumentPoster {
       this.postUrl = postUrl;
    }
 
-   public void setDocsPerCommit(int docsPerCommit) {
-      this.docsPerCommit = docsPerCommit;
-   }
-
    public void setDocsPerPost(int docsPerPost) {
       this.docsPerPost = docsPerPost;
    }
@@ -72,11 +67,9 @@ public class SolrHttpDocumentPoster {
 
    public void add(HashMap<String, List<String>> solrOutputDoc, Map<String, String> attribs) throws XMLStreamException, PipelineException {
       addDocument(solrOutputDoc, attribs);
+      uncommitedDocs++;
       if (++unpostedDocs >= docsPerPost) {
          endAdd();
-      }
-      if (++uncommitedDocs >= docsPerCommit) {
-         commit();
       }
    }
 
@@ -110,9 +103,7 @@ public class SolrHttpDocumentPoster {
       } else {
          throw new PipelineException("Can not delete document. The id field is not set.");
       }
-      if (++uncommitedDocs >= docsPerCommit) {
-         commit();
-      }
+      uncommitedDocs++;
    }
 
    private void addDocument(HashMap<String, List<String>> solrOutputDoc, Map<String, String> attribs) 
