@@ -23,13 +23,16 @@ import no.trank.openpipe.api.document.Document;
  * @version $Revision$
  */
 public class Pipeline extends BaseSubPipeline {
-   private PipelineExceptionHandler pipelineExceptionHandler = new DefaultPipelineExceptionHandler();
+   private PipelineExceptionHandler pipelineExceptionHandler;
 
    public Pipeline() {
+      this(null);
    }
 
    public Pipeline(List<? extends PipelineStep> pipelineSteps) {
       super(pipelineSteps);
+      pipelineExceptionHandler = new DefaultPipelineExceptionHandler();
+      pipelineExceptionHandler.addExceptionListener(new LoggingPipelineExceptionListener());
    }
 
    public PipelineExceptionHandler getPipelineExceptionHandler() {
