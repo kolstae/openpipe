@@ -34,53 +34,53 @@ import static no.trank.openpipe.api.PipelineStepStatusCode.CONTINUE;
 import static no.trank.openpipe.api.PipelineStepStatusCode.DIVERT_PIPELINE;
 import no.trank.openpipe.api.SubPipeline;
 import no.trank.openpipe.api.document.Document;
-import no.trank.openpipe.config.annotation.NotEmpty;
 import no.trank.openpipe.config.annotation.NotNull;
 
 /**
- * A {@link PipelineStep} that selects a sub-pipeline and 
+ * An abstract {@link PipelineStep} that selects a sub-pipeline based on the switch value implemented by a subclass
  * 
  * @version $Revision$
  */
-public class PipelineSelector extends BasePipelineStep {
+public abstract class PipelineSelector extends BasePipelineStep {
    private static final Logger log = LoggerFactory.getLogger(PipelineSelector.class);
-   @NotEmpty
-   private Map<String, List<PipelineStep>> operationMap = Collections.emptyMap();
+   private Map<String, List<PipelineStep>> switchMap = Collections.emptyMap();
    @NotNull
    private Map<String, PipelineStepStatusCode> statusCodeMap = Collections.emptyMap();
-   private Map<String, SubPipeline> opMap = new HashMap<String, SubPipeline>();
+   private Map<String, SubPipeline> swMap = new HashMap<String, SubPipeline>();
 
-   public PipelineSelector() {
-      super("PipelineSelector");
+   public PipelineSelector(String name) {
+      super(name);
    }
 
    @Override
    public PipelineStepStatus execute(Document doc) throws PipelineException {
-      final SubPipeline pipeline = opMap.get(doc.getOperation());
+      final SubPipeline pipeline = swMap.get(getSwitchValue(doc));
       final PipelineStepStatus status;
       if (pipeline != null) {
          status = handleSubPipeline(doc, pipeline);
       } else {
-         final PipelineStepStatusCode statusCode = getStatusCode(doc.getOperation(), CONTINUE);
+         final PipelineStepStatusCode statusCode = getStatusCode(getSwitchValue(doc), CONTINUE);
          if (statusCode.hasSubPipeline()) {
-            throw new PipelineException("No sub-pipeline configured for operation '" + doc.getOperation() + 
+            throw new PipelineException("No sub-pipeline configured for operation '" + getSwitchValue(doc) +
                   "' but code " + statusCode + " found");
          }
          status = new PipelineStepStatus(statusCode);
       }
-      log.debug("Operation {}: {}", doc.getOperation(), status);
+      log.debug("Operation {}: {}", getSwitchValue(doc), status);
       return status;
    }
+
+   protected abstract String getSwitchValue(Document doc);
 
    @Override
    public void prepare() throws PipelineException {
       super.prepare();
 
-      opMap.clear();
-      for (Map.Entry<String,List<PipelineStep>> entry : operationMap.entrySet()) {
+      swMap.clear();
+      for (Map.Entry<String,List<PipelineStep>> entry : switchMap.entrySet()) {
          final BaseSubPipeline pipeline = new BaseSubPipeline(entry.getValue());
          pipeline.prepare();
-         opMap.put(entry.getKey(), pipeline);
+         swMap.put(entry.getKey(), pipeline);
       }
    }
 
@@ -88,7 +88,7 @@ public class PipelineSelector extends BasePipelineStep {
    public void finish(boolean success) throws PipelineException {
       // Rethrow all exceptions
       MultiPipelineException pipelineException = null;
-      for (SubPipeline pipeline : opMap.values()) {
+      for (SubPipeline pipeline : swMap.values()) {
             try {
                pipeline.finish(success);
             } catch (PipelineException e) {
@@ -103,17 +103,17 @@ public class PipelineSelector extends BasePipelineStep {
                pipelineException.add(new PipelineException(e));
             }
       }
-      opMap.clear();
+      swMap.clear();
       if (pipelineException != null) {
          throw pipelineException;
       }
    }
 
    private PipelineStepStatus handleSubPipeline(Document doc, SubPipeline pipeline) {
-      final PipelineStepStatusCode statusCode = getStatusCode(doc.getOperation(), DIVERT_PIPELINE);
+      final PipelineStepStatusCode statusCode = getStatusCode(getSwitchValue(doc), DIVERT_PIPELINE);
       final PipelineStepStatus status = new PipelineStepStatus(statusCode, pipeline);
       if (!statusCode.hasSubPipeline()) {
-         log.warn("Sub-pipeline for operation {} found, but status {} is set", doc.getOperation(), statusCode);
+         log.warn("Sub-pipeline for operation {} found, but status {} is set", getSwitchValue(doc), statusCode);
       }
       return status;
    }
@@ -123,17 +123,12 @@ public class PipelineSelector extends BasePipelineStep {
       return code != null ? code : defaultCode;
    }
 
-   @Override
-   public String getRevision() {
-      return "$Revision$";
+   public Map<String, List<PipelineStep>> getSwitchMap() {
+      return switchMap;
    }
 
-   public Map<String, List<PipelineStep>> getOperationMap() {
-      return operationMap;
-   }
-
-   public void setOperationMap(Map<String, List<PipelineStep>> operationMap) {
-      this.operationMap = operationMap;
+   public void setSwitchMap(Map<String, List<PipelineStep>> switchMap) {
+      this.switchMap = switchMap;
    }
 
    public Map<String, PipelineStepStatusCode> getStatusCodeMap() {
