@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 import no.trank.openpipe.api.BasePipelineStep;
 import no.trank.openpipe.api.PipelineException;
 import no.trank.openpipe.api.PipelineStepStatus;
+import no.trank.openpipe.api.PipelineStepStatusCode;
 import no.trank.openpipe.api.document.Document;
 import no.trank.openpipe.config.annotation.NotNull;
 import no.trank.openpipe.config.annotation.NullNotEmpty;
@@ -44,6 +45,7 @@ public class WikipediaIntroExtractor extends BasePipelineStep {
    @NullNotEmpty
    private String relativeSizeField;
    private int introSize = 160;
+   private boolean dropEmptyDocuments;
 
 
    public WikipediaIntroExtractor() {
@@ -52,9 +54,13 @@ public class WikipediaIntroExtractor extends BasePipelineStep {
 
    public PipelineStepStatus execute(Document doc) throws PipelineException {
       String bodyText = doc.getFieldValue(bodyField);
-      if (!bodyText.startsWith("#REDIRECT")) {
-         int relIntroSize = relativeSizeField != null && doc.getFieldValue(relativeSizeField) != null ? introSize - doc.getFieldValue(relativeSizeField).length() : introSize;
-         doc.addFieldValue(introField, getIntro(bodyText, relIntroSize));
+      if (bodyText != null) {
+         if (!bodyText.startsWith("#REDIRECT")) {
+            int relIntroSize = relativeSizeField != null && doc.getFieldValue(relativeSizeField) != null ? introSize - doc.getFieldValue(relativeSizeField).length() : introSize;
+            doc.addFieldValue(introField, getIntro(bodyText, relIntroSize));
+         }
+      } else if (dropEmptyDocuments) {
+         return new PipelineStepStatus(PipelineStepStatusCode.FINISH);
       }
       return PipelineStepStatus.DEFAULT;
    }
@@ -62,14 +68,34 @@ public class WikipediaIntroExtractor extends BasePipelineStep {
    public String getIntro(String body, int introSize) {
       StringBuilder introBuilder = new StringBuilder();
       MediaWikiStripper wikiStripper = new MediaWikiStripper(body);
+      boolean fullText = false;
       while (introBuilder.length() < introSize) {
-         introBuilder.append(wikiStripper.nextChunk());
+         final String nextChunk = wikiStripper.nextChunk();
+         if (nextChunk.length() > 0) {
+            introBuilder.append(nextChunk);
+         } else {
+            introBuilder = strip(introBuilder);
+            fullText = true;
+            break;
+         }
+         if (introBuilder.length() >= introSize) {
+            introBuilder = strip(introBuilder);
+         }
       }
-      String intro = introBuilder.toString();
-      do {
-         intro = LAST_WORD.matcher(intro).replaceAll("...");
-      } while (intro.length() > introSize);
+      String intro = introBuilder.toString().trim();
+      if (!fullText) {
+         do {
+            intro = LAST_WORD.matcher(intro).replaceAll("...");
+         } while (intro.length() > introSize);
+      }
       return intro;
+   }
+
+   private StringBuilder strip(StringBuilder introBuilder) {
+      String intro = introBuilder.toString();
+      intro = BOLD_ITALIC.matcher(intro).replaceAll("$1");
+      intro = LINK.matcher(intro).replaceAll("$1");
+      return new StringBuilder(intro);
    }
 
    public String getRevision() {
@@ -131,6 +157,24 @@ public class WikipediaIntroExtractor extends BasePipelineStep {
    }
 
    /**
+    * Specifies that a document should be dropped id there is no body text.
+    *
+    * @return <code>true</code> if a document should be dropped id there is no body text.
+    */
+   public boolean isDropEmptyDocuments() {
+      return dropEmptyDocuments;
+   }
+
+   /**
+    * Specifies that a document should be dropped id there is no body text.
+    *
+    * @param dropEmptyDocuments <code>true</code> if a document should be dropped id there is no body text.
+    */
+   public void setDropEmptyDocuments(boolean dropEmptyDocuments) {
+      this.dropEmptyDocuments = dropEmptyDocuments;
+   }
+
+   /**
     * Gets the relative sizing fieldname.
     *
     * @return the relative sizing fieldname.
@@ -162,42 +206,49 @@ public class WikipediaIntroExtractor extends BasePipelineStep {
       }
 
       public String nextChunk() {
-         StringBuilder rawChunk = rawChunk();
-         String tmpChunk = BOLD_ITALIC.matcher(rawChunk).replaceAll("$1");
-         tmpChunk = LINK.matcher(tmpChunk).replaceAll("$1");
-         return tmpChunk;
+         return rawChunk().toString();
       }
 
       private StringBuilder rawChunk() {
-         if (startOfLine && text.charAt(currentPos) == ':') {
-            skipLine();
-            return rawChunk();
-         }
-         if (text.charAt(currentPos) == '{' && currentPos + 2 < text.length() && text.charAt(currentPos + 1) == '{') {
-            curlyCount++;
-            currentPos += 2;
-            skipToEndCulies();
-            return rawChunk();
-         }
-         startOfLine = false;
-         StringBuilder chunk = new StringBuilder();
-         while (currentPos < text.length()) {
-            chunk.append(text.charAt(currentPos));
-            if (text.charAt(currentPos) == '\n') {
-               startOfLine = true;
+         if (currentPos < text.length()) {
+            if (startOfLine && text.charAt(currentPos) == ':') {
+               skipLine();
+               return rawChunk();
+            }
+            if (startOfLine && text.charAt(currentPos) == ';') {
                currentPos++;
-               if (chunk.length() == 1 && chunk.charAt(0) == '\n') {
-                  return rawChunk();
-               } else {
+            }
+            startOfLine = false;
+            if (currentPos + 1 < text.length() && text.charAt(currentPos) == '{' && text.charAt(currentPos + 1) == '{') {
+               curlyCount++;
+               currentPos += 2;
+               skipToEndCulies();
+               return rawChunk();
+            }
+            StringBuilder chunk = new StringBuilder();
+            while (currentPos < text.length()) {
+               chunk.append(text.charAt(currentPos));
+               if (text.charAt(currentPos) == '\n') {
+                  startOfLine = true;
+                  currentPos++;
+                  if (chunk.length() == 1 && chunk.charAt(0) == '\n') {
+                     return rawChunk();
+                  } else {
+                     return chunk;
+                  }
+               } else if (text.charAt(currentPos) == ' ' || text.charAt(currentPos) == '.') {
+                  currentPos++;
+                  if (text.length() > currentPos && text.charAt(currentPos) == '\n') {
+                     chunk.append('\n');
+                  }
                   return chunk;
                }
-            } else if (text.charAt(currentPos) == ' ' || text.charAt(currentPos) == '.') {
                currentPos++;
-               return chunk;
             }
-            currentPos++;
+            return chunk;
+         } else {
+            return new StringBuilder();
          }
-         return chunk;
       }
 
       private void skipToEndCulies() {
@@ -217,6 +268,9 @@ public class WikipediaIntroExtractor extends BasePipelineStep {
 
       private void skipLine() {
          currentPos = text.indexOf('\n', currentPos);
+         if (currentPos == -1) {
+            currentPos = text.length();
+         }
       }
    }
 }

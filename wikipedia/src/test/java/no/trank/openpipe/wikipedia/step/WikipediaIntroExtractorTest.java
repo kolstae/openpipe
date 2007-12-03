@@ -57,6 +57,76 @@ public class WikipediaIntroExtractorTest extends TestCase {
       assertNull(doc.getFieldValue("intro"));
    }
 
+   public void testBug2WikipediaIntroExtractor() throws Exception {
+      wikipediaIntroExtractor.setBodyField("text");
+      wikipediaIntroExtractor.setIntroField("intro");
+      wikipediaIntroExtractor.setIntroSize(160);
+      wikipediaIntroExtractor.prepare();
+      Document doc = new Document();
+      doc.setFieldValue("text", getTest2String());
+      wikipediaIntroExtractor.execute(doc);
+      assertNotNull(doc.getFieldValue("intro"));
+      assertEquals("Brann kan vise til:\n" +
+            "* Brann (katastrofe)\n" +
+            "* Ild\n" +
+            "* Sportsklubben Brann\n" +
+            "* Brand - Skuespill av Henrik Ibsen\n" +
+            "en:Brann", doc.getFieldValue("intro"));
+   }
+
+   public void testBug3WikipediaIntroExtractor() throws Exception {
+      wikipediaIntroExtractor.setBodyField("text");
+      wikipediaIntroExtractor.setIntroField("intro");
+      wikipediaIntroExtractor.setIntroSize(160);
+      wikipediaIntroExtractor.prepare();
+      Document doc = new Document();
+      doc.setFieldValue("text", getTest3String());
+      wikipediaIntroExtractor.execute(doc);
+      assertNotNull(doc.getFieldValue("intro"));
+      assertEquals("Biler kan refere til\n" +
+            "* Biler er flertallsformen for bil.\n" +
+            "* Biler (Cars) er en amerikansk animasjonsfilm.\n" +
+            "* Biler", doc.getFieldValue("intro"));
+   }
+
+   public void testBug4WikipediaIntroExtractor() throws Exception {
+      wikipediaIntroExtractor.setBodyField("text");
+      wikipediaIntroExtractor.setIntroField("intro");
+      wikipediaIntroExtractor.setIntroSize(160);
+      wikipediaIntroExtractor.prepare();
+      Document doc = new Document();
+      doc.setFieldValue("text", getTest4String());
+      wikipediaIntroExtractor.execute(doc);
+      assertNotNull(doc.getFieldValue("intro"));
+
+   }
+
+
+   private String getTest4String() {
+      return "{{MediaWiki:Groups-existing}}:";
+   }
+
+   private String getTest3String() {
+      return ";Biler kan refere til\n" +
+            "* Biler er flertallsformen for [[bil]].\n" +
+            "* [[Biler (film)|Biler]] (''Cars'') er en amerikansk animasjonsfilm.\n" +
+            "* [[Biler]]\n" +
+            "{{Peker}}";
+   }
+
+   private String getTest2String() {
+      return "'''Brann''' kan vise til:\n" +
+            "\n" +
+            "* [[Brann (katastrofe)]]\n" +
+            "* [[Ild]]\n" +
+            "* [[Sportsklubben Brann]]\n" +
+            "* [[Brand]] - [[Skuespill]] av [[Henrik Ibsen]]\n" +
+            "\n" +
+            "{{peker}}\n" +
+            "\n" +
+            "[[en:Brann]]";
+   }
+
    private String getTestString() {
       return ":''Se også [[Akershus festning]]''\n" +
             "{{Infoboks_fylke|\n" +
