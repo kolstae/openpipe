@@ -36,6 +36,18 @@ public class RegexFieldTest extends TestCase {
       fieldNameMap.put("in", "out");
       regexField.setFieldNameMap(fieldNameMap);
    }
+
+   public void testEmptyField() throws Exception {
+      Document doc = new Document();
+      regexField.setNullIsBlank(true);
+      
+      regexField.setFromPattern("^$");
+      regexField.setToPattern("nohit");
+
+      regexField.execute(doc);
+      assertEquals("nohit", doc.getFieldValue("out"));
+
+   }
    
    public void testExecute() throws Exception {
       Document doc = new Document();

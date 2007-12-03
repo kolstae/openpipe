@@ -20,14 +20,15 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import no.trank.openpipe.api.MultiInputOutputFieldPipelineStep;
 import no.trank.openpipe.api.PipelineException;
 import no.trank.openpipe.api.document.AnnotatedField;
+import no.trank.openpipe.api.document.BaseAnnotatedField;
 import no.trank.openpipe.api.document.Document;
 import no.trank.openpipe.config.annotation.NotNull;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This step offers java regex functionality. 
@@ -41,15 +42,22 @@ public class RegexField extends MultiInputOutputFieldPipelineStep {
    @NotNull
    private String toPattern;
    private boolean copyOnMiss;
+   private boolean nullIsBlank;
 
    public RegexField() {
-      super("RegexField", true);
+      super("RegexField", false);
    }
 
+   @Override
    protected void process(Document doc, String inputFieldName, List<AnnotatedField> inputFields, String outputFieldName)
          throws PipelineException {
       List<String> outValues = new ArrayList<String>();
-    
+
+      if (inputFields.isEmpty() && nullIsBlank) {
+         inputFields = new ArrayList<AnnotatedField>();
+         inputFields.add(new BaseAnnotatedField(""));
+      }
+
       for (AnnotatedField field : inputFields) {
          Matcher m = fromPattern.matcher(field.getValue());
          if (m.find()) {
@@ -128,9 +136,27 @@ public class RegexField extends MultiInputOutputFieldPipelineStep {
     * Specifies whether the input field value should be copied to the output field if the input field value
     * does not match the from pattern. 
     * 
-    * @param copyOnMiss
+    * @param copyOnMiss <code>true</code> if the input field value should be copied to the output field if the input field value
     */
    public void setCopyOnMiss(boolean copyOnMiss) {
       this.copyOnMiss = copyOnMiss;
+   }
+
+   /**
+    * Specifies if the RegexMatcher treats a null field as a blank field
+    * @return true if the RegexMatcher should treat a null field as a blank field
+    */
+   public boolean isNullIsBlank() {
+      return nullIsBlank;
+   }
+
+   /**
+    * Specifies that the RegexMatcher should treat a null field as a blank field. This makes it possible to match the
+    * empty field by using the match string "^$".
+    *
+    * @param nullIsBlank true if the RegexMatcher should treat a null field as a blank field
+    */
+   public void setNullIsBlank(boolean nullIsBlank) {
+      this.nullIsBlank = nullIsBlank;
    }
 }
