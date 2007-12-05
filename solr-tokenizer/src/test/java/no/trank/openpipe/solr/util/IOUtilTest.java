@@ -80,8 +80,8 @@ public class IOUtilTest extends TestCase {
       final ByteArrayInputStream bin = new ByteArrayInputStream(buf);
       final MyByteArrayOutputStream bout = new MyByteArrayOutputStream(buf);
       bin.mark(5);
-      for (int i = 0; i < Integer.MAX_VALUE && i >= 0; i += 13) {
-         testValue(bout, bin, i);
+      for (int i = 0; i < 50000; i++) {
+         testValue(bout, bin, i * 42949);
       }
       testAndPrint(bout, bin, buf, 0);
       testAndPrint(bout, bin, buf, 128);
