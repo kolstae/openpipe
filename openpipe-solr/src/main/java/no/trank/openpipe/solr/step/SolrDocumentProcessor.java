@@ -18,6 +18,7 @@ package no.trank.openpipe.solr.step;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -216,6 +217,11 @@ public class SolrDocumentProcessor extends BasePipelineStep {
       addField(BOOST_KEY); // Needed even if there is no schemaUrl
       if (!tokenizedFields.isEmpty() && serializer == null) {
          throw new PipelineException("TokenizedFields set, but no serializer configured");
+      }
+      try {
+         documentPoster.prepare();
+      } catch (MalformedURLException e) {
+         throw new PipelineException("Post url is malformed", e);
       }
    }
 

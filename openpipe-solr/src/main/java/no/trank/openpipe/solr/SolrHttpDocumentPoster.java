@@ -19,12 +19,16 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 
@@ -44,6 +48,32 @@ public class SolrHttpDocumentPoster {
    private boolean inAdd = false;
    private XMLBufferRequestEntity buf;
    private UpdateOptions updateOptions = new UpdateOptions();
+   private String user;
+   private String password;
+
+   public void prepare() throws MalformedURLException {
+      URL url = new URL(postUrl);
+      AuthScope authScope = new AuthScope(url.getHost(), url.getPort());
+      if (user != null) {
+         httpClient.getState().setCredentials(authScope, new UsernamePasswordCredentials(user, password));
+      }
+   }
+
+   public String getUser() {
+      return user;
+   }
+
+   public void setUser(String user) {
+      this.user = user;
+   }
+
+   public String getPassword() {
+      return password;
+   }
+
+   public void setPassword(String password) {
+      this.password = password;
+   }
 
    public void setEncoding(String encoding) {
       this.encoding = encoding;
