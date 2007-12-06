@@ -16,6 +16,7 @@
 package no.trank.openpipe.solr.step;
 
 import java.net.URL;
+import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -131,6 +132,11 @@ public class SolrDocumentProcessorTest extends TestCase {
    private static class TestPoster extends SolrHttpDocumentPoster {
       private HashMap<String, List<String>> solrOutputDoc;
       private Map<String, String> attribs;
+
+      @Override
+      public void prepare() throws MalformedURLException {
+         // Overriding url check
+      }
 
       @Override
       public void add(HashMap<String, List<String>> solrOutputDoc, Map<String, String> attribs) 
