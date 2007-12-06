@@ -16,17 +16,29 @@
 package no.trank.openpipe.wikipedia.producer;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
+import java.security.DigestOutputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import no.trank.openpipe.util.HexUtil;
 
 /**
  * @version $Revision$
@@ -58,6 +70,46 @@ public class HttpDownloader {
       progressListeners.add(progressListener);
    }
 
+   public boolean isLastVersion() throws IOException {
+      int idx = sourceUrl.lastIndexOf('/');
+      String baseUrl = sourceUrl.substring(0, idx);
+      String wikiArtifactName = sourceUrl.substring(idx + 1, sourceUrl.indexOf('-', idx + 1));
+      String md5SumsUrl = baseUrl + '/' + wikiArtifactName +"-latest-md5sums.txt";
+      log.debug("Dowloading md5Sums");
+      HttpClient httpClient = new HttpClient();
+      GetMethod get = new GetMethod(md5SumsUrl);
+      int status = httpClient.executeMethod(get);
+      if (status >= 200 && status < 300) {
+         final String md5sums = get.getResponseBodyAsString();
+         final Pattern p = Pattern.compile("\\n(\\S+)\\s+(" + wikiArtifactName + "-(\\d+)-pages-articles\\.xml\\.bz2)");
+         final Matcher matcher = p.matcher(md5sums);
+         if (matcher.find()) {
+            String md5Sum = matcher.group(1);
+            return isSameMd5(targetFile, md5Sum);
+         }
+      } else {
+         log.debug("Could not download md5 sums.");
+      }
+      return false;
+   }
+
+   private boolean isSameMd5(File file, String md5Sum) {
+      File md5File = new File(file.getAbsolutePath() + ".md5");
+      try {
+         if (md5File.exists()) {
+            BufferedReader reader = new BufferedReader(new FileReader(md5File));
+            String localMd5 = reader.readLine().trim();
+            return md5Sum.equalsIgnoreCase(localMd5);
+         }
+      } catch (FileNotFoundException e) {
+         // Do nothing
+      } catch (IOException e) {
+         log.error("Could not read md5 from file: " + md5File.getAbsolutePath());
+      }
+      return false;
+   }
+
+
    public int downloadFile() throws IOException {
       HttpClient httpClient = new HttpClient();
       GetMethod get = new GetMethod(sourceUrl);
@@ -76,7 +128,13 @@ public class HttpDownloader {
    }
 
    protected void writeFile(InputStream in, long size) throws IOException {
-      final FileOutputStream out = new FileOutputStream(targetFile);
+      OutputStream out;
+      try {
+         out = new DigestOutputStream(new FileOutputStream(targetFile), MessageDigest.getInstance("MD5"));
+      } catch (NoSuchAlgorithmException e) {
+         log.error("Could not make md5. MD5 not supported", e);
+         out = new FileOutputStream(targetFile);
+      }
       try {
          long totalReadBytes = 0;
          byte[] buf = new byte[16384];
@@ -94,6 +152,23 @@ public class HttpDownloader {
             // Do nothing
          }
          progress(size, size);
+         if (out instanceof DigestOutputStream) {
+            writeMd5File(((DigestOutputStream)out).getMessageDigest());
+         }
+      }
+   }
+
+   private void writeMd5File(MessageDigest messageDigest) throws IOException {
+      File md5File = new File(targetFile.getAbsolutePath() + ".md5");
+      FileOutputStream fout = new FileOutputStream(md5File);
+      try {         
+         fout.write(HexUtil.toHexString(messageDigest.digest()).getBytes("UTF-8"));
+      } finally {
+         try {
+            fout.close();
+         } catch (Exception e) {
+            // Do nothing
+         }
       }
    }
 

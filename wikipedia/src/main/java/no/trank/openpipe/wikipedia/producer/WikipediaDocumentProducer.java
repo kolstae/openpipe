@@ -18,9 +18,6 @@ package no.trank.openpipe.wikipedia.producer;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Iterator;
 import javax.xml.stream.XMLStreamException;
 
@@ -43,21 +40,12 @@ public class WikipediaDocumentProducer implements DocumentProducer, DownloadProg
    private WikiDocumentSplitter documentSplitter;
    private Integer maxDocs;
    private String contentField = "wikiPage";
+   private boolean isNew = false;
+   private boolean indexOnlyNew = true;
 
    public void init() {
       log.info("Initializing");
-      if (!httpDownloader.getTargetFile().exists()) {
-         try {
-            log.info("Downloading " + httpDownloader.getSourceUrl());
-            httpDownloader.addProgressListener(this);
-            final int status = httpDownloader.downloadFile();
-            if (status < 200 || status >= 300) {
-               throw new RuntimeException("Could not download file: http returned status: " + status);
-            }
-         } catch (IOException e) {
-            throw new RuntimeException("Could not download file", e);
-         }
-      }
+         isNew = downloadWiki();
       try {
          FileInputStream in =  new FileInputStream(httpDownloader.getTargetFile());
          log.debug("Opening wikipedia dump at: " + httpDownloader.getTargetFile().getAbsolutePath());
@@ -75,6 +63,29 @@ public class WikipediaDocumentProducer implements DocumentProducer, DownloadProg
 
    }
 
+   private boolean downloadWiki() {
+      try {
+         if (!httpDownloader.isLastVersion()) {
+            try {
+               log.info("Downloading " + httpDownloader.getSourceUrl());
+               httpDownloader.addProgressListener(this);
+               final int status = httpDownloader.downloadFile();
+               if (status < 200 || status >= 300) {
+                  throw new RuntimeException("Could not download file: http returned status: " + status);
+               }
+               return true;
+            } catch (IOException e) {
+               throw new RuntimeException("Could not download file", e);
+            }
+         } else {
+            log.info("Found local file with correct md5. Skipping download.");
+         }
+      } catch (IOException e) {
+         log.error("Could not determine last version.", e);
+      }
+      return false;
+   }
+
    public void close() {
       if (documentSplitter != null) {
          try {
@@ -83,10 +94,6 @@ public class WikipediaDocumentProducer implements DocumentProducer, DownloadProg
             // Do nothing
          }
       }
-      // Postfixing file with date, to indicate that this has been processed.
-      SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-      final File targetFile = httpDownloader.getTargetFile();
-      targetFile.renameTo(new File(targetFile.getParentFile(), targetFile.getName() + "." + sdf.format(new Date())));
    }
 
    public void fail() {
@@ -110,9 +117,6 @@ public class WikipediaDocumentProducer implements DocumentProducer, DownloadProg
 
    /**
     * Sets the HttpDownloader for this producer.
-    *
-    * If the dowloaders targetfile exists, the producer will not call downloadFile() on the downloader. It will use this
-    * file. When all documents are processed the file will be postfixed with current date.
     *
     * @param httpDownloader the downloader that is used to get the wikipedia dump.
     */
@@ -159,7 +163,12 @@ public class WikipediaDocumentProducer implements DocumentProducer, DownloadProg
    }
 
    public Iterator<Document> iterator() {
-      return new WikiDocumentIterator(maxDocs);
+      if (indexOnlyNew && !isNew) {
+         log.info("Current wiki dump is up to date. Producing 0 documents. (Set indexOnlyNew to false to force indexing.)");
+         return new WikiDocumentIterator(0);
+      } else {
+         return new WikiDocumentIterator(maxDocs);
+      }
    }
 
    /**
@@ -182,6 +191,28 @@ public class WikipediaDocumentProducer implements DocumentProducer, DownloadProg
       this.bunzip2 = bunzip2;
    }
 
+   /**
+    * Specifies if the documentProducer should produce documents from an earlier downloaded wikipedia. Set this to false
+    * if you want to produce documents from an earlier downloaded wiki. If this is set to true(default) the producer will
+    * only produce if there was a new dump available.
+    *
+    * @return <code>true</code> if the documentProducer should produce documents from an earlier downloaded wikipedia.
+    */
+   public boolean isIndexOnlyNew() {
+      return indexOnlyNew;
+   }
+
+   /**
+    * Specifies if the documentProducer should produce documents from an earlier downloaded wikipedia. Set this to false
+    * if you want to produce documents from an earlier downloaded wiki. If thei is set to true(default) the producer will
+    * only produce if there was a new dump available.
+    *
+    * @param indexOnlyNew <code>true</code> if the documentProducer should produce documents from an earlier downloaded wikipedia.
+    */
+   public void setIndexOnlyNew(boolean indexOnlyNew) {
+      this.indexOnlyNew = indexOnlyNew;
+   }
+
    public void progress(long totalUnits, long doneUnits) {
       log.info("Download progress: " + doneUnits + " of " + totalUnits + " ("  + Math.round(((float)doneUnits / totalUnits) * 100) + "%)" );
    }
@@ -195,7 +226,7 @@ public class WikipediaDocumentProducer implements DocumentProducer, DownloadProg
       }
 
       public boolean hasNext() {
-         return (maxDocs == null || (maxDocs != null && maxDocs > processedDocs)) && documentSplitter.hasNext();
+         return (maxDocs == null || maxDocs > processedDocs) && documentSplitter.hasNext();
       }
 
       public Document next() {
