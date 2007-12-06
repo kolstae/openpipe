@@ -98,55 +98,56 @@
                   </compilerArguments>
                </configuration>
             </plugin>
+            <plugin>
+               <groupId>org.apache.maven.plugins</groupId>
+               <artifactId>maven-surefire-plugin</artifactId>
+               <configuration>
+                  <forkMode>never</forkMode>
+                  <disableXmlReport>true</disableXmlReport>
+               </configuration>
+            </plugin>
          </plugins>
       </pluginManagement>
-      <extensions>
-         <extension>
-            <groupId>org.apache.maven.wagon</groupId>
-            <artifactId>wagon-ssh-external</artifactId>
-            <version>1.0-beta-2</version>
-         </extension>
-      </extensions>
    </build>
    <dependencyManagement>
       <dependencies>
          <dependency>
-            <groupId>no.trank.openpipe</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>openpipe-core</artifactId>
             <version>${pom.version}</version>
          </dependency>
          <dependency>
-            <groupId>no.trank.openpipe</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>openpipe-jdbc</artifactId>
             <version>${pom.version}</version>
          </dependency>
          <dependency>
-            <groupId>no.trank.openpipe</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>openpipe-solr</artifactId>
             <version>${pom.version}</version>
          </dependency>
          <dependency>
-            <groupId>no.trank.openpipe</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>openpipe-opennlp</artifactId>
             <version>${pom.version}</version>
          </dependency>
          <dependency>
-            <groupId>no.trank.openpipe</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>openpipe-parse</artifactId>
             <version>${pom.version}</version>
          </dependency>
          <dependency>
-            <groupId>no.trank.openpipe</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>openpipe-parse-ms</artifactId>
             <version>${pom.version}</version>
          </dependency>
          <dependency>
-            <groupId>no.trank.openpipe</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>openpipe-parse-misc</artifactId>
             <version>${pom.version}</version>
          </dependency>
          <dependency>
-            <groupId>no.trank.openpipe</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>solr-tokenizer</artifactId>
             <version>${pom.version}</version>
          </dependency>

@@ -34,7 +34,6 @@
                   <goals>
                      <goal>single</goal>
                   </goals>
-                  <phase>package</phase>
                </execution>
             </executions>
             <configuration>
@@ -53,23 +52,23 @@
    </build>
    <dependencies>
       <dependency>
-         <groupId>no.trank.openpipe</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>openpipe-core</artifactId>
       </dependency>
       <dependency>
-         <groupId>no.trank.openpipe</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>openpipe-solr</artifactId>
       </dependency>
       <dependency>
-         <groupId>no.trank.openpipe</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>openpipe-parse</artifactId>
       </dependency>
       <dependency>
-         <groupId>no.trank.openpipe</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>openpipe-parse-ms</artifactId>
       </dependency>
       <dependency>
-         <groupId>no.trank.openpipe</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>openpipe-parse-misc</artifactId>
       </dependency>
       <dependency>

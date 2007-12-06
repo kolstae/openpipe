@@ -28,7 +28,7 @@
    <name>OpenPipe Language</name>
    <dependencies>
       <dependency>
-         <groupId>no.trank.openpipe</groupId>
+         <groupId>${project.groupId}</groupId>
          <artifactId>openpipe-core</artifactId>
       </dependency>
       <dependency>
