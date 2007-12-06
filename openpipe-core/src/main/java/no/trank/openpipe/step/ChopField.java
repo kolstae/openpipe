@@ -37,6 +37,7 @@ import no.trank.openpipe.api.document.BaseAnnotatedField;
 public class ChopField extends MultiInputFieldPipelineStep {
    private int chopLength;
    private String appendOnChop;
+   private String fitField;
    private Pattern LAST_WORD = Pattern.compile("[\\s\\.]+[\\S&&[^\\.]]+[\\s\\.]*$");
 
    public ChopField() {
@@ -49,7 +50,7 @@ public class ChopField extends MultiInputFieldPipelineStep {
          List<AnnotatedField> newFields = new ArrayList<AnnotatedField>();
          for (AnnotatedField fieldValue : fieldValues) {
             if (fieldValue.getValue().length() > chopLength) {
-               String choppedString = chop(fieldValue.getValue());
+               String choppedString = chop(fieldValue.getValue(), doc.getFieldValue(fitField));
                newFields.add(new BaseAnnotatedField(choppedString));
             } else {
                newFields.add(fieldValue);
@@ -59,8 +60,10 @@ public class ChopField extends MultiInputFieldPipelineStep {
       }
    }
 
-   private String chop(String value) {
+   private String chop(String value, String fitFieldValue) {
       int chopTo = appendOnChop == null ? chopLength : chopLength - appendOnChop.length();
+      chopTo = fitFieldValue == null ? chopTo : chopTo - fitFieldValue.length();
+      chopTo = Math.max(0, chopTo);
       Matcher matcher = LAST_WORD.matcher(value.substring(0, chopTo));
       return matcher.replaceAll(appendOnChop == null ? "" : appendOnChop);
    }
@@ -99,6 +102,26 @@ public class ChopField extends MultiInputFieldPipelineStep {
     */
    public void setAppendOnChop(String appendOnChop) {
       this.appendOnChop = appendOnChop;
+   }
+
+   /**
+    * Gets the fitField.
+    *
+    * @return the fitField
+    * @see #setFitField(String)
+    */
+   public String getFitField() {
+      return fitField;
+   }
+
+   /**
+    * Sets the fitField. If this is set the chopper will chop texts relative to the length of the value of fitfield.
+    * That means that the chopLength will be shortened by the length of the fitField value.
+    *
+    * @param fitField the fitField
+    */
+   public void setFitField(String fitField) {
+      this.fitField = fitField;
    }
 
    public String getRevision() {

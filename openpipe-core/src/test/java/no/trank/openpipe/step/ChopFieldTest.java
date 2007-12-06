@@ -24,6 +24,7 @@ import no.trank.openpipe.api.document.Document;
  */
 public class ChopFieldTest extends TestCase {
    private ChopField chopField;
+
    @Override
    protected void setUp() throws Exception {
       chopField = new ChopField();
@@ -42,6 +43,7 @@ public class ChopFieldTest extends TestCase {
       chopField.setChopLength(160);
       chopField.execute(doc);
       assertNotNull(doc.getFieldValue("in"));
+      assertTrue(doc.getFieldValue("in").length() <= 160);
       assertEquals("Kaffe er en drikk laget av frukten fra kaffeplanten (Arabica eller Coffea arabica og Robusta eller Coffea canephora utgjør ca. 99 %). Frukten blir skrellet", doc.getFieldValue("in"));
    }
 
@@ -52,6 +54,7 @@ public class ChopFieldTest extends TestCase {
       chopField.setAppendOnChop("...");
       chopField.execute(doc);
       assertNotNull(doc.getFieldValue("in"));
+      assertTrue(doc.getFieldValue("in").length() <= 160);
       assertEquals("Kaffe er en drikk laget av frukten fra kaffeplanten (Arabica eller Coffea arabica og Robusta eller Coffea canephora utgjør ca. 99 %). Frukten blir skrellet...", doc.getFieldValue("in"));
 
       doc.setFieldValue("in", "Kaffe er en drikk laget av frukten fra kaffeplanten.");
@@ -59,5 +62,18 @@ public class ChopFieldTest extends TestCase {
       assertNotNull(doc.getFieldValue("in"));
       assertEquals("Kaffe er en drikk laget av frukten fra kaffeplanten.", doc.getFieldValue("in"));
 
+   }
+
+   public void testChopWithFitField() throws Exception {
+      Document doc = new Document();
+      doc.setFieldValue("in", "Kaffe er en drikk laget av frukten fra kaffeplanten (Arabica eller Coffea arabica og Robusta eller Coffea canephora utgjør ca. 99 %). Frukten blir skrellet for skall og fruktkjøtt, og kjernen (steinen), det vi kaller bønnene, blir tørket, brent og malt opp. Finheten på kaffepulveret varierer etter hvordan kaffen skal tilberedes. Kaffen blandes på forskjellige måter med vann, og drikkes i de fleste tilfeller varm.");
+      doc.setFieldValue("fitField", "1234567890");
+      chopField.setChopLength(20);
+      chopField.setAppendOnChop("...");
+      chopField.setFitField("fitField");
+      chopField.execute(doc);
+      assertNotNull(doc.getFieldValue("in"));
+      assertTrue(doc.getFieldValue("in").length() <= 10);
+      assertEquals("Kaffe...", doc.getFieldValue("in"));
    }
 }
