@@ -16,6 +16,8 @@
 package no.trank.openpipe.util.log;
 
 /**
+ * NOOP timed logger, does nothing.
+ *
  * @version $Revision$
  */
 public class NoopTimedLogger implements TimedLogger {

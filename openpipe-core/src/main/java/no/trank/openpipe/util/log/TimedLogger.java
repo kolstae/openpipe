@@ -16,6 +16,8 @@
 package no.trank.openpipe.util.log;
 
 /**
+ * A simple interface for measuring and logging timings of operations.
+ *
  * @version $Revision$
  */
 public interface TimedLogger {

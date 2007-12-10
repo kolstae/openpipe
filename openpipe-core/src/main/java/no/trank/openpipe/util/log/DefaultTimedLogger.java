@@ -22,6 +22,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * A timed logger that logs with a given interval.
+ *
  * @version $Revision$
  */
 public class DefaultTimedLogger implements TimedLogger {
@@ -35,10 +37,23 @@ public class DefaultTimedLogger implements TimedLogger {
    private long lastLog = System.nanoTime();
    private long logPeriod = SECONDS.toNanos(10);
 
+   /**
+    * Creates a timed logger.
+    *
+    * @see #setLog(Logger)
+    * @see #setFormat(String)
+    * @see #setLogPeriodInSeconds(long)
+    */
    public DefaultTimedLogger() {
       this(LoggerFactory.getLogger(DefaultTimedLogger.class), "%1$d operations at %2$.2f millis/operation");
    }
 
+   /**
+    * Creates a timed logger with the given logger and format.
+    *
+    * @param log the logger to use.
+    * @param format the format to use.
+    */
    public DefaultTimedLogger(Logger log, String format) {
       this.log = log;
       this.format = format;
@@ -49,6 +64,10 @@ public class DefaultTimedLogger implements TimedLogger {
       start = System.nanoTime();
    }
 
+   /**
+    * {@inheritDoc}
+    * <p>Logs info if time since last log exceeds {@link #getLogPeriodInSeconds()}</p>
+    */
    @Override
    public void stopTimerAndIncrement() {
       final long now = System.nanoTime();
@@ -80,27 +99,79 @@ public class DefaultTimedLogger implements TimedLogger {
       lastLog = System.nanoTime();
    }
 
+   /**
+    * Gets the logger used for logging.
+    *
+    * @return the logger used for logging.
+    */
    public Logger getLog() {
       return log;
    }
 
+   /**
+    * Sets the logger used for logging. Default <tt>LoggerFactory.getLogger(DefaultTimedLogger.class)</tt>.
+    *
+    * @param log the logger used for logging. <b>Cannot</b> be <tt>null</tt>.
+    */
    public void setLog(Logger log) {
       this.log = log;
    }
 
+   /**
+    * Gets the format of the log statement.
+    *
+    * @return the format of the log statement.
+    *
+    * @see #setFormat(String)
+    */
    public String getFormat() {
       return format;
    }
 
+   /**
+    * Sets the format of the log statement. Default <tt>&quot;%1$d operations at %2$.2f millis/operation&quot;</tt>.
+    *
+    * @param format the format of the log statement.
+    *
+    * @see Formatter
+    */
    public void setFormat(String format) {
       this.format = format;
    }
 
+   /**
+    * Gets the log period in seconds.
+    *
+    * @return the log period in seconds.
+    */
    public long getLogPeriodInSeconds() {
       return NANOSECONDS.toSeconds(logPeriod);
    }
 
+   /**
+    * Sets the log period in seconds. Default is <tt>10</tt> seconds.
+    *
+    * @param logPeriod the log period in seconds.
+    */
    public void setLogPeriodInSeconds(long logPeriod) {
       this.logPeriod = SECONDS.toNanos(logPeriod);
+   }
+
+   /**
+    * Gets the log period in nanos.
+    *
+    * @return the log period in nanos.
+    */
+   public long getLogPeriod() {
+      return logPeriod;
+   }
+
+   /**
+    * Sets the log period in nanos.
+    *
+    * @param logPeriod the log period in nanos.
+    */
+   public void setLogPeriod(long logPeriod) {
+      this.logPeriod = logPeriod;
    }
 }
