@@ -90,7 +90,7 @@ public class ParseXMLXPath extends BasePipelineStep {
 
    private void handleException(String text, Exception e) throws PipelineException {
       if (failOnXMLError) {
-         log.info("Failed parsing of: {}", text);
+         log.debug("Failed parsing of: {}", text);
          throw new PipelineException("Could not parse XML in field '" + fieldName + "'", e);
       } else {
          log.error("{}: Could not parse XML in field '" + fieldName + "'", e);
