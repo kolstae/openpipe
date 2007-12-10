@@ -20,6 +20,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Iterator;
+import javax.sql.DataSource;
 
 import org.apache.ws.jaxme.sqls.BooleanConstraint;
 import org.apache.ws.jaxme.sqls.Column;
@@ -43,9 +44,9 @@ import org.springframework.dao.TypeMismatchDataAccessException;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.JdbcOperations;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
-import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * @version $Revision$
@@ -54,7 +55,7 @@ public class DocStateHolder {
    private static final Logger log = LoggerFactory.getLogger(DocStateHolder.class);
    private static final StringRowMapper STRING_ROWMAPPER = new StringRowMapper();
    private final SimpleJdbcTemplate jdbcTemplate;
-   private TransactionTemplate transaction;
+   private DataSourceTransactionManager transactionManager;
    private final SQLFactory sqlFactory;
    private String update;
    private String insert;
@@ -63,27 +64,27 @@ public class DocStateHolder {
    private Timestamp startTime;
    private TransactionStatus status;
 
-   public DocStateHolder(SimpleJdbcTemplate jdbcTemplate, SQLFactory sqlFactory, String tableName, String idColumnName,
-         int idMaxLength, String updColumnName) {
-      this.jdbcTemplate = jdbcTemplate;
+   public DocStateHolder(DataSource dataSource, SQLFactory sqlFactory, TableDescription desc) {
+      jdbcTemplate = new SimpleJdbcTemplate(dataSource);
+      transactionManager = new DataSourceTransactionManager(dataSource);
       this.sqlFactory = sqlFactory;
       final JdbcOperations op = jdbcTemplate.getJdbcOperations();
       final Schema schema = (Schema) op.execute(new SchemaCallback(sqlFactory));
-      Table table = schema.getTable(tableName);
+      Table table = schema.getTable(desc.getTableName());
       final SQLGenerator generator = sqlFactory.newSQLGenerator();
       final StringColumn colId;
       final Column colUpd;
       if (table != null) {
-         final Column id = table.getColumn(idColumnName);
-         colUpd = table.getColumn(updColumnName);
-         validateTable(id, colUpd, idMaxLength);
+         final Column id = table.getColumn(desc.getIdColumnName());
+         colUpd = table.getColumn(desc.getUpdColumnName());
+         validateTable(id, colUpd, desc.getIdMaxLength());
          colId = (StringColumn) id;
       } else {
-         table = schema.newTable(tableName);
-         colId = (StringColumn) table.newColumn(idColumnName, VARCHAR);
-         colUpd = table.newColumn(updColumnName, TIMESTAMP);
+         table = schema.newTable(desc.getTableName());
+         colId = (StringColumn) table.newColumn(desc.getIdColumnName(), VARCHAR);
+         colUpd = table.newColumn(desc.getUpdColumnName(), TIMESTAMP);
          colId.setNullable(false);
-         colId.setLength(idMaxLength);
+         colId.setLength(desc.getIdMaxLength());
          table.newPrimaryKey().addColumn(colId);
          colUpd.setNullable(false);
          createTable(op, table, generator);
@@ -100,23 +101,21 @@ public class DocStateHolder {
 
    public void prepare() {
       startTime = new Timestamp(System.currentTimeMillis());
-      final DefaultTransactionDefinition definition = new DefaultTransactionDefinition();
-      status = transaction.getTransactionManager().getTransaction(definition);
+      status = transactionManager.getTransaction(new DefaultTransactionDefinition());
    }
 
    public void commit() {
       jdbcTemplate.update(delete, startTime);
       try {
-         transaction.getTransactionManager().commit(status);
+         transactionManager.commit(status);
       } finally {
          status = null;
       }
    }
 
    public void rollback() {
-      jdbcTemplate.getJdbcOperations().execute("rollback");
       try {
-         transaction.getTransactionManager().rollback(status);
+         transactionManager.rollback(status);
       } finally {
          status = null;
       }
@@ -202,14 +201,6 @@ public class DocStateHolder {
          jdbcTemplate.update(insert, id, startTime);
       }
       return wasUpdate;
-   }
-
-   public TransactionTemplate getTransactionTemplate() {
-      return transaction;
-   }
-
-   public void setTransactionTemplate(TransactionTemplate transaction) {
-      this.transaction = transaction;
    }
 
    private static class SchemaCallback implements ConnectionCallback {

@@ -28,9 +28,7 @@ import static org.easymock.EasyMock.*;
 import org.hsqldb.jdbcDriver;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
-import org.springframework.transaction.support.TransactionTemplate;
 
 import no.trank.openpipe.api.document.Document;
 import no.trank.openpipe.api.document.DocumentOperation;
@@ -49,7 +47,6 @@ public class StateDocumentProducerTest extends TestCase {
    private SingleConnectionDataSource dataSource;
    private SimpleJdbcTemplate jdbcTemplate;
    private static final String DOC_ID = "1";
-   private TransactionTemplate transactionTemplate;
 
    public void testValidateSchemaFailes() throws Exception {
       jdbcTemplate.getJdbcOperations().execute("CREATE CACHED TABLE " + TABLE_NAME +
@@ -275,8 +272,7 @@ public class StateDocumentProducerTest extends TestCase {
 
    private StateDocumentProducer setupProducer(DocumentProducer mockProd) {
       final StateDocumentProducer producer = new StateDocumentProducer(mockProd);
-      producer.setJdbcTemplate(jdbcTemplate);
-      producer.setTransactionTemplate(transactionTemplate);
+      producer.setDataSource(dataSource);
       producer.setSqlFactory(new HsqlDbSQLFactoryImpl());
       producer.setIdFieldName(FIELD_ID);
       producer.setTableName(TABLE_NAME);
@@ -293,7 +289,6 @@ public class StateDocumentProducerTest extends TestCase {
       dataSource.setUrl("jdbc:hsqldb:mem:test");
       dataSource.setSuppressClose(true);
       jdbcTemplate = new SimpleJdbcTemplate(dataSource);
-      transactionTemplate = new TransactionTemplate(new DataSourceTransactionManager(dataSource));
    }
 
    @Override

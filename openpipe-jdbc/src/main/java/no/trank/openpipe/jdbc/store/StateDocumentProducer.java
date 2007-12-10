@@ -17,12 +17,9 @@ package no.trank.openpipe.jdbc.store;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import javax.sql.DataSource;
 
 import org.apache.ws.jaxme.sqls.SQLFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
-import org.springframework.transaction.support.TransactionTemplate;
 
 import no.trank.openpipe.api.PipelineException;
 import no.trank.openpipe.api.document.Document;
@@ -35,17 +32,14 @@ import no.trank.openpipe.config.annotation.NotNull;
 /**
  * @version $Revision$
  */
-public class StateDocumentProducer implements DocumentProducer {
-   private static final Logger log = LoggerFactory.getLogger(StateDocumentProducer.class);
+public class StateDocumentProducer implements DocumentProducer, TableDescription {
    private final DocumentProducer producer;
    @NotEmpty
    private String idFieldName;
    @NotNull
-   private SimpleJdbcTemplate jdbcTemplate;
-   @NotNull
-   private TransactionTemplate transactionTemplate;
-   @NotNull
    private SQLFactory sqlFactory;
+   @NotNull
+   private DataSource dataSource;
    @NotEmpty
    private String tableName = "doc_store";
    @NotEmpty
@@ -72,10 +66,8 @@ public class StateDocumentProducer implements DocumentProducer {
       producer.init();
 
       if (docStateHolder == null) {
-         docStateHolder = new DocStateHolder(jdbcTemplate, sqlFactory, tableName, idColumnName, idMaxLength,
-               updColumnName);
+         docStateHolder = new DocStateHolder(dataSource, sqlFactory, this);
       }
-      docStateHolder.setTransactionTemplate(transactionTemplate);
       docStateHolder.prepare();
    }
 
@@ -104,6 +96,7 @@ public class StateDocumentProducer implements DocumentProducer {
       this.idFieldName = idFieldName;
    }
 
+   @Override
    public String getTableName() {
       return tableName;
    }
@@ -112,6 +105,7 @@ public class StateDocumentProducer implements DocumentProducer {
       this.tableName = tableName;
    }
 
+   @Override
    public String getIdColumnName() {
       return idColumnName;
    }
@@ -120,6 +114,7 @@ public class StateDocumentProducer implements DocumentProducer {
       this.idColumnName = idColumnName;
    }
 
+   @Override
    public String getUpdColumnName() {
       return updColumnName;
    }
@@ -128,6 +123,7 @@ public class StateDocumentProducer implements DocumentProducer {
       this.updColumnName = updColumnName;
    }
 
+   @Override
    public int getIdMaxLength() {
       return idMaxLength;
    }
@@ -136,28 +132,20 @@ public class StateDocumentProducer implements DocumentProducer {
       this.idMaxLength = idMaxLength;
    }
 
-   public SimpleJdbcTemplate getJdbcTemplate() {
-      return jdbcTemplate;
-   }
-
-   public void setJdbcTemplate(SimpleJdbcTemplate jdbcTemplate) {
-      this.jdbcTemplate = jdbcTemplate;
-   }
-
-   public TransactionTemplate getTransactionTemplate() {
-      return transactionTemplate;
-   }
-
-   public void setTransactionTemplate(TransactionTemplate transactionTemplate) {
-      this.transactionTemplate = transactionTemplate;
-   }
-
    public SQLFactory getSqlFactory() {
       return sqlFactory;
    }
 
    public void setSqlFactory(SQLFactory sqlFactory) {
       this.sqlFactory = sqlFactory;
+   }
+
+   public DataSource getDataSource() {
+      return dataSource;
+   }
+
+   public void setDataSource(DataSource dataSource) {
+      this.dataSource = dataSource;
    }
 
    private static class StateDocumentIterator implements Iterator<Document> {
