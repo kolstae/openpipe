@@ -17,8 +17,8 @@ package no.trank.openpipe.solr.step;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -36,6 +36,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
@@ -206,6 +207,11 @@ public class SolrDocumentProcessor extends BasePipelineStep {
    @Override
    public void prepare() throws PipelineException {
       super.prepare();
+      try {
+         documentPoster.prepare();
+      } catch (MalformedURLException e) {
+         throw new PipelineException("Post url is malformed", e);
+      }
 
       if (solrSchemaUrl != null) {
          try {
@@ -217,11 +223,6 @@ public class SolrDocumentProcessor extends BasePipelineStep {
       addField(BOOST_KEY); // Needed even if there is no schemaUrl
       if (!tokenizedFields.isEmpty() && serializer == null) {
          throw new PipelineException("TokenizedFields set, but no serializer configured");
-      }
-      try {
-         documentPoster.prepare();
-      } catch (MalformedURLException e) {
-         throw new PipelineException("Post url is malformed", e);
       }
    }
 
@@ -368,7 +369,16 @@ public class SolrDocumentProcessor extends BasePipelineStep {
    private void loadIndexSchema(URL url) throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
       solrFields.clear();
       solrDynamicFields.clear();
-      final InputStream in = new XmlInputStream(url.openStream());
+
+      InputStream sIn;
+      if (url.getProtocol().equals("file")) {
+         sIn = url.openStream();
+      } else {
+         GetMethod get = new GetMethod(url.toExternalForm());
+         documentPoster.getHttpClient().executeMethod(get);
+         sIn = get.getResponseBodyAsStream();
+      }
+      final InputStream in = new XmlInputStream(sIn);
       try {
 
          DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();

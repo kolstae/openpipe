@@ -164,7 +164,7 @@ public class WikipediaDocumentProducer implements DocumentProducer, DownloadProg
 
    public Iterator<Document> iterator() {
       if (indexOnlyNew && !isNew) {
-         log.info("Current wiki dump is up to date. Producing 0 documents. (Set indexOnlyNew to false to force indexing.)");
+         log.info("Current wiki dump is up to date. Skipping produce. (Set indexOnlyNew to false to force indexing.)");
          return new WikiDocumentIterator(0);
       } else {
          return new WikiDocumentIterator(maxDocs);

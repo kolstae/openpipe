@@ -78,18 +78,19 @@ public class ParseXMLXPath extends BasePipelineStep {
             final Node reader = builder.parse(new InputSource(new StringReader(text)));
             parseXML(doc, reader);
          } catch (IOException e) {
-            handleException(e);
+            handleException(text, e);
          } catch (SAXException e) {
-            handleException(e);
+            handleException(text, e);
          } catch (XPathExpressionException e) {
-            handleException(e);
+            handleException(text, e);
          }
       }
       return PipelineStepStatus.DEFAULT;
    }
 
-   private void handleException(Exception e) throws PipelineException {
+   private void handleException(String text, Exception e) throws PipelineException {
       if (failOnXMLError) {
+         log.info("Failed parsing of: {}", text);
          throw new PipelineException("Could not parse XML in field '" + fieldName + "'", e);
       } else {
          log.error("{}: Could not parse XML in field '" + fieldName + "'", e);

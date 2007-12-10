@@ -136,6 +136,13 @@ public class SolrHttpDocumentPoster {
       uncommitedDocs++;
    }
 
+   /**
+    * @deprecated
+    */
+   public HttpClient getHttpClient() {
+      return httpClient;
+   }
+
    private void addDocument(HashMap<String, List<String>> solrOutputDoc, Map<String, String> attribs) 
          throws XMLStreamException, PipelineException {
       startAdd();
