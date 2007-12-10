@@ -54,7 +54,7 @@ public class BaseSubPipeline implements SubPipeline {
       for (PipelineStep step : getPipelineSteps()) {
          try {
             step.prepare();
-            log.info("Prepared {}{}", step.getName(), step.getRevision().replaceAll("$", " "));
+            log.info("Prepared {}{}", step.getName(), step.getRevision().replace('$', ' '));
             preparedSteps.add(step);
          } catch (PipelineException e) {
             e.setPipelineStepNameIfNull(step.getName());

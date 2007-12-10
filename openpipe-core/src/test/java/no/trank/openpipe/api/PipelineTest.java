@@ -43,25 +43,23 @@ public class PipelineTest extends TestCase {
       docs.add(new Document());
 
       pipelineStep = createMock(PipelineStep.class);
+      expect(pipelineStep.getName()).andReturn("Step 1").anyTimes();
+      expect(pipelineStep.getRevision()).andReturn("$Revision$").anyTimes();
       failingStep = createMock(PipelineStep.class);
+      expect(failingStep.getName()).andReturn("FailStep").anyTimes();
+      expect(failingStep.getRevision()).andReturn("$Revision$").anyTimes();
 
       steps.add(pipelineStep);
       steps.add(failingStep);
    }
 
    public void testPrepare() throws Exception {
-      PipelineStep pipelineStep = createMock(PipelineStep.class);
-      PipelineStep failingStep = createMock(PipelineStep.class);
-      PipelineExceptionHandler eHandler = createMock(PipelineExceptionHandler.class);
-
-      steps.add(pipelineStep);
-      steps.add(failingStep);
 
       // Testing one ok, and one failing step
       pipelineStep.prepare();
+      expectLastCall().once();
       failingStep.prepare();
       expectLastCall().andThrow(new RuntimeException("I am always failing"));
-      expect(failingStep.getName()).andReturn("FailStep").anyTimes();
 
       replay(pipelineStep, failingStep);
       assertFalse("One step failed, success should be false", pipeline.prepare());
@@ -80,11 +78,6 @@ public class PipelineTest extends TestCase {
       expect(pipelineStep.execute(doc)).andReturn(PipelineStepStatus.DEFAULT);
       expect(failingStep.execute(doc)).andThrow(new RuntimeException("I am always failing"));
 
-      expect(failingStep.getName()).andReturn("testFailStep").anyTimes();
-      expect(pipelineStep.getName()).andReturn("testStep").anyTimes();
-      expect(pipelineStep.getRevision()).andReturn("$Revision$").anyTimes();
-      expect(failingStep.getRevision()).andReturn("$Revision$").anyTimes();
-
       replay(pipelineStep, failingStep);
       assertTrue(pipeline.prepare());
       PipelineFlow pipelineFlow = pipeline.execute(doc);
@@ -101,7 +94,6 @@ public class PipelineTest extends TestCase {
       pipelineStep.prepare();
       failingStep.prepare();
       expectLastCall().andThrow(new RuntimeException("I am always failing"));
-      expect(failingStep.getName()).andReturn("FailStep").anyTimes();
       expect(eHandler.handlePrepareException((PipelineException) notNull())).andReturn(PipelineFlowEnum.CONTINUE);
       replay(pipelineStep, failingStep, eHandler);
 
@@ -126,11 +118,6 @@ public class PipelineTest extends TestCase {
       pipelineStep.prepare();
       failingStep.finish(true);
       pipelineStep.finish(true);
-
-      expect(failingStep.getName()).andReturn("testFailStep").anyTimes();
-      expect(pipelineStep.getName()).andReturn("testStep").anyTimes();
-      expect(pipelineStep.getRevision()).andReturn("$Revision$").anyTimes();
-      expect(failingStep.getRevision()).andReturn("$Revision$").anyTimes();
 
       replay(pipelineStep, failingStep, eHandler);
 
