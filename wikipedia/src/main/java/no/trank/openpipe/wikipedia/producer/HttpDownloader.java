@@ -24,7 +24,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URL;
 import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -49,6 +48,7 @@ public class HttpDownloader {
    private String sourceUrl;
    private long progressTimeStamp;
    private List<DownloadProgressListener> progressListeners = new ArrayList<DownloadProgressListener>();
+   private int progressInterval = 1000;
 
    public File getTargetFile() {
       return targetFile;
@@ -64,6 +64,14 @@ public class HttpDownloader {
 
    public void setSourceUrl(String sourceUrl) {
       this.sourceUrl = sourceUrl;
+   }
+
+   public int getProgressInterval() {
+      return progressInterval;
+   }
+
+   public void setProgressInterval(int progressInterval) {
+      this.progressInterval = progressInterval;
    }
 
    public void addProgressListener(DownloadProgressListener progressListener) {
@@ -174,7 +182,7 @@ public class HttpDownloader {
 
    private void progress(long size, long totalReadBytes) {
       final long currentTime = System.currentTimeMillis();
-      if (progressTimeStamp + 1000 < currentTime || size == totalReadBytes) {
+      if (progressTimeStamp + progressInterval < currentTime || size == totalReadBytes) {
          for (DownloadProgressListener progressListener : progressListeners) {
             progressListener.progress(size, totalReadBytes);
          }
