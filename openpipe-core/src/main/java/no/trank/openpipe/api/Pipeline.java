@@ -17,13 +17,19 @@ package no.trank.openpipe.api;
 
 import java.util.List;
 
+import org.slf4j.LoggerFactory;
+
 import no.trank.openpipe.api.document.Document;
+import no.trank.openpipe.util.log.DefaultTimedLogger;
+import no.trank.openpipe.util.log.TimedLogger;
 
 /**
  * @version $Revision$
  */
 public class Pipeline extends BaseSubPipeline {
    private PipelineExceptionHandler pipelineExceptionHandler;
+   private TimedLogger timedLogger = new DefaultTimedLogger(LoggerFactory.getLogger(Pipeline.class),
+         "Processed %1$d docs at %2$.2f millis/doc");
 
    public Pipeline() {
       this(null);
@@ -49,6 +55,7 @@ public class Pipeline extends BaseSubPipeline {
 
    @Override
    public boolean prepare() {
+      timedLogger.reset();
       try {
          return super.prepare();
       } catch (Exception e) {
@@ -58,6 +65,7 @@ public class Pipeline extends BaseSubPipeline {
 
    @Override
    public void finish(boolean success) {
+      timedLogger.log();
       try {
          super.finish(success);
       } catch (Exception e) {
@@ -88,11 +96,14 @@ public class Pipeline extends BaseSubPipeline {
     */
    public boolean execute(Iterable<Document> documents) {
       try {
+         timedLogger.startTimer(); // To include DocumentProducer times
          for (Document document : documents) {
             PipelineFlow pipelineFlow = execute(document);
+            timedLogger.stopTimerAndIncrement();
             if (pipelineFlow.isStopPipeline()) {
                return pipelineFlow.isSuccess();
             }
+            timedLogger.startTimer(); // To include DocumentProducer times
          }
          return true;
       } catch (Exception e) {
@@ -119,7 +130,7 @@ public class Pipeline extends BaseSubPipeline {
       return success;
    }
 
-   private PipelineException wrapToPiplineException(Exception ex) {
+   private static PipelineException wrapToPiplineException(Exception ex) {
       PipelineException pex;
       if (PipelineException.class.isAssignableFrom(ex.getClass())) {
          pex = (PipelineException) ex;
@@ -127,5 +138,13 @@ public class Pipeline extends BaseSubPipeline {
          pex = new PipelineException(ex);
       }
       return pex;
+   }
+
+   public TimedLogger getTimedLogger() {
+      return timedLogger;
+   }
+
+   public void setTimedLogger(TimedLogger timedLogger) {
+      this.timedLogger = timedLogger;
    }
 }

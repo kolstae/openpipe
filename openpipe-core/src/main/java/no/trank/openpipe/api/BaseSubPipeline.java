@@ -54,6 +54,7 @@ public class BaseSubPipeline implements SubPipeline {
       for (PipelineStep step : getPipelineSteps()) {
          try {
             step.prepare();
+            log.info("Prepared {}{}", step.getName(), step.getRevision().replaceAll("$", " "));
             preparedSteps.add(step);
          } catch (PipelineException e) {
             e.setPipelineStepNameIfNull(step.getName());
@@ -94,13 +95,9 @@ public class BaseSubPipeline implements SubPipeline {
    public PipelineStatusCode executeSteps(Document document) throws PipelineException {
       PipelineStatusCode pipelineStatusCode = PipelineStatusCode.CONTINUE;
       for (PipelineStep pipelineStep : preparedSteps) {
-         final String infoString = buildPipelineInfo(document, pipelineStep);
-         log.debug("Running {}", infoString);
          final PipelineStepStatusCode stepStatusCode;
          try {
-            final long start = System.currentTimeMillis();
-            PipelineStepStatus status = pipelineStep.execute(document);
-            log.info("Execute {} took {} millis", infoString, System.currentTimeMillis() - start);
+            PipelineStepStatus status = executeStep(document, pipelineStep);
             if (status == null) {
                throw new PipelineException("null status received", pipelineStep.getName());
             }
@@ -123,11 +120,24 @@ public class BaseSubPipeline implements SubPipeline {
       return pipelineStatusCode;
    }
 
-   private static String buildPipelineInfo(Document document, PipelineStep pipelineStep) {
-      if (pipelineStep.getRevision() != null) {
-         return pipelineStep.getName() + pipelineStep.getRevision().replace('$', ' ') + "document operation: " + document.getOperation();
+   protected PipelineStepStatus executeStep(Document document, PipelineStep pipelineStep) throws PipelineException {
+      final String infoString;
+      final long start;
+      final boolean debug = log.isDebugEnabled();
+      if (debug) {
+         infoString = pipelineStep.getName() + "document operation: " + document.getOperation();
+         log.debug("Running {}", infoString);
+         start = System.currentTimeMillis();
       } else {
-         throw new NullPointerException(pipelineStep.getName() + " revision is null.");
+         infoString = null;
+         start = 0;
       }
+
+      final PipelineStepStatus status = pipelineStep.execute(document);
+
+      if (debug) {
+         log.debug("Execute {} took {} millis", infoString, System.currentTimeMillis() - start);
+      }
+      return status;
    }
 }
