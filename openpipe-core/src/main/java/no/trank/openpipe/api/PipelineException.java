@@ -43,11 +43,12 @@ public class PipelineException extends Exception {
    }
 
    public PipelineException(Throwable cause) {
-      this(null, cause, null);
+      super(cause);
    }
    
    public PipelineException(Throwable cause, String pipelineStepName) {
-      this(null, cause, pipelineStepName);
+      super(cause);
+      this.pipelineStepName = pipelineStepName;
    }
 
    public String getPipelineStepName() {
