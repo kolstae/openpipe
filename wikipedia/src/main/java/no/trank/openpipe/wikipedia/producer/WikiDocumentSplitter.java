@@ -55,50 +55,49 @@ public class WikiDocumentSplitter implements Iterator<String> {
       if (next != null) {
          return true;
       } else {
-         XMLEvent xmlEvent = null;
          try {
-            ByteArrayOutputStream out = null;
-            XMLEventWriter xmlEventWriter = null;
             while (xmlEventReader.hasNext()) {
-               xmlEvent = xmlEventReader.nextEvent();
+               XMLEvent xmlEvent = xmlEventReader.nextEvent();
                if(xmlEvent.isStartElement()) {
                   String localPart = xmlEvent.asStartElement().getName().getLocalPart();
                   if (PAGE_ELEMENT.equals(localPart)) {
-                     out = new ByteArrayOutputStream();
-                     xmlEventWriter = xmlOutputFactory.createXMLEventWriter(out);
-                  }
-               }
-
-               if (xmlEventWriter != null) {
-                  xmlEventWriter.add(xmlEvent);
-               }
-
-               if (xmlEvent.isEndElement()) {
-                  String localPart = xmlEvent.asEndElement().getName().getLocalPart();
-                  if (PAGE_ELEMENT.equals(localPart)) {
-                     if (out != null && out.size() > 0) {
-                        if (xmlEventWriter != null) {
-                           try {
-                              xmlEventWriter.close();
-                           } catch (Exception e) {
-                              // Do nothing
-                           }
-                        }
-                        next = out.toString("UTF-8");
-                        return true;
-                     }
+                     next = parsePage(xmlEvent);
+                     return next != null;
                   }
                }
             }
+            return false;
          } catch (XMLStreamException e) {
-            if (xmlEvent != null) {
-               log.info("Failed on event {}", xmlEvent);
-            }
             throw new RuntimeException("Could not parse xml", e);
          } catch (UnsupportedEncodingException e) {
             throw new RuntimeException("UTF-8 not supported", e);
          }
-         return false;
+      }
+   }
+
+   private String parsePage(XMLEvent pageStartEvent) throws XMLStreamException, UnsupportedEncodingException {
+      XMLEvent xmlEvent = null;
+      ByteArrayOutputStream out = new ByteArrayOutputStream();
+      XMLEventWriter xmlEventWriter = xmlOutputFactory.createXMLEventWriter(out);
+      try {
+         xmlEventWriter.add(pageStartEvent);
+         while (xmlEventReader.hasNext()) {
+            xmlEvent = xmlEventReader.nextEvent();
+            xmlEventWriter.add(xmlEvent);
+            if (xmlEvent.isEndElement()) {
+               String localPart = xmlEvent.asEndElement().getName().getLocalPart();
+               if (PAGE_ELEMENT.equals(localPart)) {
+                  xmlEventWriter.close();
+                  return out.toString("UTF-8");
+               }
+            }
+         }
+         return null;
+      } catch (XMLStreamException e) {
+         if (xmlEvent != null) {
+            log.info("Failed on event {}", xmlEvent);
+         }
+         throw e;
       }
    }
 
