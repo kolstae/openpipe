@@ -23,8 +23,8 @@ import java.util.regex.Pattern;
 import no.trank.openpipe.api.MultiInputFieldPipelineStep;
 import no.trank.openpipe.api.PipelineException;
 import no.trank.openpipe.api.document.AnnotatedField;
-import no.trank.openpipe.api.document.Document;
 import no.trank.openpipe.api.document.BaseAnnotatedField;
+import no.trank.openpipe.api.document.Document;
 
 /**
  * Chops field(s) to a maximum length.
@@ -46,18 +46,16 @@ public class ChopField extends MultiInputFieldPipelineStep {
 
    @Override
    protected void process(Document doc, String fieldName, List<AnnotatedField> fieldValues) throws PipelineException {
-      if (fieldValues.size() > 0) {
-         List<AnnotatedField> newFields = new ArrayList<AnnotatedField>();
-         for (AnnotatedField fieldValue : fieldValues) {
-            if (fieldValue.getValue().length() > chopLength) {
-               String choppedString = chop(fieldValue.getValue(), doc.getFieldValue(fitField));
-               newFields.add(new BaseAnnotatedField(choppedString));
-            } else {
-               newFields.add(fieldValue);
-            }
+      List<AnnotatedField> newFields = new ArrayList<AnnotatedField>();
+      for (AnnotatedField fieldValue : fieldValues) {
+         if (fieldValue.getValue().length() > chopLength) {
+            String choppedString = chop(fieldValue.getValue(), doc.getFieldValue(fitField));
+            newFields.add(new BaseAnnotatedField(choppedString));
+         } else {
+            newFields.add(fieldValue);
          }
-         doc.setField(fieldName, newFields);
       }
+      doc.setField(fieldName, newFields);
    }
 
    private String chop(String value, String fitFieldValue) {
@@ -124,6 +122,7 @@ public class ChopField extends MultiInputFieldPipelineStep {
       this.fitField = fitField;
    }
 
+   @Override
    public String getRevision() {
       return "$Revision$";
    }
