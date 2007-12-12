@@ -16,9 +16,11 @@
 package no.trank.openpipe.wikipedia.producer;
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.tools.bzip2.CBZip2InputStream;
@@ -35,7 +37,6 @@ import no.trank.openpipe.api.document.DocumentProducer;
  */
 public class WikipediaDocumentProducer implements DocumentProducer, DownloadProgressListener {
    private static final Logger log = LoggerFactory.getLogger(WikipediaDocumentProducer.class);
-   private boolean bunzip2 = true;
    private HttpDownloader httpDownloader;
    private WikiDocumentSplitter documentSplitter;
    private Integer maxDocs;
@@ -43,24 +44,31 @@ public class WikipediaDocumentProducer implements DocumentProducer, DownloadProg
    private boolean isNew = false;
    private boolean indexOnlyNew = true;
 
+   @Override
    public void init() {
       log.info("Initializing");
-         isNew = downloadWiki();
+      isNew = downloadWiki();
+      final File file = httpDownloader.getTargetFile();
       try {
-         FileInputStream in =  new FileInputStream(httpDownloader.getTargetFile());
-         log.debug("Opening wikipedia dump at: " + httpDownloader.getTargetFile().getAbsolutePath());
-         if (bunzip2) {
+         FileInputStream in =  new FileInputStream(file);
+         log.debug("Opening wikipedia dump at: " + file.getAbsolutePath());
+         if (isBunzip2(file)) {
             // Have to strip away the two first bytes in the .bz2 file if they are 'BZ'. A bug in CBZip2InputStream?
-            documentSplitter = new WikiDocumentSplitter(new BufferedInputStream(new CBZip2InputStream(new InputStreamPrefixStripper(in, new byte[] {'B', 'Z'}))));
+            documentSplitter = new WikiDocumentSplitter(new BufferedInputStream(new CBZip2InputStream(
+                  new BufferedInputStream(new InputStreamPrefixStripper(in, new byte[] {(byte) 'B', (byte) 'Z'})))));
          } else {
             documentSplitter = new WikiDocumentSplitter(new BufferedInputStream(in));
          }
       } catch (XMLStreamException e) {
          throw new RuntimeException("Could not download file", e);
       } catch (IOException e) {
-         log.error("Could not read file: " + httpDownloader.getTargetFile().getAbsoluteFile(), e);
+         log.error("Could not read file: " + file.getAbsoluteFile(), e);
       }
 
+   }
+
+   private static boolean isBunzip2(File file) {
+      return file.getName().toLowerCase().endsWith(".bz2");
    }
 
    private boolean downloadWiki() {
@@ -86,6 +94,7 @@ public class WikipediaDocumentProducer implements DocumentProducer, DownloadProg
       return false;
    }
 
+   @Override
    public void close() {
       if (documentSplitter != null) {
          try {
@@ -96,6 +105,7 @@ public class WikipediaDocumentProducer implements DocumentProducer, DownloadProg
       }
    }
 
+   @Override
    public void fail() {
       if (documentSplitter != null) {
          try {
@@ -162,6 +172,7 @@ public class WikipediaDocumentProducer implements DocumentProducer, DownloadProg
       this.contentField = contentField;
    }
 
+   @Override
    public Iterator<Document> iterator() {
       if (indexOnlyNew && !isNew) {
          log.info("Current wiki dump is up to date. Skipping produce. (Set indexOnlyNew to false to force indexing.)");
@@ -169,26 +180,6 @@ public class WikipediaDocumentProducer implements DocumentProducer, DownloadProg
       } else {
          return new WikiDocumentIterator(maxDocs);
       }
-   }
-
-   /**
-    * Gets if the downloaded file is expected to be a bzip2 file. Default is true.
-    *
-    * @return true if the downloaded file is expected to be a bzip2 file
-    */
-   public boolean isBunzip2() {
-      return bunzip2;
-   }
-
-   /**
-    * Sets if the downloaded file is expected to be a bzip2 file.
-    *
-    * If this is true this producer will run the input through a unpacker befor splitting the file into documents.
-    *
-    * @param bunzip2 true if the downloaded file is expected to be a bzip2 file.
-    */
-   public void setBunzip2(boolean bunzip2) {
-      this.bunzip2 = bunzip2;
    }
 
    /**
@@ -213,8 +204,10 @@ public class WikipediaDocumentProducer implements DocumentProducer, DownloadProg
       this.indexOnlyNew = indexOnlyNew;
    }
 
+   @Override
    public void progress(long totalUnits, long doneUnits) {
-      log.info("Download progress: " + doneUnits + " of " + totalUnits + " ("  + Math.round(((float)doneUnits / totalUnits) * 100) + "%)" );
+      log.info("Download progress: " + doneUnits + " of " + totalUnits + " ("  +
+            Math.round(((float)doneUnits / totalUnits) * 100) + "%)" );
    }
 
    private class WikiDocumentIterator implements Iterator<Document> {
@@ -225,22 +218,23 @@ public class WikipediaDocumentProducer implements DocumentProducer, DownloadProg
          this.maxDocs = maxDocs;
       }
 
+      @Override
       public boolean hasNext() {
          return (maxDocs == null || maxDocs > processedDocs) && documentSplitter.hasNext();
       }
 
+      @Override
       public Document next() {
-         String content = documentSplitter.next();
-         if (content != null) {
-            Document doc = new Document();
-            doc.addFieldValue(contentField, content);
-            processedDocs++;
-            return doc;
-         } else {
-            return null;
+         if (!hasNext()) {
+            throw new NoSuchElementException();
          }
+         final Document doc = new Document();
+         doc.addFieldValue(contentField, documentSplitter.next());
+         processedDocs++;
+         return doc;
       }
 
+      @Override
       public void remove() {
          throw new UnsupportedOperationException("Remove not supported");
       }
