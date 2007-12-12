@@ -101,7 +101,7 @@ public class HttpDownloader {
       return false;
    }
 
-   private boolean isSameMd5(File file, String md5Sum) {
+   private static boolean isSameMd5(File file, String md5Sum) {
       File md5File = new File(file.getAbsolutePath() + ".md5");
       try {
          if (md5File.exists()) {

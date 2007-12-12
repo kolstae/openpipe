@@ -51,6 +51,7 @@ public class WikiDocumentSplitter implements Iterator<String> {
       }
    }
 
+   @Override
    public boolean hasNext() {
       if (next != null) {
          return true;
@@ -101,6 +102,7 @@ public class WikiDocumentSplitter implements Iterator<String> {
       }
    }
 
+   @Override
    public String next() {
       if (hasNext()) {
          try {
@@ -113,6 +115,7 @@ public class WikiDocumentSplitter implements Iterator<String> {
       }
    }
 
+   @Override
    public void remove() {
       throw new UnsupportedOperationException("Operation not supported");
    }

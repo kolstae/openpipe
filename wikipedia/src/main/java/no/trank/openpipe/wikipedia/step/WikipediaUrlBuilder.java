@@ -41,6 +41,7 @@ public class WikipediaUrlBuilder extends BasePipelineStep {
       super("WikipediaUrlBuilder");
    }
 
+   @Override
    public PipelineStepStatus execute(Document doc) throws PipelineException {
       String title = doc.getFieldValue(titleField);
       String url = baseUrl + convertTitle(title);
@@ -102,10 +103,11 @@ public class WikipediaUrlBuilder extends BasePipelineStep {
       this.urlField = urlField;
    }
 
-   private String convertTitle(String title) {
+   private static String convertTitle(String title) {
       return title.replace(' ', '_');
    }
 
+   @Override
    public String getRevision() {
       return "$Revision$";
    }
