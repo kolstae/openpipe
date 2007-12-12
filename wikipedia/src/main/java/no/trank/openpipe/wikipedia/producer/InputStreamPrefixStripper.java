@@ -15,8 +15,8 @@
  */
 package no.trank.openpipe.wikipedia.producer;
 
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Strips bytes from the beginning of a stream.
@@ -46,5 +46,13 @@ public class InputStreamPrefixStripper extends InputStream {
       } else {
          return originalStream.read();
       }
+   }
+
+   @Override
+   public int read(byte b[], int off, int len) throws IOException {
+      if (inPrefix) {
+         return super.read(b, off, len);
+      }
+      return originalStream.read(b, off, len);
    }
 }
