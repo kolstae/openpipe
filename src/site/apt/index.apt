@@ -55,7 +55,8 @@ OpenPipe
 ** Pipeline step
 ~~~~~~~~~~~~~~~~
   A pipeline step is an implementation of some operations on a document, for instance lemmatization. A document is 
-  received as input.
+  received as input. More info on writing a pipeline step can be found on the
+  {{{http://openfacts2.berlios.de/wikien/index.php/BerliosProject:OpenPipe/PipelineStepGettingStarted}wiki}}
 
 ** Pipeline
 ~~~~~~~~~~~
@@ -74,7 +75,8 @@ OpenPipe
   A producer is a module responsible for getting content from somewhere and inject this content as documents into a 
   pipeline. The following producers are currently shipped with OpenPipe:
 
-    * jdbc: Read content from a database
+    * jdbc: Read content from a database. More info can be found on the
+    {{{http://openfacts2.berlios.de/wikien/index.php/BerliosProject:OpenPipe_-_SimpleJdbcDocumentProducer}wiki}}
     
     * solr: Receive HTTP Post UpdateXMLMessages in the same manner as Solr
     
