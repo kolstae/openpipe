@@ -290,6 +290,7 @@
                   <link>http://lucene.apache.org/java/docs/api/</link>
                   <link>http://static.springframework.org/spring/docs/2.0.x/api</link>
                   <link>http://icu-project.org/apiref/icu4j/</link>
+                  <link>http://ws.apache.org/jaxme/apidocs/</link>
                </links>
                <groups>
                   <group>
