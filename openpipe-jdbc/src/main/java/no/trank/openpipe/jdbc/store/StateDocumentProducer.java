@@ -30,6 +30,11 @@ import no.trank.openpipe.config.annotation.NotEmpty;
 import no.trank.openpipe.config.annotation.NotNull;
 
 /**
+ * A &quot;decorator&quot; document producer, that tracks whether a document is new, updated or deleted using
+ * {@link IdStateHolder}.<br/>
+ * <b>Note:</b> Documents produced by {@link #getProducer()} must contain a field with a field value for a
+ * field with name {@link #getIdFieldName()}.
+ *
  * @version $Revision$
  */
 public class StateDocumentProducer implements DocumentProducer, TableDescription {
@@ -47,8 +52,13 @@ public class StateDocumentProducer implements DocumentProducer, TableDescription
    @NotEmpty
    private String updColumnName = "updated";
    private int idMaxLength = 256;
-   private DocStateHolder docStateHolder;
+   private IdStateHolder idStateHolder;
 
+   /**
+    * Creates a document producer that decorates <tt>producer</tt>.
+    *
+    * @param producer the producer to decorate.
+    */
    public StateDocumentProducer(DocumentProducer producer) {
       if (producer == null) {
          throw new NullPointerException("producer cannot be null");
@@ -56,6 +66,9 @@ public class StateDocumentProducer implements DocumentProducer, TableDescription
       this.producer = producer;
    }
 
+   /**
+    * Calls {@link #getProducer()}<tt>.prapare()</tt> and then {@link IdStateHolder#prepare()}.
+    */
    @Override
    public void init() {
       try {
@@ -65,64 +78,128 @@ public class StateDocumentProducer implements DocumentProducer, TableDescription
       }
       producer.init();
 
-      if (docStateHolder == null) {
-         docStateHolder = new DocStateHolder(dataSource, sqlFactory, this);
+      if (idStateHolder == null) {
+         idStateHolder = new IdStateHolder(dataSource, sqlFactory, this);
       }
-      docStateHolder.prepare();
+      idStateHolder.prepare();
    }
 
+   /**
+    * Calls {@link #getProducer()}<tt>.close()</tt> and then {@link IdStateHolder#commit()}.
+    */
    @Override
    public void close() {
       producer.close();
-      docStateHolder.commit();
+      if (idStateHolder != null) {
+         idStateHolder.commit();
+      }
    }
 
+   /**
+    * Calls {@link #getProducer()}<tt>.fail()</tt> and then {@link IdStateHolder#rollback()}.
+    */
    @Override
    public void fail() {
       producer.fail();
-      docStateHolder.rollback();
+      if (idStateHolder != null) {
+         idStateHolder.rollback();
+      }
    }
 
+   /**
+    * Returns an iterator that first updates {@link Document#setOperation(String)} of all documents returned by
+    * {@link #getProducer()}<tt>.iterator()</tt> to either {@link DocumentOperation#ADD_VALUE} or
+    * {@link DocumentOperation#MODIFY_VALUE} based on the outcome of
+    * {@link IdStateHolder#isUpdate(String)}. And then documents with id in
+    * {@link IdStateHolder#findDeletedIds()} and {@link Document#setOperation(String) Doument.setOperation(}
+    * {@link DocumentOperation#DELETE_VALUE}<tt>)</tt>.
+    */
    @Override
    public Iterator<Document> iterator() {
-      return new StateDocumentIterator(producer.iterator(), docStateHolder, idFieldName);
+      return new StateDocumentIterator(producer.iterator(), idStateHolder, idFieldName);
    }
 
+   public DocumentProducer getProducer() {
+      return producer;
+   }
+
+   /**
+    * Get in what field of the document the id can be found.
+    *
+    * @return the name of the id-field.
+    */
    public String getIdFieldName() {
       return idFieldName;
    }
 
+   /**
+    * Set in what field of the document the id can be found.
+    *
+    * @param idFieldName the name of the id-field. <em>Cannot</em> be <tt>null</tt> or <tt>&quot;&quot;</tt>.
+    */
    public void setIdFieldName(String idFieldName) {
       this.idFieldName = idFieldName;
    }
 
+   /**
+    * {@inheritDoc}
+    * Default value is <tt>&quot;doc_store&quot;</tt>.
+    */
    @Override
    public String getTableName() {
       return tableName;
    }
 
+   /**
+    * Sets the name of the table.
+    *
+    * @param tableName the name of the table. <em>Cannot</em> be <tt>null</tt> or <tt>&quot;&quot;</tt>.
+    */
    public void setTableName(String tableName) {
       this.tableName = tableName;
    }
 
+   /**
+    * {@inheritDoc}
+    * Default value is <tt>&quot;id&quot;</tt>.
+    */
    @Override
    public String getIdColumnName() {
       return idColumnName;
    }
 
+   /**
+    * Sets the name of the <tt>ID</tt> column.
+    *
+    * @param idColumnName the name of the <tt>ID</tt> column. <em>Cannot</em> be <tt>null</tt> or <tt>&quot;&quot;</tt>.
+    */
    public void setIdColumnName(String idColumnName) {
       this.idColumnName = idColumnName;
    }
 
+   /**
+    * {@inheritDoc}
+    * Default value is <tt>&quot;updated&quot;</tt>.
+    */
    @Override
    public String getUpdColumnName() {
       return updColumnName;
    }
 
+   /**
+    * Sets the name of the <tt>lastUpdated</tt> column.
+    *
+    * @param updColumnName the name of the <tt>lastUpdated</tt> column. <em>Cannot</em> be <tt>null</tt> or
+    * <tt>&quot;&quot;</tt>.
+    */
    public void setUpdColumnName(String updColumnName) {
       this.updColumnName = updColumnName;
    }
 
+   /**
+    * {@inheritDoc}
+    * Default value is <tt>256</tt>.
+    */
    @Override
    public int getIdMaxLength() {
       return idMaxLength;
@@ -132,31 +209,51 @@ public class StateDocumentProducer implements DocumentProducer, TableDescription
       this.idMaxLength = idMaxLength;
    }
 
+   /**
+    * Gets the sql factory used to create the SQL needed.
+    *
+    * @return the sql factory used to create the SQL needed.
+    */
    public SQLFactory getSqlFactory() {
       return sqlFactory;
    }
 
+   /**
+    * Sets the sql factory used to create the SQL needed.
+    *
+    * @param sqlFactory the sql factory used to create the SQL needed. <em>Cannot</em> be <tt>null</tt>.
+    */
    public void setSqlFactory(SQLFactory sqlFactory) {
       this.sqlFactory = sqlFactory;
    }
 
+   /**
+    * Gets the datasource used for tracking document ids.
+    *
+    * @return the datasource used for tracking document ids.
+    */
    public DataSource getDataSource() {
       return dataSource;
    }
 
+   /**
+    * Sets the datasource used for tracking document ids.
+    *
+    * @return the datasource used for tracking document ids. <em>Cannot</em> be <tt>null</tt>.
+    */
    public void setDataSource(DataSource dataSource) {
       this.dataSource = dataSource;
    }
 
    private static class StateDocumentIterator implements Iterator<Document> {
       private final Iterator<Document> iterator;
-      private final DocStateHolder docStateHolder;
+      private final IdStateHolder idStateHolder;
       private Iterator<Document> delIterator;
       private String idFieldName;
 
-      public StateDocumentIterator(Iterator<Document> iterator, DocStateHolder docStateHolder, String idFieldName) {
+      public StateDocumentIterator(Iterator<Document> iterator, IdStateHolder idStateHolder, String idFieldName) {
          this.iterator = iterator;
-         this.docStateHolder = docStateHolder;
+         this.idStateHolder = idStateHolder;
          this.idFieldName = idFieldName;
       }
 
@@ -172,7 +269,7 @@ public class StateDocumentProducer implements DocumentProducer, TableDescription
       }
 
       private Iterator<Document> createDelIterator() {
-         return new IdDocumentIterator(docStateHolder.findDeletedIds(), idFieldName);
+         return new IdDocumentIterator(idStateHolder.findDeletedIds(), idFieldName);
       }
 
       @Override
@@ -182,7 +279,7 @@ public class StateDocumentProducer implements DocumentProducer, TableDescription
          }
          if (delIterator == null) {
             final Document doc = iterator.next();
-            if (docStateHolder.isUpdate(doc.getFieldValue(idFieldName))) {
+            if (idStateHolder.isUpdate(doc.getFieldValue(idFieldName))) {
                doc.setOperation(DocumentOperation.MODIFY_VALUE);
             } else {
                doc.setOperation(DocumentOperation.ADD_VALUE);

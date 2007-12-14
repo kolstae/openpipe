@@ -16,14 +16,37 @@
 package no.trank.openpipe.jdbc.store;
 
 /**
+ * A class that represents a description of a database table.
+ *
  * @version $Revision$
  */
 public interface TableDescription {
+
+   /**
+    * Gets the name of the table.
+    *
+    * @return the name of the table.
+    */
    public String getTableName();
 
+   /**
+    * Gets the name of the <tt>ID</tt> column.
+    *
+    * @return the name of the <tt>ID</tt> column.
+    */
    public String getIdColumnName();
 
+   /**
+    * Gets the max length of the column named by {@link #getIdColumnName() idColumnName}.
+    *
+    * @return the max length of the column named by {@link #getIdColumnName() idColumnName}.
+    */
    public int getIdMaxLength();
 
+   /**
+    * Gets the name of the <tt>lastUpdated</tt> column.
+    *
+    * @return the name of the <tt>lastUpdated</tt> column.
+    */
    public String getUpdColumnName();
 }
