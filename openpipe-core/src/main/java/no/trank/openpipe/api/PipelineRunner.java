@@ -72,17 +72,10 @@ public class PipelineRunner implements Runnable {
       boolean success = false;
       try {
          documentProducer.init();
-         try {
-            if (PipelineExceptionListener.class.isAssignableFrom(documentProducer.getClass())) {
-               pipeline.getPipelineExceptionHandler().addExceptionListener((PipelineExceptionListener) documentProducer);
-            }
-            success = pipeline.prepare();
-            if (success) {
-               success = pipeline.execute(documentProducer);
-            }
-         } finally {
-            pipeline.finish(success);
+         if (PipelineExceptionListener.class.isAssignableFrom(documentProducer.getClass())) {
+            pipeline.getPipelineExceptionHandler().addExceptionListener((PipelineExceptionListener) documentProducer);
          }
+         success = pipeline.run(documentProducer);
       } finally {
          if (PipelineExceptionListener.class.isAssignableFrom(documentProducer.getClass())) {
             pipeline.getPipelineExceptionHandler().removeExceptionListener((PipelineExceptionListener) documentProducer);
