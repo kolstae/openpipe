@@ -239,7 +239,7 @@ public class StateDocumentProducer implements DocumentProducer, TableDescription
    /**
     * Sets the datasource used for tracking document ids.
     *
-    * @return the datasource used for tracking document ids. <em>Cannot</em> be <tt>null</tt>.
+    * @param dataSource the datasource used for tracking document ids. <em>Cannot</em> be <tt>null</tt>.
     */
    public void setDataSource(DataSource dataSource) {
       this.dataSource = dataSource;

@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 
 import no.trank.openpipe.api.BasePipelineStep;
 import no.trank.openpipe.api.PipelineException;
-import no.trank.openpipe.api.PipelineStep;
 import no.trank.openpipe.api.PipelineStepStatus;
 import no.trank.openpipe.api.document.Document;
 import no.trank.openpipe.config.annotation.NotEmpty;
@@ -57,11 +56,6 @@ public class LanguageIdentifier extends BasePipelineStep {
 
    /**
     * Creates a step with <tt>&quot;LanguageIdentifier&quot;</tt> as name.
-    *
-    * @param name the name of step.
-    *
-    * @see PipelineStep#getName()
-    * @see PipelineStep#setName(String)
     */
    public LanguageIdentifier() {
       super("LanguageIdentifier");

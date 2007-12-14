@@ -312,6 +312,7 @@
                </groups>
                <charset>${encoding}</charset>
                <encoding>${encoding}</encoding>
+               <quiet>true</quiet>
             </configuration>
             <reportSets>
                <reportSet>

@@ -23,7 +23,6 @@ import org.apache.ws.jaxme.sqls.SQLFactory;
 import no.trank.openpipe.api.BasePipelineStep;
 import no.trank.openpipe.api.BaseSubPipeline;
 import no.trank.openpipe.api.PipelineException;
-import no.trank.openpipe.api.PipelineStep;
 import no.trank.openpipe.api.PipelineStepStatus;
 import no.trank.openpipe.api.SubPipeline;
 import no.trank.openpipe.api.document.Document;
@@ -56,12 +55,7 @@ public class StateDocumentStep extends BasePipelineStep implements TableDescript
    private boolean lifecycleSubPipeline = true;
 
    /**
-    * Creates a step with the given name.
-    *
-    * @param name the name of step.
-    *
-    * @see PipelineStep#getName()
-    * @see PipelineStep#setName(String)
+    * Creates a step with the name &quot;StateDocumentStep&quot;.
     */
    public StateDocumentStep() {
       super("StateDocumentStep");
@@ -161,7 +155,7 @@ public class StateDocumentStep extends BasePipelineStep implements TableDescript
    /**
     * Sets the datasource used for tracking document ids.
     *
-    * @return the datasource used for tracking document ids. <em>Cannot</em> be <tt>null</tt>.
+    * @param dataSource the datasource used for tracking document ids. <em>Cannot</em> be <tt>null</tt>.
     */
    public void setDataSource(DataSource dataSource) {
       this.dataSource = dataSource;
