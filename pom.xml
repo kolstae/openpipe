@@ -310,6 +310,7 @@
                   </group>
                </groups>
                <charset>${encoding}</charset>
+               <encoding>${encoding}</encoding>
             </configuration>
             <reportSets>
                <reportSet>
@@ -353,6 +354,8 @@
                <aggregate>true</aggregate>
                <linkJavadoc>true</linkJavadoc>
                <javadocDir>/apidocs</javadocDir>
+               <inputEncoding>${encoding}</inputEncoding>
+               <outputEncoding>${encoding}</outputEncoding>
             </configuration>
             <reportSets>
                <reportSet>
