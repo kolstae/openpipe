@@ -83,7 +83,7 @@ public class HttpDownloader {
       String baseUrl = sourceUrl.substring(0, idx);
       String wikiArtifactName = sourceUrl.substring(idx + 1, sourceUrl.indexOf('-', idx + 1));
       String md5SumsUrl = baseUrl + '/' + wikiArtifactName +"-latest-md5sums.txt";
-      log.debug("Dowloading md5Sums");
+      log.debug("Downloading md5Sums");
       HttpClient httpClient = new HttpClient();
       GetMethod get = new GetMethod(md5SumsUrl);
       int status = httpClient.executeMethod(get);

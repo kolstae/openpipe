@@ -79,7 +79,7 @@ public class WikiDocumentSplitter implements Iterator<String> {
    private String parsePage(XMLEvent pageStartEvent) throws XMLStreamException, UnsupportedEncodingException {
       XMLEvent xmlEvent = null;
       ByteArrayOutputStream out = new ByteArrayOutputStream();
-      XMLEventWriter xmlEventWriter = xmlOutputFactory.createXMLEventWriter(out);
+      XMLEventWriter xmlEventWriter = xmlOutputFactory.createXMLEventWriter(out, "UTF-8");
       try {
          xmlEventWriter.add(pageStartEvent);
          while (xmlEventReader.hasNext()) {
