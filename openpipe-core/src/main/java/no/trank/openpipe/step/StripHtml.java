@@ -102,7 +102,7 @@ public class StripHtml extends MultiInputOutputFieldPipelineStep {
       int index = 0;
 
       while (next != -1) {
-         final int end = text.indexOf("-->", next);
+         final int end = text.indexOf("-->", next + 4);
 
          if (end == -1) {
             next = -1;
