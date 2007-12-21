@@ -20,22 +20,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import no.trank.openpipe.api.MultiInputOutputFieldPipelineStep;
 import no.trank.openpipe.api.PipelineException;
 import no.trank.openpipe.api.document.AnnotatedField;
 import no.trank.openpipe.api.document.Document;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * This step strips html from input text in four steps:
  * <p/>
  * <p><ul>
- * <li>Html comments are removed.</li>
- * <li>Html tags are removed.</li>
- * <li>Blocks of whitespace are replaced with a single space character.</li>
- * <li>Html entities are decoded.</li>
+ *    <li>Html comments are removed.</li>
+ *    <li>Html tags are removed.</li>
+ *    <li>Blocks of whitespace are replaced with a single space character.</li>
+ *    <li>Html entities are decoded.</li>
  * </ul>
  *
  * @version $Revision$
@@ -54,13 +54,13 @@ public class StripHtml extends MultiInputOutputFieldPipelineStep {
 
       for (AnnotatedField field : inputFields) {
          final String text = field.getValue();
-         String outText = text;
-         outText = stripComments(outText);
+         String outText = stripComments(text);
          outText = stripTags(outText);
          outText = trim(outText);
          outText = Entities.decodeAll(outText);
 
-         log.debug("Field '{}' length: {}; Output field '{}' length: {}", new Object[]{inputFieldName, text.length(), outputFieldName, outText.length()});
+         log.debug("Field '{}' length: {}; Output field '{}' length: {}",
+               new Object[]{inputFieldName, text.length(), outputFieldName, outText.length()});
          outValues.add(outText);
       }
 
@@ -77,7 +77,7 @@ public class StripHtml extends MultiInputOutputFieldPipelineStep {
       StringBuilder ret = new StringBuilder();
       boolean ws = false;
       for (int i = 0; i < text.length(); ++i) {
-         char c = text.charAt(i);
+         final char c = text.charAt(i);
          if (c == ' ' || c == '\n' || c == '\r' || c == '\t') {
             ws = true;
          } else {
@@ -93,22 +93,22 @@ public class StripHtml extends MultiInputOutputFieldPipelineStep {
    }
 
    private static String stripComments(String text) {
-      int index = 0;
       int next = text.indexOf("<!--");
       if (next == -1) {
          return text;
       }
 
-      StringBuilder ret = new StringBuilder();
+      final StringBuilder ret = new StringBuilder(text.length() - 8);
+      int index = 0;
 
       while (next != -1) {
-         int end = text.indexOf("-->", next);
+         final int end = text.indexOf("-->", next);
 
          if (end == -1) {
             next = -1;
          } else {
             if (next > index) {
-               ret.append(text.substring(index, next));
+               ret.append(text, index, next);
             }
             index = end + 3;
 
@@ -117,7 +117,7 @@ public class StripHtml extends MultiInputOutputFieldPipelineStep {
       }
 
       if (index < text.length()) {
-         ret.append(text.substring(index));
+         ret.append(text, index, text.length());
       }
 
       return ret.toString();
@@ -130,7 +130,7 @@ public class StripHtml extends MultiInputOutputFieldPipelineStep {
          return text;
       }
 
-      StringBuilder ret = new StringBuilder();
+      final StringBuilder ret = new StringBuilder(text.length() - 2);
 
       while (next != -1) {
          char quote = '\0';
@@ -156,7 +156,7 @@ public class StripHtml extends MultiInputOutputFieldPipelineStep {
             next = -1;
          } else {
             if (next > index) {
-               ret.append(text.substring(index, next));
+               ret.append(text, index, next);
             }
             index = end + 1;
 
@@ -165,7 +165,7 @@ public class StripHtml extends MultiInputOutputFieldPipelineStep {
       }
 
       if (index < text.length()) {
-         ret.append(text.substring(index));
+         ret.append(text, index, text.length());
       }
       return ret.toString();
    }
@@ -176,8 +176,7 @@ public class StripHtml extends MultiInputOutputFieldPipelineStep {
    }
 
    static class Entities {
-      static final Map<String, String> decoder = new HashMap<String, String>(300);
-      static final String[] encoder = new String[0x100];
+      static final Map<String, Character> decoder = new HashMap<String, Character>(300);
 
       static String decodeAll(String s) {
          int next = s.indexOf('&');
@@ -186,18 +185,18 @@ public class StripHtml extends MultiInputOutputFieldPipelineStep {
          }
 
          int index = 0;
-         StringBuilder ret = new StringBuilder();
+         final StringBuilder ret = new StringBuilder(s.length() - 4);
 
          while (next != -1) {
-            int end = s.indexOf(';', next);
+            final int end = s.indexOf(';', next);
 
             if (end == -1) {
                next = -1;
             } else {
                if (next > index) {
-                  ret.append(s.substring(index, next));
+                  ret.append(s, index, next);
                }
-               ret.append(decode(s.substring(next, end)));
+               decodeAppend(ret, s, next, end);
                index = end + 1;
 
                next = index >= s.length() ? -1 : s.indexOf('&', index);
@@ -205,56 +204,41 @@ public class StripHtml extends MultiInputOutputFieldPipelineStep {
          }
 
          if (index < s.length()) {
-            ret.append(s.substring(index));
+            ret.append(s, index, s.length());
          }
 
          return ret.toString();
 
       }
 
-      static String decode(String entity) {
-         if (entity.length() > 2 && entity.charAt(1) == '#') {
-            int start = 2;
-            int radix = 10;
-            if (entity.charAt(2) == 'X' || entity.charAt(2) == 'x') {
-               start++;
+      private static void decodeAppend(StringBuilder ret, String entity, int startIdx, int endIdx) {
+         if (endIdx - startIdx > 2 && entity.charAt(startIdx + 1) == '#') {
+            final int start;
+            final int radix;
+            final char ch = entity.charAt(startIdx + 2);
+            if (ch == 'X' || ch == 'x') {
+               start = 3 + startIdx;
                radix = 16;
-            }
-            Character c = (char) Integer.parseInt(entity.substring(start), radix);
-            return c.toString();
-         } else {
-            String s = decoder.get(entity);
-            if (s != null)
-               return s;
-         }
-         return "";
-      }
-
-      static public String encode(String s) {
-         int length = s.length();
-         StringBuilder buffer = new StringBuilder(length * 2);
-         for (int i = 0; i < length; i++) {
-            char c = s.charAt(i);
-            int j = (int) c;
-            if (j < 0x100 && encoder[j] != null) {
-               buffer.append(encoder[j]);                // have a named encoding
-               buffer.append(';');
-            } else if (j < 0x80) {
-               buffer.append(c);                         // use ASCII value
             } else {
-               buffer.append("&#");                      // use numeric encoding
-               buffer.append((int) c);
-               buffer.append(';');
+               start = 2 + startIdx;
+               radix = 10;
+            }
+
+            try {
+               ret.append((char) Integer.parseInt(entity.substring(start, endIdx), radix));
+            } catch (NumberFormatException e) {
+               // Ignoring
+            }
+         } else {
+            final Character c = decoder.get(entity.substring(startIdx, endIdx));
+            if (c != null) {
+               ret.append(c.charValue());
             }
          }
-         return buffer.toString();
       }
 
       static void add(String entity, int value) {
-         decoder.put(entity, Character.valueOf((char) value).toString());
-
-         if (value < 0x100)
-            encoder[value] = entity;
+         decoder.put(entity, (char) value);
       }
 
       static {
