@@ -15,6 +15,11 @@
  */
 package no.trank.openpipe.wikipedia.step;
 
+import java.net.URLEncoder;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.UnsupportedCharsetException;
+
 import no.trank.openpipe.api.BasePipelineStep;
 import no.trank.openpipe.api.PipelineException;
 import no.trank.openpipe.api.PipelineStepStatus;
@@ -36,17 +41,47 @@ public class WikipediaUrlBuilder extends BasePipelineStep {
    private String baseUrl;
    private String titleField = "title";
    private String urlField = "url";
+   private String urlEncoding = "UTF-8";
 
    public WikipediaUrlBuilder() {
       super("WikipediaUrlBuilder");
    }
 
    @Override
+   public void prepare() throws PipelineException {
+      super.prepare();
+      Charset.forName(urlEncoding);
+   }
+
+   @Override
    public PipelineStepStatus execute(Document doc) throws PipelineException {
-      String title = doc.getFieldValue(titleField);
-      String url = baseUrl + convertTitle(title);
-      doc.setFieldValue(urlField, url);
-      return PipelineStepStatus.DEFAULT;
+      try {
+         String title = doc.getFieldValue(titleField);
+         String url = baseUrl + convertTitle(title);
+         doc.setFieldValue(urlField, url);
+         return PipelineStepStatus.DEFAULT;
+      } catch (UnsupportedEncodingException e) {
+         // Should never happen since this has been checked in prepare
+         throw new PipelineException("Unsupported urlEncoding", e);
+      }
+   }
+
+   /**
+    * Gets the url encoding to use for the created url.
+    *
+    * @return the url encoding to use for the created url.
+    */
+   public String getUrlEncoding() {
+      return urlEncoding;
+   }
+
+   /**
+    * Sets the url encoding to use for the created url.
+    * 
+    * @param urlEncoding the url encoding to use for the created url.
+    */
+   public void setUrlEncoding(String urlEncoding) {
+      this.urlEncoding = urlEncoding;
    }
 
    /**
@@ -103,8 +138,8 @@ public class WikipediaUrlBuilder extends BasePipelineStep {
       this.urlField = urlField;
    }
 
-   private static String convertTitle(String title) {
-      return title.replace(' ', '_');
+   private String convertTitle(String title) throws UnsupportedEncodingException {
+      return URLEncoder.encode(title.replace(' ', '_'), urlEncoding);
    }
 
    @Override
