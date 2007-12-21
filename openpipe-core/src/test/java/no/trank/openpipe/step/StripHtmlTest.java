@@ -60,5 +60,10 @@ public class StripHtmlTest extends TestCase {
       doc.setFieldValue("in", "trala&nbsp;la");
       stripHtml.execute(doc);
       assertEquals("trala la", doc.getFieldValue("out"));
+
+      doc.setFieldValue("in", "trala&;la");
+      stripHtml.execute(doc);
+      assertEquals("tralala", doc.getFieldValue("out"));
+
    }
 }
