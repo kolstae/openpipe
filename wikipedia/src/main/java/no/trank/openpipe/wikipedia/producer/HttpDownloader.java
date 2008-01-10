@@ -24,8 +24,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -35,6 +33,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,8 +88,8 @@ public class HttpDownloader {
          throw new NullPointerException("sourceUrl cannot be null");
       }
       try {
-         new URL(sourceUrl);
-      } catch (MalformedURLException e) {
+         new URI(sourceUrl, true);
+      } catch (URIException e) {
          throw new IllegalArgumentException("sourceUrl '" +sourceUrl+ "' must be a valid URL: " + e.getMessage());
       }
    }
