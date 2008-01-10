@@ -39,7 +39,7 @@ public class WikipediaDocumentProducer implements DocumentProducer, DownloadProg
    private static final Logger log = LoggerFactory.getLogger(WikipediaDocumentProducer.class);
    private HttpDownloader httpDownloader;
    private WikiDocumentSplitter documentSplitter;
-   private int maxDocs = 0;
+   private int maxDocs = -1;
    private String contentField = "wikiPage";
    private boolean isNew = false;
    private boolean indexOnlyNew = true;
@@ -47,6 +47,7 @@ public class WikipediaDocumentProducer implements DocumentProducer, DownloadProg
    @Override
    public void init() {
       log.info("Initializing");
+      httpDownloader.init();
       isNew = downloadWiki();
       final File file = httpDownloader.getTargetFile();
       try {
@@ -146,7 +147,7 @@ public class WikipediaDocumentProducer implements DocumentProducer, DownloadProg
    /**
     * Sets the maximum number of documents to produce from the dump.
     *
-    * Default is 0. All documents in the dump will be produced.
+    * Default is -1. All documents in the dump will be produced.
     *
     * @param maxDocs the maximum number of documents to produce from the dump.
     */
@@ -211,8 +212,8 @@ public class WikipediaDocumentProducer implements DocumentProducer, DownloadProg
    }
 
    private class WikiDocumentIterator implements Iterator<Document> {
-      private int processedDocs = 0;
       private final int maxDocs;
+      private int processedDocs = 0;
 
       private WikiDocumentIterator(int maxDocs) {
          this.maxDocs = maxDocs;
@@ -220,7 +221,7 @@ public class WikipediaDocumentProducer implements DocumentProducer, DownloadProg
 
       @Override
       public boolean hasNext() {
-         return (maxDocs == 0 || maxDocs > processedDocs) && documentSplitter.hasNext();
+         return (maxDocs < 0 || maxDocs > processedDocs) && documentSplitter.hasNext();
       }
 
       @Override

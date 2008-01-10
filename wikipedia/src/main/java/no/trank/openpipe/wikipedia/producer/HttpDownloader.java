@@ -24,6 +24,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -47,8 +49,8 @@ public class HttpDownloader {
    private File targetFile;
    private String sourceUrl;
    private long progressTimeStamp;
-   private List<DownloadProgressListener> progressListeners = new ArrayList<DownloadProgressListener>();
-   private int progressInterval = 1000;
+   private List<DownloadProgressListener> progressListeners = new ArrayList<DownloadProgressListener>(1);
+   private int progressInterval = 10000;
 
    public File getTargetFile() {
       return targetFile;
@@ -78,6 +80,20 @@ public class HttpDownloader {
       progressListeners.add(progressListener);
    }
 
+   public void init() {
+      if (targetFile == null || !targetFile.getParentFile().isDirectory()) {
+         throw new IllegalArgumentException("Invalid targetFile '" + targetFile + '\'');
+      }
+      if (sourceUrl == null) {
+         throw new NullPointerException("sourceUrl cannot be null");
+      }
+      try {
+         new URL(sourceUrl);
+      } catch (MalformedURLException e) {
+         throw new IllegalArgumentException("sourceUrl '" +sourceUrl+ "' must be a valid URL: " + e.getMessage());
+      }
+   }
+
    public boolean isLastVersion() throws IOException {
       int idx = sourceUrl.lastIndexOf('/');
       String baseUrl = sourceUrl.substring(0, idx);
@@ -86,17 +102,21 @@ public class HttpDownloader {
       log.debug("Downloading md5Sums");
       HttpClient httpClient = new HttpClient();
       GetMethod get = new GetMethod(md5SumsUrl);
-      int status = httpClient.executeMethod(get);
-      if (status >= 200 && status < 300) {
-         final String md5sums = get.getResponseBodyAsString();
-         final Pattern p = Pattern.compile("\\n(\\S+)\\s+(" + wikiArtifactName + "-(\\d+)-pages-articles\\.xml\\.bz2)");
-         final Matcher matcher = p.matcher(md5sums);
-         if (matcher.find()) {
-            String md5Sum = matcher.group(1);
-            return isSameMd5(targetFile, md5Sum);
+      try {
+         int status = httpClient.executeMethod(get);
+         if (status >= 200 && status < 300) {
+            final String md5sums = get.getResponseBodyAsString();
+            final Pattern p = Pattern.compile("\\n(\\S+)\\s+(" + wikiArtifactName + "-(\\d+)-pages-articles\\.xml\\.bz2)");
+            final Matcher matcher = p.matcher(md5sums);
+            if (matcher.find()) {
+               String md5Sum = matcher.group(1);
+               return isSameMd5(targetFile, md5Sum);
+            }
+         } else {
+            log.debug("Could not download md5 sums.");
          }
-      } else {
-         log.debug("Could not download md5 sums.");
+      } finally {
+         get.releaseConnection();
       }
       return false;
    }
@@ -121,18 +141,22 @@ public class HttpDownloader {
    public int downloadFile() throws IOException {
       HttpClient httpClient = new HttpClient();
       GetMethod get = new GetMethod(sourceUrl);
-      int status = httpClient.executeMethod(get);
-      if (status >= 200 && status < 300) {
-         long size = get.getResponseContentLength();
-         log.debug("Downloading: " + size + " bytes");
-         final BufferedInputStream in = new BufferedInputStream(get.getResponseBodyAsStream());
-         try {
-            writeFile(in, size);
-         } finally {
-            in.close();
+      try {
+         final int status = httpClient.executeMethod(get);
+         if (status >= 200 && status < 300) {
+            long size = get.getResponseContentLength();
+            log.debug("Downloading: " + size + " bytes");
+            final BufferedInputStream in = new BufferedInputStream(get.getResponseBodyAsStream());
+            try {
+               writeFile(in, size);
+            } finally {
+               in.close();
+            }
          }
+         return status;
+      } finally {
+         get.releaseConnection();
       }
-      return status;
    }
 
    protected void writeFile(InputStream in, long size) throws IOException {
