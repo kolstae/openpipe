@@ -31,6 +31,10 @@ public class NoopTimedLogger implements TimedLogger {
    }
 
    @Override
+   public void stopTimerAndIncrement(int byCount) {
+   }
+
+   @Override
    public void log() {
    }
 

@@ -33,6 +33,17 @@ public interface TimedLogger {
     */
    void stopTimerAndIncrement();
 
+   /**
+    * Stops the timer and increments the operation count. Should measure the time elapsed since {@link #startTimer()}
+    * was called.
+    *
+    * @param byCount the count to increment operation count by.
+    */
+   void stopTimerAndIncrement(int byCount);
+
+   /**
+    * Logs current averages and operattion count.
+    */
    void log();
 
    /**

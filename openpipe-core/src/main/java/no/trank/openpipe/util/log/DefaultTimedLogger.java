@@ -17,6 +17,7 @@ package no.trank.openpipe.util.log;
 
 import java.util.Formatter;
 import static java.util.concurrent.TimeUnit.*;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,11 +32,12 @@ public class DefaultTimedLogger implements TimedLogger {
    private final Formatter formatter = new Formatter(buf);
    private Logger log;
    private String format;
-   private int count;
+   private long count;
    private long start;
    private long tot;
    private long lastLog = System.nanoTime();
    private long logPeriod = SECONDS.toNanos(10);
+   private final TimeUnit timeUnit;
 
    /**
     * Creates a timed logger.
@@ -55,8 +57,20 @@ public class DefaultTimedLogger implements TimedLogger {
     * @param format the format to use.
     */
    public DefaultTimedLogger(Logger log, String format) {
+      this(log, format, MILLISECONDS);
+   }
+
+   /**
+    * Creates a timed logger with the given logger and format.
+    *
+    * @param log the logger to use.
+    * @param format the format to use.
+    * @param timeUnit the time unit used for averages and times.
+    */
+   public DefaultTimedLogger(Logger log, String format, TimeUnit timeUnit) {
       this.log = log;
       this.format = format;
+      this.timeUnit = timeUnit;
    }
 
    @Override
@@ -70,9 +84,14 @@ public class DefaultTimedLogger implements TimedLogger {
     */
    @Override
    public void stopTimerAndIncrement() {
+      stopTimerAndIncrement(1);
+   }
+
+   @Override
+   public void stopTimerAndIncrement(final int byCount) {
       final long now = System.nanoTime();
       tot += now - start;
-      count++;
+      count += byCount;
       if (now - lastLog > logPeriod) {
          log();
          lastLog = now;
@@ -89,7 +108,7 @@ public class DefaultTimedLogger implements TimedLogger {
    }
 
    protected double calculateAverage(long totNanos, double count) {
-      return MILLISECONDS.convert(totNanos, NANOSECONDS) / count;
+      return timeUnit.convert(totNanos, NANOSECONDS) / count;
    }
 
    @Override
