@@ -383,10 +383,15 @@
          <name>OpenPipe</name>
          <url>scp://shell.berlios.de/home/groups/openpipe/htdocs/</url>
       </site>
+      <repository>
+         <id>openpipe.site</id>
+         <name>OpenPipe repository</name>
+         <url>scp://shell.berlios.de/home/groups/openpipe/htdocs/repository/</url>
+      </repository>
    </distributionManagement>
    <scm>
       <connection>scm:svn:http://svn.berlios.de/svnroot/repos/openpipe/openpipe/trunk</connection>
-      <developerConnection>scm:svn:https://svn.berlios.de/svnroot/repos/openpipe/openpipe/trunk</developerConnection>
+      <developerConnection>scm:svn:svn+ssh://svn.berlios.de/svnroot/repos/openpipe/openpipe/trunk</developerConnection>
       <url>http://svn.berlios.de/viewcvs/openpipe/openpipe/trunk</url>
    </scm>
    <mailingLists>
