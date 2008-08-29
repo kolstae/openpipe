@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 public class Document {
    private static final Logger log = LoggerFactory.getLogger(Document.class);
    private final Map<String, ArrayList<AnnotatedField>> fieldMap = new LinkedHashMap<String, ArrayList<AnnotatedField>>();
-   private final RawData rawData;
+   private RawData rawData;
    private String operation;
 
    /**
@@ -290,6 +290,15 @@ public class Document {
     */
    public RawData getRawData() {
       return rawData;
+   }
+
+   /**
+    * Sets the raw-data of this document.
+    *
+    * @param rawData the raw-data. 
+    */
+   public void setRawData(RawData rawData) {
+      this.rawData = rawData;
    }
 
    /**
