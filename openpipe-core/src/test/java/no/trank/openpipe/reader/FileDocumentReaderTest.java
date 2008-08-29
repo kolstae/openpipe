@@ -18,10 +18,7 @@ package no.trank.openpipe.reader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import junit.framework.TestCase;
 
@@ -60,6 +57,36 @@ public class FileDocumentReaderTest extends TestCase {
             count++;
          }
          assertEquals(5, count);
+      } finally {
+         deleteDirs(dir);
+      }
+   }
+
+   public void testIterateWithRegEx() throws Exception {
+      final File dir = File.createTempFile("fileDoc", "");
+      try {
+         dir.delete();
+         dir.mkdir();
+         writeFile(dir, "testfile1.gz");
+         writeFile(dir, "testfile2.txt");
+         writeFile(dir, "testfile3.txt");
+         writeFile(dir, "testfile4.gz");
+
+         Set<String> legalFileNames = new HashSet<String>();
+         legalFileNames.add("testfile1.gz");
+         legalFileNames.add("testfile4.gz");
+
+         FileDocumentReader reader = new FileDocumentReader();
+         reader.setDirectory(dir.getAbsolutePath());
+         reader.setRegexPattern(".+\\.gz");
+         reader.init();
+
+         int count = 0;
+         for (Document document : reader) {
+            count++;
+            assertTrue(legalFileNames.contains(document.getFieldValue("fileName")));
+         }
+         assertEquals(2, count);
       } finally {
          deleteDirs(dir);
       }

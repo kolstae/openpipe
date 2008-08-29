@@ -125,7 +125,7 @@ public class BaseSubPipeline implements SubPipeline {
       final long start;
       final boolean debug = log.isDebugEnabled();
       if (debug) {
-         infoString = pipelineStep.getName() + "document operation: " + document.getOperation();
+         infoString = pipelineStep.getName() + " document operation: " + document.getOperation();
          log.debug("Running {}", infoString);
          start = System.currentTimeMillis();
       } else {

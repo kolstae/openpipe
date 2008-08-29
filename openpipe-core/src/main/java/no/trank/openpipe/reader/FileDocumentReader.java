@@ -135,6 +135,13 @@ public class FileDocumentReader implements DocumentProducer {
       return regexPattern;
    }
 
+   /**
+    * Sets a regular expression that will be run against the filename of each file found in the specified directory(s).
+    *
+    * If you set this only filenames that matches the regular expression will be included. 
+    *
+    * @param regexPattern the pattern to match against
+    */
    public void setRegexPattern(String regexPattern) {
       this.regexPattern = regexPattern;
    }
@@ -188,8 +195,8 @@ public class FileDocumentReader implements DocumentProducer {
          }
          this.maxDepth = maxDepth - 1;
          stack = new ArrayDeque<Iterator<File>>();
-         fileIt = getFiles(file);
          onlyFileFilter = new FileOnlyFileFilter(this.fileFilter);
+         fileIt = getFiles(file);
       }
 
       private Iterator<File> getFiles(File file) {
