@@ -29,7 +29,7 @@ import no.trank.openpipe.util.log.TimedLogger;
 public class Pipeline extends BaseSubPipeline {
    private PipelineExceptionHandler pipelineExceptionHandler;
    private TimedLogger timedLogger = new DefaultTimedLogger(LoggerFactory.getLogger(Pipeline.class),
-         "Processed %1$d docs at %2$.2f millis/doc");
+         "Processed %1$d (%3$d) docs at %2$.2f (%4$.2f) ms/doc");
 
    public Pipeline() {
       this(null);

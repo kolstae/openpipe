@@ -16,8 +16,8 @@
 package no.trank.openpipe.util.log;
 
 import java.util.Formatter;
-import static java.util.concurrent.TimeUnit.*;
 import java.util.concurrent.TimeUnit;
+import static java.util.concurrent.TimeUnit.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,10 +33,12 @@ public class DefaultTimedLogger implements TimedLogger {
    private Logger log;
    private String format;
    private long count;
+   private int localCount;
    private long start;
+   private long localTot;
    private long tot;
    private long lastLog = System.nanoTime();
-   private long logPeriod = SECONDS.toNanos(10);
+   private long logPeriod = SECONDS.toNanos(20);
    private final TimeUnit timeUnit;
 
    /**
@@ -47,7 +49,7 @@ public class DefaultTimedLogger implements TimedLogger {
     * @see #setLogPeriodInSeconds(long)
     */
    public DefaultTimedLogger() {
-      this(LoggerFactory.getLogger(DefaultTimedLogger.class), "%1$d operations at %2$.2f millis/operation");
+      this(LoggerFactory.getLogger(DefaultTimedLogger.class), "%1$d (%2$d) ops at %2$.2f (%4$.2f) ms/op");
    }
 
    /**
@@ -90,24 +92,30 @@ public class DefaultTimedLogger implements TimedLogger {
    @Override
    public void stopTimerAndIncrement(final int byCount) {
       final long now = System.nanoTime();
-      tot += now - start;
+      final long delta = now - start;
+      localTot += delta;
+      tot += delta;
       count += byCount;
+      localCount += byCount;
       if (now - lastLog > logPeriod) {
          log();
          lastLog = now;
+         localTot = 0;
+         localCount = 0;
       }
    }
 
    @Override
    public void log() {
       if (count > 0 && log.isInfoEnabled()) {
-         formatter.format(format, count, calculateAverage(tot, (double) count));
+         formatter.format(format, count, calculateAverage(tot, (double) count),
+               localCount, calculateAverage(localTot, (double) localCount));
          log.info(buf.toString());
          buf.setLength(0);
       }
    }
 
-   protected double calculateAverage(long totNanos, double count) {
+   protected double calculateAverage(final long totNanos, final double count) {
       return timeUnit.convert(totNanos, NANOSECONDS) / count;
    }
 
@@ -115,6 +123,8 @@ public class DefaultTimedLogger implements TimedLogger {
    public void reset() {
       count = 0;
       tot = 0;
+      localCount = 0;
+      localTot = 0;
       lastLog = System.nanoTime();
    }
 
@@ -148,7 +158,7 @@ public class DefaultTimedLogger implements TimedLogger {
    }
 
    /**
-    * Sets the format of the log statement. Default <tt>&quot;%1$d operations at %2$.2f millis/operation&quot;</tt>.
+    * Sets the format of the log statement. Default <tt>&quot;%1$d (%2$d) ops at %2$.2f (%4$.2f) ms/op&quot;</tt>.
     *
     * @param format the format of the log statement.
     *
@@ -168,12 +178,12 @@ public class DefaultTimedLogger implements TimedLogger {
    }
 
    /**
-    * Sets the log period in seconds. Default is <tt>10</tt> seconds.
+    * Sets the log period in seconds. Default is <tt>20</tt> seconds.
     *
     * @param logPeriod the log period in seconds.
     */
    public void setLogPeriodInSeconds(long logPeriod) {
-      this.logPeriod = SECONDS.toNanos(logPeriod);
+      setLogPeriod(logPeriod, SECONDS);
    }
 
    /**
@@ -192,5 +202,15 @@ public class DefaultTimedLogger implements TimedLogger {
     */
    public void setLogPeriod(long logPeriod) {
       this.logPeriod = logPeriod;
+   }
+
+   /**
+    * Sets the log period in the given <tt>TimeUnit</tt>.
+    *
+    * @param logPeriod the log period.
+    * @param unit the <tt>TimeUnit</tt> of <tt>logPeriod</tt>.
+    */
+   public void setLogPeriod(long logPeriod, TimeUnit unit) {
+      setLogPeriod(unit.toNanos(logPeriod));
    }
 }
