@@ -20,10 +20,20 @@ import java.util.Map;
 import org.apache.solr.analysis.TokenFilterFactory;
 
 /**
+ * An utility factory to create, set and initialize a TokenFilterFactory with the supplied argument map.
+ *
  * @version $Revision$
  */
 public class TokenFilterFactoryFactory {
-   
+
+   /**
+    * Creates the TokenFilterFactory with the supplied class name, and initializes the filterFactory with the
+    * supplied argument map.
+    *
+    * @param className the fully qualified classname of the TokenFilterFactory to create
+    * @param args the argument map to use with initialization
+    * @return an initialized <tt>TokenFilterFactory</tt>
+    */
    public static TokenFilterFactory createFactory(String className, Map<String, String> args) {
       try {
          final Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass(className);

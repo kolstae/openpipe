@@ -37,7 +37,16 @@ import no.trank.openpipe.solr.analysis.TokenStreamAnnotation;
 
 /**
  * A <tt>PipelineStep</tt> for running solr tokenizer-/analyzer-chains in OpenPipe.
- * 
+ *
+ * Similar to the SolR config, this should have one or zero TokenizerFactories, and zero or more 
+ * TokenFilterFactories.
+ *
+ * If you want to tokenize in the pipeline, you can look into the schema.xml for solr to get tips on how to set up this.
+ *
+ * If you are using spring to supply the TokenFilterFactories, you can use
+ * <tt>no.trank.openpipe.solr.util.TokenFilterFactoryFactory</tt> to initialize the filterfactories.
+ *
+ * @see no.trank.openpipe.solr.util.TokenFilterFactoryFactory
  * @version $Revision$
  */
 public class SolrAnalyzerStep extends MultiInputFieldPipelineStep {
@@ -101,18 +110,39 @@ public class SolrAnalyzerStep extends MultiInputFieldPipelineStep {
       return "$Revision$";
    }
 
+   /**
+    * Gets the SolR TokenizerFactory that is used.
+    *
+    * @return the TokenizerFactory
+    */
    public TokenizerFactory getTokenizerFactory() {
       return tokenizerFactory;
    }
 
+   /**
+    * Sets the SolR TokenizerFactory to use.
+    *
+    * @param tokenizerFactory a TokenizerFactory
+    */
    public void setTokenizerFactory(TokenizerFactory tokenizerFactory) {
       this.tokenizerFactory = tokenizerFactory;
    }
 
+   /**
+    * Gets the list of SolR <tt>TokenFilterFactories</tt> that is used.
+    *
+    * @see #setTokenizerFactory(org.apache.solr.analysis.TokenizerFactory)
+    * @return a list of TokenFilterFactory objects
+    */
    public List<TokenFilterFactory> getFilterFactories() {
       return filterFactories;
    }
 
+   /**
+    * Sets the list of initialized SolR <tt>TokenFilterFactories</tt> to use for analasys.
+    *
+    * @param filterFactories the filterFactories to use
+    */
    public void setFilterFactories(List<TokenFilterFactory> filterFactories) {
       this.filterFactories = filterFactories;
    }
