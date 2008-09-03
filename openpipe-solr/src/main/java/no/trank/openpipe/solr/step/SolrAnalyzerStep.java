@@ -36,13 +36,17 @@ import no.trank.openpipe.solr.analysis.AnnotationTokenStream;
 import no.trank.openpipe.solr.analysis.TokenStreamAnnotation;
 
 /**
- * A <tt>PipelineStep</tt> for running solr tokenizer-/analyzer-chains in OpenPipe.
- *
+ * A <tt>PipelineStep</tt> for running solr tokenizer-/analyzer-chains in OpenPipe.<br/>
+ * <br/>
  * Similar to the SolR config, this should have one or zero TokenizerFactories, and zero or more 
- * TokenFilterFactories.
- *
- * If you want to tokenize in the pipeline, you can look into the schema.xml for solr to get tips on how to set up this.
- *
+ * TokenFilterFactories.<br/>
+ * <br/>
+ * As an alternative to specifying a TokenizerFactory, you may set the annotation set. (If you use another tokenizer,
+ * but want to use filters from SolR). If this option is used, annotated tokens of a type in the annotation set will be
+ * treated as a token.<br/>
+ * <br/>
+ * If you want to tokenize in the pipeline, you can look into the schema.xml for solr to get tips on how to set up this.<br/>
+ * <br/>
  * If you are using spring to supply the TokenFilterFactories, you can use
  * <tt>no.trank.openpipe.solr.util.TokenFilterFactoryFactory</tt> to initialize the filterfactories.
  *
@@ -147,10 +151,20 @@ public class SolrAnalyzerStep extends MultiInputFieldPipelineStep {
       this.filterFactories = filterFactories;
    }
 
+   /**
+    * Gets the set of annotation types to treat as tokens. Used only if <tt>TokenizerFactory</tt> is not set. 
+    *
+    * @return a set of Strings
+    */
    public Set<String> getAnnotations() {
       return annotations;
    }
 
+   /**
+    * Sets the set of annotation types to treat as tokens. Used only if <tt>TokenizerFactory</tt> is not set.
+    *
+    * @param annotations a set of Strings
+    */
    public void setAnnotations(Set<String> annotations) {
       this.annotations = annotations;
    }
