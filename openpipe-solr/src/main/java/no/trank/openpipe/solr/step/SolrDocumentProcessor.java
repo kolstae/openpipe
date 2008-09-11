@@ -211,6 +211,8 @@ public class SolrDocumentProcessor extends BasePipelineStep {
          documentPoster.prepare();
       } catch (MalformedURLException e) {
          throw new PipelineException("Post url is malformed", e);
+      } catch (IOException e) {
+         throw new PipelineException(e);
       }
 
       if (solrSchemaUrl != null) {

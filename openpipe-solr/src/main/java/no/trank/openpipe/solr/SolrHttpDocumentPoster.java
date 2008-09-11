@@ -19,6 +19,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -50,12 +52,20 @@ public class SolrHttpDocumentPoster {
    private UpdateOptions updateOptions = new UpdateOptions();
    private String user;
    private String password;
+   private File storePostsDir;
+   private int postCount = 0;
+   private boolean prettyXML;
 
-   public void prepare() throws MalformedURLException {
+   public void prepare() throws IOException {
       URL url = new URL(postUrl);
       AuthScope authScope = new AuthScope(url.getHost(), url.getPort());
       if (user != null) {
          httpClient.getState().setCredentials(authScope, new UsernamePasswordCredentials(user, password));
+      }
+      if (storePostsDir != null && !storePostsDir.isDirectory()) {
+         if (!storePostsDir.mkdirs()) {
+            throw new IOException("No such directory: " + storePostsDir.getAbsolutePath());
+         }
       }
    }
 
@@ -93,6 +103,22 @@ public class SolrHttpDocumentPoster {
 
    public void setUpdateOptions(UpdateOptions updateOptions) {
       this.updateOptions = updateOptions;
+   }
+
+   public File getStorePostsDir() {
+      return storePostsDir;
+   }
+
+   public void setStorePostsDir(File storePostsDir) {
+      this.storePostsDir = storePostsDir;
+   }
+
+   public boolean isPrettyXML() {
+      return prettyXML;
+   }
+
+   public void setPrettyXML(boolean prettyXML) {
+      this.prettyXML = prettyXML;
    }
 
    public void add(HashMap<String, List<String>> solrOutputDoc, Map<String, String> attribs) throws XMLStreamException, PipelineException {
@@ -179,7 +205,7 @@ public class SolrHttpDocumentPoster {
          } else {
             buf.reset();
          }
-         solrDocumentWriter = new SolrXmlDocumentWriter(new OutputStreamWriter(buf, encoding), updateOptions);
+         solrDocumentWriter = new SolrXmlDocumentWriter(new OutputStreamWriter(buf, encoding), updateOptions, prettyXML);
       } catch (IOException e) {
          throw new PipelineException("Could not create post streams", e);
       } catch (XMLStreamException e) {
@@ -203,6 +229,7 @@ public class SolrHttpDocumentPoster {
          final PostMethod postMethod = new PostMethod(postUrl);
          try {
             postMethod.setRequestEntity(buf);
+            writePostToFile();
             int status = httpClient.executeMethod(postMethod);
             if (status < 200 || status >= 300) {
                throw new PipelineException("Solr post returned status: " + status + "\n" + postMethod.getResponseBodyAsString());
@@ -219,6 +246,21 @@ public class SolrHttpDocumentPoster {
             // Do nothing
          }
          buf = null;
+      }
+   }
+
+   private void writePostToFile() throws IOException {
+      if (storePostsDir != null) {
+         final FileOutputStream fout = new FileOutputStream(new File(storePostsDir, ++postCount + ".xml"));
+         try {
+            buf.writeRequest(fout);
+         } finally {
+            try {
+               fout.close();
+            } catch (IOException e) {
+               // Ignoring
+            }
+         }
       }
    }
 
