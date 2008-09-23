@@ -74,7 +74,7 @@ public class StripHtml extends MultiInputOutputFieldPipelineStep {
    private static String trim(String text) {
       text = text.trim();
 
-      StringBuilder ret = new StringBuilder();
+      StringBuilder ret = new StringBuilder(text.length());
       boolean ws = false;
       for (int i = 0; i < text.length(); ++i) {
          final char c = text.charAt(i);
@@ -185,7 +185,7 @@ public class StripHtml extends MultiInputOutputFieldPipelineStep {
          }
 
          int index = 0;
-         final StringBuilder ret = new StringBuilder(s.length() - 4);
+         final StringBuilder ret = new StringBuilder(Math.max(s.length() - 4, 16));
 
          while (next != -1) {
             final int end = s.indexOf(';', next);
