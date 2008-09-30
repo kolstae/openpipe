@@ -49,7 +49,7 @@ public class DefaultTimedLogger implements TimedLogger {
     * @see #setLogPeriodInSeconds(long)
     */
    public DefaultTimedLogger() {
-      this(LoggerFactory.getLogger(DefaultTimedLogger.class), "%1$d (%2$d) ops at %2$.2f (%4$.2f) ms/op");
+      this(LoggerFactory.getLogger(DefaultTimedLogger.class), "%1$d (%3$d) ops at %2$.2f (%4$.2f) ms/op");
    }
 
    /**
