@@ -217,6 +217,10 @@ public class SolrDocumentProcessor extends BasePipelineStep {
          throw new PipelineException(e);
       }
 
+      if (httpClient == null) {
+         httpClient = new HttpClient();
+      }
+
       if (solrSchemaUrl != null) {
          try {
             loadIndexSchema(new URL(solrSchemaUrl));
@@ -227,10 +231,6 @@ public class SolrDocumentProcessor extends BasePipelineStep {
       addField(BOOST_KEY); // Needed even if there is no schemaUrl
       if (!tokenizedFields.isEmpty() && serializer == null) {
          throw new PipelineException("TokenizedFields set, but no serializer configured");
-      }
-
-      if (httpClient == null) {
-         httpClient = new HttpClient();
       }
    }
 
