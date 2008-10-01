@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<rss version="2.0">
+	<channel>
+		<title>pages-articles.xml.bz2</title>
+		<link>http://download.wikimedia.org/enwiki/20080724</link>
+		<description>Wikimedia dump updates for enwiki</description>
+		<item>
+			<title>http://download.wikimedia.org/enwiki/20080724</title>
+			<link>http://download.wikimedia.org/enwiki/20080724</link>
+			<description>&lt;a href="http://download.wikimedia.org/enwiki/20080724/enwiki-20080724-pages-articles.xml.bz2"&gt;enwiki-20080724-pages-articles.xml.bz2&lt;/a&gt;</description>
+			<pubDate>Sun, 27 Jul 2008 15:43:45 GMT</pubDate>
+		</item>
+	</channel>
+</rss>
