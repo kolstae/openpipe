@@ -36,6 +36,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -130,6 +131,7 @@ public class SolrDocumentProcessor extends BasePipelineStep {
    private TokenSerializer serializer;
    @NotNull
    private SolrHttpDocumentPoster documentPoster;
+   private HttpClient httpClient;
 
    /**
     * Creates a <tt>SolrDocumentProcessor</tt> with the name <tt>&quot;SolrPoster&quot;</tt>.
@@ -225,6 +227,10 @@ public class SolrDocumentProcessor extends BasePipelineStep {
       addField(BOOST_KEY); // Needed even if there is no schemaUrl
       if (!tokenizedFields.isEmpty() && serializer == null) {
          throw new PipelineException("TokenizedFields set, but no serializer configured");
+      }
+
+      if (httpClient == null) {
+         httpClient = new HttpClient();
       }
    }
 
@@ -322,6 +328,10 @@ public class SolrDocumentProcessor extends BasePipelineStep {
       return Collections.unmodifiableSet(solrFields);
    }
 
+   public void setHttpClient(HttpClient httpClient) {
+      this.httpClient = httpClient;
+   }
+
    @Override
    public String getRevision() {
       return "$Revision$";
@@ -377,7 +387,7 @@ public class SolrDocumentProcessor extends BasePipelineStep {
          sIn = url.openStream();
       } else {
          GetMethod get = new GetMethod(url.toExternalForm());
-         documentPoster.getHttpClient().executeMethod(get);
+         httpClient.executeMethod(get);
          sIn = get.getResponseBodyAsStream();
       }
       final InputStream in = new XmlInputStream(sIn);
