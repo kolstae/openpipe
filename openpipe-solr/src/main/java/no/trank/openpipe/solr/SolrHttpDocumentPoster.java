@@ -16,13 +16,13 @@
 package no.trank.openpipe.solr;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Formatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -162,13 +162,6 @@ public class SolrHttpDocumentPoster {
       uncommitedDocs++;
    }
 
-   /**
-    * @deprecated
-    */
-   public HttpClient getHttpClient() {
-      return httpClient;
-   }
-
    private void addDocument(HashMap<String, List<String>> solrOutputDoc, Map<String, String> attribs) 
          throws XMLStreamException, PipelineException {
       startAdd();
@@ -251,7 +244,7 @@ public class SolrHttpDocumentPoster {
 
    private void writePostToFile() throws IOException {
       if (storePostsDir != null) {
-         final FileOutputStream fout = new FileOutputStream(new File(storePostsDir, ++postCount + ".xml"));
+         final FileOutputStream fout = new FileOutputStream(new File(storePostsDir, createFileName()));
          try {
             buf.writeRequest(fout);
          } finally {
@@ -262,6 +255,10 @@ public class SolrHttpDocumentPoster {
             }
          }
       }
+   }
+
+   private String createFileName() {
+      return new Formatter().format("%1$04d.xml", postCount++).toString();
    }
 
    private static class XMLBufferRequestEntity extends ByteArrayOutputStream implements RequestEntity {
