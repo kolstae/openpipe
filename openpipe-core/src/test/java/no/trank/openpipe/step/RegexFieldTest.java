@@ -140,4 +140,17 @@ public class RegexFieldTest extends TestCase {
       assertEquals("/home/file.txt", doc.getFieldValues("out").get(0));
       assertEquals("/home/fi%25le%25.txt", doc.getFieldValues("out").get(1));
    }
+
+   public void testDeleteOnEmpty() throws Exception {
+      Document doc = new Document();
+
+      regexField.setFromPattern("abc");
+      regexField.setToPattern("drop");
+      regexField.setDeleteOnEmpty(false);
+      doc.setFieldValue("in", "cba");
+      doc.setFieldValue("out", "original");
+
+      regexField.execute(doc);
+      assertEquals("original", doc.getFieldValue("out"));
+   }
 }

@@ -36,12 +36,13 @@ import no.trank.openpipe.config.annotation.NotNull;
  * @version $Revision$
  */
 public class RegexField extends MultiInputOutputFieldPipelineStep {
-   private static Logger log = LoggerFactory.getLogger(RegexField.class);
+   private static final Logger log = LoggerFactory.getLogger(RegexField.class);
    @NotNull
    private Pattern fromPattern;
    @NotNull
    private String toPattern;
    private boolean copyOnMiss;
+   private boolean deleteOnEmpty = true;
    private boolean nullIsBlank;
 
    public RegexField() {
@@ -59,7 +60,7 @@ public class RegexField extends MultiInputOutputFieldPipelineStep {
       }
 
       for (AnnotatedField field : inputFields) {
-         Matcher m = fromPattern.matcher(field.getValue());
+         final Matcher m = fromPattern.matcher(field.getValue());
          if (m.find()) {
             log.debug("Field '{}' matches", inputFieldName);
             outValues.add(m.replaceAll(toPattern));
@@ -72,7 +73,9 @@ public class RegexField extends MultiInputOutputFieldPipelineStep {
       }
       
       if (outValues.isEmpty()) {
-         doc.removeField(outputFieldName);
+         if (deleteOnEmpty) {
+            doc.removeField(outputFieldName);
+         }
       } else {
          doc.setFieldValues(outputFieldName, outValues);
       }
@@ -136,10 +139,25 @@ public class RegexField extends MultiInputOutputFieldPipelineStep {
     * Specifies whether the input field value should be copied to the output field if the input field value
     * does not match the from pattern. 
     * 
-    * @param copyOnMiss <code>true</code> if the input field value should be copied to the output field if the input field value
+    * @param copyOnMiss <code>true</code> if the input field value should be copied to the output field if pattern
+    * doesn't match.
     */
    public void setCopyOnMiss(boolean copyOnMiss) {
       this.copyOnMiss = copyOnMiss;
+   }
+
+   public boolean isDeleteOnEmpty() {
+      return deleteOnEmpty;
+   }
+
+   /**
+    * Specifies whether the output field value should be removed if the input field value does not match the from
+    * pattern and isCopyOnMiss is false.
+    *
+    * @param deleteOnEmpty <code>true</code> if the the output field should be deleted.
+    */
+   public void setDeleteOnEmpty(boolean deleteOnEmpty) {
+      this.deleteOnEmpty = deleteOnEmpty;
    }
 
    /**
