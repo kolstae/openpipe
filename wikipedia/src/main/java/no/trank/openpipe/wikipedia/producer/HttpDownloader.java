@@ -24,13 +24,13 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URL;
 import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.URI;
@@ -40,6 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import no.trank.openpipe.util.HexUtil;
+import no.trank.openpipe.wikipedia.producer.meta.RssMetaParser;
 
 /**
  * @version $Revision$
@@ -47,10 +48,12 @@ import no.trank.openpipe.util.HexUtil;
 public class HttpDownloader {
    private static final Logger log = LoggerFactory.getLogger(HttpDownloader.class);
    private File targetFile;
-   private String sourceUrl;
+   private String rssUrl;
    private long progressTimeStamp;
    private List<DownloadProgressListener> progressListeners = new ArrayList<DownloadProgressListener>(1);
    private int progressInterval = 10000;
+   private URL sourceUrl;
+   private HttpClient httpClient;
 
    public File getTargetFile() {
       return targetFile;
@@ -60,12 +63,12 @@ public class HttpDownloader {
       this.targetFile = targetFile;
    }
 
-   public String getSourceUrl() {
-      return sourceUrl;
+   public String getRssUrl() {
+      return rssUrl;
    }
 
-   public void setSourceUrl(String sourceUrl) {
-      this.sourceUrl = sourceUrl;
+   public void setRssUrl(String rssUrl) {
+      this.rssUrl = rssUrl;
    }
 
    public int getProgressInterval() {
@@ -76,6 +79,14 @@ public class HttpDownloader {
       this.progressInterval = progressInterval;
    }
 
+   public URL getSourceUrl() {
+      return sourceUrl;
+   }
+
+   public void setHttpClient(HttpClient httpClient) {
+      this.httpClient = httpClient;
+   }
+
    public void addProgressListener(DownloadProgressListener progressListener) {
       progressListeners.add(progressListener);
    }
@@ -84,41 +95,49 @@ public class HttpDownloader {
       if (targetFile == null || !targetFile.getParentFile().isDirectory()) {
          throw new IllegalArgumentException("Invalid targetFile '" + targetFile + '\'');
       }
-      if (sourceUrl == null) {
+      if (rssUrl == null) {
          throw new NullPointerException("sourceUrl cannot be null");
       }
       try {
-         new URI(sourceUrl, true);
+         new URI(rssUrl, true);
       } catch (URIException e) {
-         throw new IllegalArgumentException("sourceUrl '" +sourceUrl+ "' must be a valid URL: " + e.getMessage());
+         throw new IllegalArgumentException("rssUrl '" +rssUrl+ "' must be a valid URL: " + e.getMessage());
+      }
+      if (httpClient == null) {
+         httpClient = new HttpClient();
       }
    }
 
    public boolean isLastVersion() throws IOException {
-      int idx = sourceUrl.lastIndexOf('/');
-      String baseUrl = sourceUrl.substring(0, idx);
-      String wikiArtifactName = sourceUrl.substring(idx + 1, sourceUrl.indexOf('-', idx + 1));
-      String md5SumsUrl = baseUrl + '/' + wikiArtifactName +"-latest-md5sums.txt";
-      log.debug("Downloading md5Sums");
-      HttpClient httpClient = new HttpClient();
-      GetMethod get = new GetMethod(md5SumsUrl);
+      if (!targetFile.exists()) {
+         return false;
+      }
+      final RssMetaParser parser = new RssMetaParser(getContentAsString(rssUrl));
+      sourceUrl = parser.getFileUrl();
+      return !isModified(parser.getModifiedDate(), targetFile.lastModified()) || hasCorrectMd5(parser);
+   }
+
+   private boolean hasCorrectMd5(RssMetaParser parser) throws IOException {
+      final String md5Sums = getContentAsString(parser.getMd5Url().toExternalForm());
+      return isSameMd5(targetFile, parser.findMd5(md5Sums));
+   }
+
+   private String getContentAsString(String url) throws IOException {
+      final GetMethod get = new GetMethod(url);
       try {
-         int status = httpClient.executeMethod(get);
+         final int status = httpClient.executeMethod(get);
          if (status >= 200 && status < 300) {
-            final String md5sums = get.getResponseBodyAsString();
-            final Pattern p = Pattern.compile("\\n(\\S+)\\s+(" + wikiArtifactName + "-(\\d+)-pages-articles\\.xml\\.bz2)");
-            final Matcher matcher = p.matcher(md5sums);
-            if (matcher.find()) {
-               String md5Sum = matcher.group(1);
-               return isSameMd5(targetFile, md5Sum);
-            }
-         } else {
-            log.debug("Could not download md5 sums.");
+            return get.getResponseBodyAsString();
          }
+         log.warn("Could not get content from url: '{}' status: {}", url, status);
+         return null;
       } finally {
          get.releaseConnection();
       }
-      return false;
+   }
+
+   private static boolean isModified(Date modifiedDate, long localDate) {
+      return modifiedDate.after(new Date(localDate));
    }
 
    private static boolean isSameMd5(File file, String md5Sum) {
@@ -126,8 +145,12 @@ public class HttpDownloader {
       try {
          if (md5File.exists()) {
             BufferedReader reader = new BufferedReader(new FileReader(md5File));
-            String localMd5 = reader.readLine().trim();
-            return md5Sum.equalsIgnoreCase(localMd5);
+            try {
+               String localMd5 = reader.readLine().trim();
+               return md5Sum.equalsIgnoreCase(localMd5);
+            } finally {
+               reader.close();
+            }
          }
       } catch (FileNotFoundException e) {
          // Do nothing
@@ -139,8 +162,7 @@ public class HttpDownloader {
 
 
    public int downloadFile() throws IOException {
-      HttpClient httpClient = new HttpClient();
-      GetMethod get = new GetMethod(sourceUrl);
+      final GetMethod get = new GetMethod(sourceUrl.toExternalForm());
       try {
          final int status = httpClient.executeMethod(get);
          if (status >= 200 && status < 300) {
