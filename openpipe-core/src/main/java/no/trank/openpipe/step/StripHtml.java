@@ -126,7 +126,7 @@ public class StripHtml extends MultiInputOutputFieldPipelineStep {
    private static String stripTags(String text) {
       int index = 0;
       int next = text.indexOf('<');
-      if (next == -1) {
+      if (next == -1 || text.length() < 2) {
          return text;
       }
 

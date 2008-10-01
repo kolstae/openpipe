@@ -56,6 +56,10 @@ public class StripHtmlTest extends TestCase {
       doc.setFieldValue("in", "<div huff='jj>\\''>tralala");
       stripHtml.execute(doc);
       assertEquals("tralala", doc.getFieldValue("out"));
+
+      doc.setFieldValue("in", "<");
+      stripHtml.execute(doc);
+      assertEquals("<", doc.getFieldValue("out"));
    }
    
    public void testEntities() throws Exception {
