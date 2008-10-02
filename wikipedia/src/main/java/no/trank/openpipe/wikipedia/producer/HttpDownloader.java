@@ -109,9 +109,6 @@ public class HttpDownloader {
    }
 
    public boolean isLastVersion() throws IOException {
-      if (!targetFile.exists()) {
-         return false;
-      }
       final RssMetaParser parser = new RssMetaParser(getContentAsString(rssUrl));
       sourceUrl = parser.getFileUrl();
       return !isModified(parser.getModifiedDate(), targetFile.lastModified()) || hasCorrectMd5(parser);
