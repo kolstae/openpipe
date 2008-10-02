@@ -55,23 +55,6 @@
       <plugins>
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-idea-plugin</artifactId>
-            <configuration>
-               <downloadSources>true</downloadSources>
-               <downloadJavadocs>true</downloadJavadocs>
-               <jdkLevel>${javaVersion}</jdkLevel>
-               <jdkName>${javaVersion}</jdkName>
-            </configuration>
-         </plugin>
-         <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-eclipse-plugin</artifactId>
-            <configuration>
-               <downloadSources>true</downloadSources>
-            </configuration>
-         </plugin>
-         <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-source-plugin</artifactId>
             <executions>
                <execution>
@@ -100,10 +83,8 @@
                   <source>${javaVersion}</source>
                   <target>${javaVersion}</target>
                   <showWarnings>true</showWarnings>
+                  <encoding>${encoding}</encoding>
                   <compilerArgument>-Xlint:unchecked</compilerArgument>
-                  <compilerArguments>
-                     <encoding>${encoding}</encoding>
-                  </compilerArguments>
                </configuration>
             </plugin>
             <plugin>
