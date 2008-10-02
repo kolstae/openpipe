@@ -73,7 +73,7 @@ public class WriteXML extends BasePipelineStep {
       if (directory.isFile()) {
          throw new PipelineException(directory + " is a file", getName());
       } else if (!directory.exists() && !directory.mkdir()) {
-         throw new PipelineException("Could not create directory" + directory, getName());
+         throw new PipelineException("Could not create directory " + directory, getName());
       } else if (!directory.canWrite()) {
          throw new PipelineException("Directory " + directory + " is not writable", getName());
       }
