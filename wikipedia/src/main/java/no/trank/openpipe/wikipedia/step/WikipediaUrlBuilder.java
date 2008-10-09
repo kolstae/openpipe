@@ -15,15 +15,15 @@
  */
 package no.trank.openpipe.wikipedia.step;
 
-import java.net.URLEncoder;
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
-import java.nio.charset.UnsupportedCharsetException;
 
 import no.trank.openpipe.api.BasePipelineStep;
 import no.trank.openpipe.api.PipelineException;
 import no.trank.openpipe.api.PipelineStepStatus;
 import no.trank.openpipe.api.document.Document;
+import no.trank.openpipe.config.annotation.NotEmpty;
 import no.trank.openpipe.config.annotation.NotNull;
 
 /**
@@ -39,8 +39,11 @@ import no.trank.openpipe.config.annotation.NotNull;
 public class WikipediaUrlBuilder extends BasePipelineStep {
    @NotNull
    private String baseUrl;
+   @NotEmpty
    private String titleField = "title";
+   @NotEmpty
    private String urlField = "url";
+   @NotEmpty
    private String urlEncoding = "UTF-8";
 
    public WikipediaUrlBuilder() {
@@ -56,14 +59,41 @@ public class WikipediaUrlBuilder extends BasePipelineStep {
    @Override
    public PipelineStepStatus execute(Document doc) throws PipelineException {
       try {
-         String title = doc.getFieldValue(titleField);
-         String url = baseUrl + convertTitle(title);
-         doc.setFieldValue(urlField, url);
+         final String title = doc.getFieldValue(titleField);
+         if (title != null) {
+            doc.setFieldValue(urlField, buildUrl(title));
+         }
          return PipelineStepStatus.DEFAULT;
       } catch (UnsupportedEncodingException e) {
          // Should never happen since this has been checked in prepare
          throw new PipelineException("Unsupported urlEncoding", e);
       }
+   }
+
+   private String buildUrl(String title) throws UnsupportedEncodingException {
+      int startIdx = 0;
+      final StringBuilder sb = new StringBuilder(title.length() + 16 + baseUrl.length());
+      sb.append(baseUrl);
+      for (int i = 0; i < title.length(); i++) {
+         final char c = title.charAt(i);
+         if (c == '/') {
+            if (startIdx < i) {
+               sb.append(URLEncoder.encode(title.substring(startIdx, i), urlEncoding));
+            }
+            sb.append(c);
+            startIdx = i + 1;
+         } else if (c == ' ') {
+            if (startIdx < i) {
+               sb.append(URLEncoder.encode(title.substring(startIdx, i), urlEncoding));
+            }
+            sb.append('_');
+            startIdx = i + 1;
+         }
+      }
+      if (startIdx < title.length()) {
+         sb.append(URLEncoder.encode(title.substring(startIdx), urlEncoding));
+      }
+      return sb.toString();
    }
 
    /**
@@ -77,7 +107,7 @@ public class WikipediaUrlBuilder extends BasePipelineStep {
 
    /**
     * Sets the url encoding to use for the created url.
-    * 
+    *
     * @param urlEncoding the url encoding to use for the created url.
     */
    public void setUrlEncoding(String urlEncoding) {
@@ -89,7 +119,6 @@ public class WikipediaUrlBuilder extends BasePipelineStep {
     *
     * @return the base url to the wikipedia site
     */
-
    public String getBaseUrl() {
       return baseUrl;
    }
@@ -136,10 +165,6 @@ public class WikipediaUrlBuilder extends BasePipelineStep {
     */
    public void setUrlField(String urlField) {
       this.urlField = urlField;
-   }
-
-   private String convertTitle(String title) throws UnsupportedEncodingException {
-      return URLEncoder.encode(title.replace(' ', '_'), urlEncoding);
    }
 
    @Override
