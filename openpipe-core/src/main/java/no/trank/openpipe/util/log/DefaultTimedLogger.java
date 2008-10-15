@@ -39,7 +39,7 @@ public class DefaultTimedLogger implements TimedLogger {
    private long tot;
    private long lastLog = System.nanoTime();
    private long logPeriod = SECONDS.toNanos(20);
-   private final TimeUnit timeUnit;
+   protected final TimeUnit timeUnit;
 
    /**
     * Creates a timed logger.
