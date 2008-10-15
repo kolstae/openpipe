@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.concurrent.TimeUnit;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.tools.bzip2.CBZip2InputStream;
@@ -29,13 +30,15 @@ import org.slf4j.LoggerFactory;
 
 import no.trank.openpipe.api.document.Document;
 import no.trank.openpipe.api.document.DocumentProducer;
+import no.trank.openpipe.util.log.DefaultTimedLogger;
+import no.trank.openpipe.util.log.TotalTimedLogger;
 
 /**
  * Produces documents from a mediawiki dump.
  *
  * @version $Revision$
  */
-public class WikipediaDocumentProducer implements DocumentProducer, DownloadProgressListener {
+public class WikipediaDocumentProducer implements DocumentProducer {
    private static final Logger log = LoggerFactory.getLogger(WikipediaDocumentProducer.class);
    private HttpDownloader httpDownloader;
    private WikiDocumentSplitter documentSplitter;
@@ -51,12 +54,12 @@ public class WikipediaDocumentProducer implements DocumentProducer, DownloadProg
       isNew = downloadWiki();
       final File file = httpDownloader.getTargetFile();
       try {
-         FileInputStream in =  new FileInputStream(file);
+         FileInputStream in = new FileInputStream(file);
          log.debug("Opening wikipedia dump at: " + file.getAbsolutePath());
          if (isBunzip2(file)) {
             // Have to strip away the two first bytes in the .bz2 file if they are 'BZ'. A bug in CBZip2InputStream?
             documentSplitter = new WikiDocumentSplitter(new BufferedInputStream(new CBZip2InputStream(
-                  new BufferedInputStream(new InputStreamPrefixStripper(in, new byte[] {(byte) 'B', (byte) 'Z'})))));
+                  new BufferedInputStream(new InputStreamPrefixStripper(in, new byte[]{(byte) 'B', (byte) 'Z'})))));
          } else {
             documentSplitter = new WikiDocumentSplitter(new BufferedInputStream(in));
          }
@@ -77,7 +80,7 @@ public class WikipediaDocumentProducer implements DocumentProducer, DownloadProg
          if (!httpDownloader.isLastVersion()) {
             try {
                log.info("Downloading " + httpDownloader.getSourceUrl());
-               httpDownloader.addProgressListener(this);
+               httpDownloader.addProgressListener(new DownloadProgressLogger());
                final int status = httpDownloader.downloadFile();
                if (status < 200 || status >= 300) {
                   throw new RuntimeException("Could not download file: http returned status: " + status);
@@ -205,12 +208,6 @@ public class WikipediaDocumentProducer implements DocumentProducer, DownloadProg
       this.indexOnlyNew = indexOnlyNew;
    }
 
-   @Override
-   public void progress(long totalUnits, long doneUnits) {
-      log.info("Download progress: " + doneUnits + " of " + totalUnits + " ("  +
-            Math.round(((float)doneUnits / totalUnits) * 100) + "%)" );
-   }
-
    private class WikiDocumentIterator implements Iterator<Document> {
       private final int maxDocs;
       private int processedDocs = 0;
@@ -238,6 +235,34 @@ public class WikipediaDocumentProducer implements DocumentProducer, DownloadProg
       @Override
       public void remove() {
          throw new UnsupportedOperationException("Remove not supported");
+      }
+   }
+
+   private static class DownloadProgressLogger implements DownloadProgressListener {
+      protected final TotalTimedLogger logger = new TotalTimedLogger(log,
+            "%1$d/%5$d [%6$4.1f%%] (%3$d) kb at %2$.2f (%4$.2f) kb/s", TimeUnit.SECONDS,
+            DefaultTimedLogger.Calculator.UNIT_PER_TIME);
+      protected long kb;
+
+      @Override
+      public void totalSize(long size) {
+         logger.setTotal(size / 1024);
+         final int len = String.valueOf(logger.getTotal()).length();
+         logger.setFormat("Downloaded %1$" + len + "d/%5$d kb [%6$4.1f%%] at %2$.2f kb/s (%4$.2f kb/s for last %3$d kb)");
+         kb = 0;
+         logger.startTimer();
+      }
+
+      @Override
+      public void progress(final long doneKB) {
+         logger.stopTimerAndIncrement((int) ((doneKB - kb) / 1024));
+         kb = doneKB;
+         logger.startTimer();
+      }
+
+      @Override
+      public void done() {
+         logger.log();
       }
    }
 }

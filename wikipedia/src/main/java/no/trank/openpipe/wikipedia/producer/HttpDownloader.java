@@ -47,11 +47,11 @@ import no.trank.openpipe.wikipedia.producer.meta.RssMetaParser;
  */
 public class HttpDownloader {
    private static final Logger log = LoggerFactory.getLogger(HttpDownloader.class);
+   private final List<DownloadProgressListener> progressListeners = new ArrayList<DownloadProgressListener>(1);
    private File targetFile;
    private String rssUrl;
-   private long progressTimeStamp;
-   private List<DownloadProgressListener> progressListeners = new ArrayList<DownloadProgressListener>(1);
-   private int progressInterval = 10000;
+   private long nextProgressTS;
+   private int progressInterval = 1000;
    private URL sourceUrl;
    private HttpClient httpClient;
 
@@ -111,7 +111,7 @@ public class HttpDownloader {
    public boolean isLastVersion() throws IOException {
       final RssMetaParser parser = new RssMetaParser(getContentAsString(rssUrl));
       sourceUrl = parser.getFileUrl();
-      return !isModified(parser.getModifiedDate(), targetFile.lastModified()) || hasCorrectMd5(parser);
+      return !isModified(parser.getModifiedDate(), targetFile) || hasCorrectMd5(parser);
    }
 
    private boolean hasCorrectMd5(RssMetaParser parser) throws IOException {
@@ -133,18 +133,18 @@ public class HttpDownloader {
       }
    }
 
-   private static boolean isModified(Date modifiedDate, long localDate) {
-      return modifiedDate.after(new Date(localDate));
+   private static boolean isModified(Date modifiedDate, File file) {
+      return modifiedDate.after(new Date(file.lastModified())) ||
+            modifiedDate.after(new Date(getMd5File(file).lastModified()));
    }
 
    private static boolean isSameMd5(File file, String md5Sum) {
-      File md5File = new File(file.getAbsolutePath() + ".md5");
+      final File md5File = getMd5File(file);
       try {
-         if (md5File.exists()) {
+         if (md5File.exists() && md5File.length() > 0) {
             BufferedReader reader = new BufferedReader(new FileReader(md5File));
             try {
-               String localMd5 = reader.readLine().trim();
-               return md5Sum.equalsIgnoreCase(localMd5);
+               return md5Sum.equalsIgnoreCase(reader.readLine().trim());
             } finally {
                reader.close();
             }
@@ -155,6 +155,10 @@ public class HttpDownloader {
          log.error("Could not read md5 from file: " + md5File.getAbsolutePath());
       }
       return false;
+   }
+
+   private static File getMd5File(File file) {
+      return new File(file.getAbsolutePath() + ".md5");
    }
 
 
@@ -186,13 +190,14 @@ public class HttpDownloader {
          log.error("Could not make md5. MD5 not supported", e);
          out = new FileOutputStream(targetFile);
       }
+      reportSize(size);
       try {
          long totalReadBytes = 0;
-         byte[] buf = new byte[16384];
+         final byte[] buf = new byte[1024 * 32];
          int numBytes = in.read(buf);
          while(numBytes >= 0) {
             totalReadBytes += numBytes;
-            progress(size, totalReadBytes);
+            reportProgress(totalReadBytes);
             out.write(buf, 0, numBytes);
             numBytes = in.read(buf);
          }
@@ -202,7 +207,7 @@ public class HttpDownloader {
          } catch (Exception e) {
             // Do nothing
          }
-         progress(size, size);
+         reportDone();
          if (out instanceof DigestOutputStream) {
             writeMd5File(((DigestOutputStream)out).getMessageDigest());
          }
@@ -210,9 +215,8 @@ public class HttpDownloader {
    }
 
    private void writeMd5File(MessageDigest messageDigest) throws IOException {
-      File md5File = new File(targetFile.getAbsolutePath() + ".md5");
-      FileOutputStream fout = new FileOutputStream(md5File);
-      try {         
+      FileOutputStream fout = new FileOutputStream(getMd5File(targetFile));
+      try {
          fout.write(HexUtil.toHexString(messageDigest.digest()).getBytes("UTF-8"));
       } finally {
          try {
@@ -223,13 +227,26 @@ public class HttpDownloader {
       }
    }
 
-   private void progress(long size, long totalReadBytes) {
-      final long currentTime = System.currentTimeMillis();
-      if (progressTimeStamp + progressInterval < currentTime || size == totalReadBytes) {
+   private void reportSize(final long size) {
+      for (DownloadProgressListener progressListener : progressListeners) {
+         progressListener.totalSize(size);
+      }
+      nextProgressTS = System.currentTimeMillis() + progressInterval;
+   }
+
+   private void reportProgress(final long totalReadBytes) {
+      final long now = System.currentTimeMillis();
+      if (nextProgressTS <= now) {
          for (DownloadProgressListener progressListener : progressListeners) {
-            progressListener.progress(size, totalReadBytes);
+            progressListener.progress(totalReadBytes);
          }
-         progressTimeStamp = currentTime;
+         nextProgressTS = now + progressInterval;
+      }
+   }
+
+   private void reportDone() {
+      for (DownloadProgressListener progressListener : progressListeners) {
+         progressListener.done();
       }
    }
 }

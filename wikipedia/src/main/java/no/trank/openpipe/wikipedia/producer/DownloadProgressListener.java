@@ -19,5 +19,9 @@ package no.trank.openpipe.wikipedia.producer;
  * @version $Revision$
  */
 public interface DownloadProgressListener {
-   void progress(long totalUnits, long doneUnits);
+   void totalSize(long size);
+
+   void progress(long doneUnits);
+
+   void done();
 }
