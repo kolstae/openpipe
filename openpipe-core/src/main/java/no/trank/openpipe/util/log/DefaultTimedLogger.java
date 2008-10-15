@@ -40,6 +40,7 @@ public class DefaultTimedLogger implements TimedLogger {
    private long lastLog = System.nanoTime();
    private long logPeriod = SECONDS.toNanos(20);
    protected final TimeUnit timeUnit;
+   protected final Calculator calculator;
 
    /**
     * Creates a timed logger.
@@ -70,9 +71,21 @@ public class DefaultTimedLogger implements TimedLogger {
     * @param timeUnit the time unit used for averages and times.
     */
    public DefaultTimedLogger(Logger log, String format, TimeUnit timeUnit) {
+      this(log, format, timeUnit, Calculator.TIME_PER_UNIT);
+   }
+
+   /**
+    * Creates a timed logger with the given logger and format.
+    *
+    * @param log the logger to use.
+    * @param format the format to use.
+    * @param timeUnit the time unit used for averages and times.
+    */
+   public DefaultTimedLogger(Logger log, String format, TimeUnit timeUnit, Calculator calculator) {
       this.log = log;
       this.format = format;
       this.timeUnit = timeUnit;
+      this.calculator = calculator;
    }
 
    @Override
@@ -108,15 +121,20 @@ public class DefaultTimedLogger implements TimedLogger {
    @Override
    public void log() {
       if (count > 0 && log.isInfoEnabled()) {
-         formatter.format(format, count, calculateAverage(tot, (double) count),
-               localCount, calculateAverage(localTot, (double) localCount));
+         format(formatter, format, count, tot, localCount, localTot);
          log.info(buf.toString());
          buf.setLength(0);
       }
    }
 
+   protected void format(final Formatter formatter, final String format, final long totCount, final long totNanos,
+                         final int localCount, final long localTotNanos) {
+      formatter.format(format, totCount, calculateAverage(totNanos, (double) totCount),
+            localCount, calculateAverage(localTotNanos, (double) localCount));
+   }
+
    protected double calculateAverage(final long totNanos, final double count) {
-      return timeUnit.convert(totNanos, NANOSECONDS) / count;
+      return calculator.calculate(timeUnit.convert(totNanos, NANOSECONDS), count);
    }
 
    @Override
@@ -212,5 +230,22 @@ public class DefaultTimedLogger implements TimedLogger {
     */
    public void setLogPeriod(long logPeriod, TimeUnit unit) {
       setLogPeriod(unit.toNanos(logPeriod));
+   }
+
+   public static enum Calculator {
+      TIME_PER_UNIT {
+         @Override
+         public double calculate(final long totTime, final double count) {
+            return totTime / count;
+         }
+      },
+      UNIT_PER_TIME {
+         @Override
+         public double calculate(final long totTime, final double count) {
+            return count / totTime;
+         }
+      };
+
+      public abstract double calculate(final long totTime, final double count);
    }
 }
