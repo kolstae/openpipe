@@ -13,10 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package no.trank.openpipe.wikipedia.producer;/**
- *
- * @version $Revision$
- */
+package no.trank.openpipe.wikipedia.download;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -29,7 +26,8 @@ public class HttpDownloaderTest extends TestCase {
 
    public void testWriteFile() throws Exception {
       httpDownloader = new HttpDownloader();
-      File testOutput = File.createTempFile("test", "tmp");
+      File testOutput = File.createTempFile("httpDownloaderTest", ".tmp");
+      testOutput.deleteOnExit();
       try {
          httpDownloader.setTargetFile(testOutput);
          ByteArrayInputStream in = new ByteArrayInputStream(new byte[]{'a','b','c'});
@@ -38,7 +36,7 @@ public class HttpDownloaderTest extends TestCase {
          byte[] testbuf = new byte[10];
          FileInputStream testin = new FileInputStream(testOutput);
          try {
-            assertEquals(3,testin.read(testbuf));
+            assertEquals(3, testin.read(testbuf));
             assertEquals('a', testbuf[0]);
             assertEquals('b', testbuf[1]);
             assertEquals('c', testbuf[2]);            

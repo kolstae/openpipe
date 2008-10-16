@@ -44,11 +44,10 @@ public class WikiDocumentSplitter implements Iterator<String> {
    private String next;
 
    public WikiDocumentSplitter(InputStream input) throws XMLStreamException {
-      if (input != null) {
-         xmlEventReader = XMLInputFactory.newInstance().createXMLEventReader(input);
-      } else {
+      if (input == null) {
          throw new IllegalArgumentException("Input can not be <null>");
       }
+      xmlEventReader = XMLInputFactory.newInstance().createXMLEventReader(input);
    }
 
    @Override

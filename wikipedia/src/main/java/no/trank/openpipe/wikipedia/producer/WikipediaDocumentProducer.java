@@ -21,7 +21,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.concurrent.TimeUnit;
 import javax.xml.stream.XMLStreamException;
 
 import org.apache.tools.bzip2.CBZip2InputStream;
@@ -30,8 +29,8 @@ import org.slf4j.LoggerFactory;
 
 import no.trank.openpipe.api.document.Document;
 import no.trank.openpipe.api.document.DocumentProducer;
-import no.trank.openpipe.util.log.DefaultTimedLogger;
-import no.trank.openpipe.util.log.TotalTimedLogger;
+import no.trank.openpipe.util.Iterators;
+import no.trank.openpipe.wikipedia.WikipediaDumpHandler;
 
 /**
  * Produces documents from a mediawiki dump.
@@ -40,62 +39,36 @@ import no.trank.openpipe.util.log.TotalTimedLogger;
  */
 public class WikipediaDocumentProducer implements DocumentProducer {
    private static final Logger log = LoggerFactory.getLogger(WikipediaDocumentProducer.class);
-   private HttpDownloader httpDownloader;
+   private WikipediaDumpHandler dumpHandler;
    private WikiDocumentSplitter documentSplitter;
    private int maxDocs = -1;
    private String contentField = "wikiPage";
-   private boolean isNew = false;
    private boolean indexOnlyNew = true;
 
    @Override
    public void init() {
-      log.info("Initializing");
-      httpDownloader.init();
-      isNew = downloadWiki();
-      final File file = httpDownloader.getTargetFile();
-      try {
-         FileInputStream in = new FileInputStream(file);
-         log.debug("Opening wikipedia dump at: " + file.getAbsolutePath());
-         if (isBunzip2(file)) {
-            // Have to strip away the two first bytes in the .bz2 file if they are 'BZ'. A bug in CBZip2InputStream?
-            documentSplitter = new WikiDocumentSplitter(new BufferedInputStream(new CBZip2InputStream(
-                  new BufferedInputStream(new InputStreamPrefixStripper(in, new byte[]{(byte) 'B', (byte) 'Z'})))));
-         } else {
-            documentSplitter = new WikiDocumentSplitter(new BufferedInputStream(in));
+      if (dumpHandler.isNewDump() || !indexOnlyNew) {
+         final File file = dumpHandler.getDumpFile();
+         try {
+            FileInputStream in = new FileInputStream(file);
+            log.debug("Opening wikipedia dump at: {}", file.getAbsolutePath());
+            if (isBunzip2(file)) {
+               // Have to strip away the two first bytes in the .bz2 file if they are 'BZ'. A bug in CBZip2InputStream?
+               documentSplitter = new WikiDocumentSplitter(new BufferedInputStream(new CBZip2InputStream(
+                     new BufferedInputStream(new InputStreamPrefixStripper(in, new byte[]{(byte) 'B', (byte) 'Z'})))));
+            } else {
+               documentSplitter = new WikiDocumentSplitter(new BufferedInputStream(in));
+            }
+         } catch (XMLStreamException e) {
+            throw new RuntimeException("Could not download file", e);
+         } catch (IOException e) {
+            log.error("Could not read file: " + file.getAbsoluteFile(), e);
          }
-      } catch (XMLStreamException e) {
-         throw new RuntimeException("Could not download file", e);
-      } catch (IOException e) {
-         log.error("Could not read file: " + file.getAbsoluteFile(), e);
       }
-
    }
 
    private static boolean isBunzip2(File file) {
       return file.getName().toLowerCase().endsWith(".bz2");
-   }
-
-   private boolean downloadWiki() {
-      try {
-         if (!httpDownloader.isLastVersion()) {
-            try {
-               log.info("Downloading " + httpDownloader.getSourceUrl());
-               httpDownloader.addProgressListener(new DownloadProgressLogger());
-               final int status = httpDownloader.downloadFile();
-               if (status < 200 || status >= 300) {
-                  throw new RuntimeException("Could not download file: http returned status: " + status);
-               }
-               return true;
-            } catch (IOException e) {
-               throw new RuntimeException("Could not download file", e);
-            }
-         } else {
-            log.info("Found local file with correct md5. Skipping download.");
-         }
-      } catch (IOException e) {
-         log.error("Could not determine last version.", e);
-      }
-      return false;
    }
 
    @Override
@@ -121,21 +94,12 @@ public class WikipediaDocumentProducer implements DocumentProducer {
    }
 
    /**
-    * Gets the HttpDownloader for this producer.
+    * Sets the <tt>WikipediaDumpHandler</tt> that handles the dump-file.
     *
-    * @return the downloader that is used to get the wikipedia dump.
+    * @param dumpHandler the handler for the dump-file.
     */
-   public HttpDownloader getHttpDownloader() {
-      return httpDownloader;
-   }
-
-   /**
-    * Sets the HttpDownloader for this producer.
-    *
-    * @param httpDownloader the downloader that is used to get the wikipedia dump.
-    */
-   public void setHttpDownloader(HttpDownloader httpDownloader) {
-      this.httpDownloader = httpDownloader;
+   public void setDumpHandler(WikipediaDumpHandler dumpHandler) {
+      this.dumpHandler = dumpHandler;
    }
 
    /**
@@ -178,12 +142,11 @@ public class WikipediaDocumentProducer implements DocumentProducer {
 
    @Override
    public Iterator<Document> iterator() {
-      if (indexOnlyNew && !isNew) {
+      if (indexOnlyNew && !dumpHandler.isNewDump()) {
          log.info("Current wiki dump is up to date. Skipping produce. (Set indexOnlyNew to false to force indexing.)");
-         return new WikiDocumentIterator(0);
-      } else {
-         return new WikiDocumentIterator(maxDocs);
+         return Iterators.emptyIterator();
       }
+      return new WikiDocumentIterator(maxDocs);
    }
 
    /**
@@ -235,34 +198,6 @@ public class WikipediaDocumentProducer implements DocumentProducer {
       @Override
       public void remove() {
          throw new UnsupportedOperationException("Remove not supported");
-      }
-   }
-
-   private static class DownloadProgressLogger implements DownloadProgressListener {
-      protected final TotalTimedLogger logger = new TotalTimedLogger(log,
-            "%1$d/%5$d [%6$4.1f%%] (%3$d) kb at %2$.2f (%4$.2f) kb/s", TimeUnit.SECONDS,
-            DefaultTimedLogger.Calculator.UNIT_PER_TIME);
-      protected long kb;
-
-      @Override
-      public void totalSize(long size) {
-         logger.setTotal(size / 1024);
-         final int len = String.valueOf(logger.getTotal()).length();
-         logger.setFormat("Downloaded %1$" + len + "d/%5$d kb [%6$4.1f%%] at %2$.2f kb/s (%4$.2f kb/s for last %3$d kb)");
-         kb = 0;
-         logger.startTimer();
-      }
-
-      @Override
-      public void progress(final long doneKB) {
-         logger.stopTimerAndIncrement((int) ((doneKB - kb) / 1024));
-         kb = doneKB;
-         logger.startTimer();
-      }
-
-      @Override
-      public void done() {
-         logger.log();
       }
    }
 }
