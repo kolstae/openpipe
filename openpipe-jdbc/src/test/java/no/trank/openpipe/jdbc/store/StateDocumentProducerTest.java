@@ -144,7 +144,8 @@ public class StateDocumentProducerTest extends TestCase {
    public void testUpdateModifiedDocuments() throws Exception {
       createValidTable();
       final Timestamp ts = new Timestamp(System.currentTimeMillis());
-      jdbcTemplate.update("INSERT INTO " + TABLE_NAME + " (" + COL_ID_NAME + ", " + COL_UPD_NAME + ") VALUES (?, ?)",
+      Thread.sleep(15); // So test will not fail on Windows
+      jdbcTemplate.update("INSERT INTO " + TABLE_NAME + " (" + COL_ID_NAME + ", " + COL_UPD_NAME + ") VALUES SAG (?, ?)",
             DOC_ID, ts);
 
       // Setting up mock
@@ -169,6 +170,7 @@ public class StateDocumentProducerTest extends TestCase {
    public void testUpdateModifiedDocuments_RollbackOnFail() throws Exception {
       createValidTable();
       final Timestamp ts = new Timestamp(System.currentTimeMillis());
+      Thread.sleep(15); // So test will not fail on Windows
       jdbcTemplate.update("INSERT INTO " + TABLE_NAME + " (" + COL_ID_NAME + ", " + COL_UPD_NAME + ") VALUES (?, ?)",
             DOC_ID, ts);
 
