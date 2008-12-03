@@ -54,19 +54,20 @@ public abstract class PipelineSelector extends BasePipelineStep {
 
    @Override
    public PipelineStepStatus execute(Document doc) throws PipelineException {
-      final SubPipeline pipeline = swMap.get(getSwitchValue(doc));
+      final String switchValue = getSwitchValue(doc);
+      final SubPipeline pipeline = swMap.get(switchValue);
       final PipelineStepStatus status;
       if (pipeline != null) {
          status = handleSubPipeline(doc, pipeline);
       } else {
-         final PipelineStepStatusCode statusCode = getStatusCode(getSwitchValue(doc), CONTINUE);
+         final PipelineStepStatusCode statusCode = getStatusCode(switchValue, CONTINUE);
          if (statusCode.hasSubPipeline()) {
-            throw new PipelineException("No sub-pipeline configured for operation '" + getSwitchValue(doc) +
+            throw new PipelineException("No sub-pipeline configured for operation '" + switchValue +
                   "' but code " + statusCode + " found");
          }
          status = new PipelineStepStatus(statusCode);
       }
-      log.debug("Operation {}: {}", getSwitchValue(doc), status);
+      log.debug("Operation {}: {}", switchValue, status);
       return status;
    }
 
