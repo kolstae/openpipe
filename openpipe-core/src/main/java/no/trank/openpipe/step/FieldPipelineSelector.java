@@ -34,6 +34,7 @@ public class FieldPipelineSelector extends PipelineSelector {
       return doc.getFieldValue(operationField);
    }
 
+   @Override
    public String getRevision() {
       return "$Revision$";
    }
