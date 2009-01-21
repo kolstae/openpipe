@@ -69,22 +69,39 @@ public class PipelineRunner implements Runnable {
 
    @Override
    public void run() {
+      runPipeline(documentProducer, pipeline);
+   }
+
+   /**
+    * Runs a pipeline with a given producer.
+    * <br/>
+    * Full cycle of {@link DocumentProducer#init()},
+    * {@link DocumentProducer#close()}/{@link DocumentProducer#fail()} is called on <tt>producer</tt>.
+    *
+    * @param producer the <tt>DocumentProducer</tt> for the run.
+    * @param pipeline the pipeline to run.
+    *
+    * @return <tt>true</tt> only if {@link Pipeline#run(Iterable) Pipeline.run(producer)} returned <tt>true</tt>,
+    * otherwise <tt>false</tt>.
+    */
+   public static boolean runPipeline(DocumentProducer producer, Pipeline pipeline) {
       boolean success = false;
       try {
-         documentProducer.init();
-         if (PipelineExceptionListener.class.isAssignableFrom(documentProducer.getClass())) {
-            pipeline.getPipelineExceptionHandler().addExceptionListener((PipelineExceptionListener) documentProducer);
+         producer.init();
+         if (PipelineExceptionListener.class.isAssignableFrom(producer.getClass())) {
+            pipeline.getPipelineExceptionHandler().addExceptionListener((PipelineExceptionListener) producer);
          }
-         success = pipeline.run(documentProducer);
+         success = pipeline.run(producer);
       } finally {
-         if (PipelineExceptionListener.class.isAssignableFrom(documentProducer.getClass())) {
-            pipeline.getPipelineExceptionHandler().removeExceptionListener((PipelineExceptionListener) documentProducer);
+         if (PipelineExceptionListener.class.isAssignableFrom(producer.getClass())) {
+            pipeline.getPipelineExceptionHandler().removeExceptionListener((PipelineExceptionListener) producer);
          }
          if (success) {
-            documentProducer.close();
+            producer.close();
          } else {
-            documentProducer.fail();
+            producer.fail();
          }
       }
+      return success;
    }
 }
