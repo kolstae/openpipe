@@ -145,7 +145,7 @@ public class StateDocumentProducerTest extends TestCase {
       createValidTable();
       final Timestamp ts = new Timestamp(System.currentTimeMillis());
       Thread.sleep(15); // So test will not fail on Windows
-      jdbcTemplate.update("INSERT INTO " + TABLE_NAME + " (" + COL_ID_NAME + ", " + COL_UPD_NAME + ") VALUES SAG (?, ?)",
+      jdbcTemplate.update("INSERT INTO " + TABLE_NAME + " (" + COL_ID_NAME + ", " + COL_UPD_NAME + ") VALUES (?, ?)",
             DOC_ID, ts);
 
       // Setting up mock
