@@ -134,13 +134,6 @@ public class SolrDocumentProcessor extends BasePipelineStep {
    private HttpClient httpClient;
 
    /**
-    * Creates a <tt>SolrDocumentProcessor</tt> with the name <tt>&quot;SolrPoster&quot;</tt>.
-    */
-   public SolrDocumentProcessor() {
-      super("SolrPoster");
-   }
-
-   /**
     * Converts a document to XML and posts it to solr.
     * 
     * @param doc the document to process.

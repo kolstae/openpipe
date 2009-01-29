@@ -44,7 +44,7 @@ public class StripHtml extends MultiInputOutputFieldPipelineStep {
    private static Logger log = LoggerFactory.getLogger(StripHtml.class);
 
    public StripHtml() {
-      super("StripHtml", true);
+      super(true);
    }
 
    @Override

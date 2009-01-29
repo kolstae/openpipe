@@ -36,10 +36,6 @@ import no.trank.openpipe.api.document.Document;
 public class AnnotateSpace extends MultiInputFieldPipelineStep {
    private static final Logger log = LoggerFactory.getLogger(AnnotateSpace.class);
 
-   public AnnotateSpace() {
-      super("AnnotateSpace");
-   }
-
    @Override
    public String getRevision() {
       return "$Revision$";

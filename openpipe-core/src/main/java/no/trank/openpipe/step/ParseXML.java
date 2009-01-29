@@ -57,10 +57,6 @@ public class ParseXML extends BasePipelineStep {
    private Map<String, String> tagToFieldName = Collections.emptyMap();
    private boolean failOnXMLError = true;
 
-   public ParseXML() {
-      super("ParseXML");
-   }
-
    @Override
    public PipelineStepStatus execute(Document doc) throws PipelineException {
       final List<String> list = doc.getFieldValues(fieldName);

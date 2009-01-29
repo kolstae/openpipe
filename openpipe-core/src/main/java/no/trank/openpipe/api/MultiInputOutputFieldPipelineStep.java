@@ -35,6 +35,10 @@ public abstract class MultiInputOutputFieldPipelineStep extends BasePipelineStep
    private Map<String, String> fieldNameMap;
    private boolean skipEmptyInput;
 
+   public MultiInputOutputFieldPipelineStep(boolean skipEmptyInput) {
+      this.skipEmptyInput = skipEmptyInput;
+   }
+
    /**
     * Creates a step with the given name.
     *

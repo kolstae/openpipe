@@ -55,13 +55,6 @@ public class StateDocumentStep extends BasePipelineStep implements TableDescript
    private boolean lifecycleSubPipeline = true;
 
    /**
-    * Creates a step with the name &quot;StateDocumentStep&quot;.
-    */
-   public StateDocumentStep() {
-      super("StateDocumentStep");
-   }
-
-   /**
     * Sets {@link Document#setOperation(String)} to either {@link DocumentOperation#ADD_VALUE} or
     * {@link DocumentOperation#MODIFY_VALUE} based on the outcome of
     * {@link IdStateHolder#isUpdate(String) idStateHolder.isUpdate(id)}.

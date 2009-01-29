@@ -25,10 +25,6 @@ import no.trank.openpipe.api.document.Document;
  */
 public class OperationPipelineSelector  extends PipelineSelector {
 
-   public OperationPipelineSelector() {
-      super("OperationPipelineSelector");
-   }
-
    @Override
    public String getRevision() {
       return "$Revision$";

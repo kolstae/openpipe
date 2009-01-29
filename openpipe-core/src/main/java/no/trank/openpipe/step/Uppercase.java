@@ -18,13 +18,13 @@ package no.trank.openpipe.step;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import no.trank.openpipe.api.MultiInputOutputFieldPipelineStep;
 import no.trank.openpipe.api.PipelineException;
 import no.trank.openpipe.api.document.AnnotatedField;
 import no.trank.openpipe.api.document.Document;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This step converts input text into uppercase.
@@ -35,7 +35,7 @@ public class Uppercase extends MultiInputOutputFieldPipelineStep {
    private static final Logger log = LoggerFactory.getLogger(Uppercase.class);
 
    public Uppercase() {
-      super("Uppercase", false);
+      super(false);
    }
 
    @Override

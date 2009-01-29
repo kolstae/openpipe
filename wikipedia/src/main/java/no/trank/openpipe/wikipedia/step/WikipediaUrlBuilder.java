@@ -46,10 +46,6 @@ public class WikipediaUrlBuilder extends BasePipelineStep {
    @NotEmpty
    private String urlEncoding = "UTF-8";
 
-   public WikipediaUrlBuilder() {
-      super("WikipediaUrlBuilder");
-   }
-
    @Override
    public void prepare() throws PipelineException {
       super.prepare();

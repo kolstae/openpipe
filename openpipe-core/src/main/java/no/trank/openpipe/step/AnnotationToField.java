@@ -40,10 +40,6 @@ public class AnnotationToField extends BasePipelineStep {
    private String toFieldName;
    private boolean failOnEmpty;
 
-   public AnnotationToField() {
-      super("AnnotationToField");
-   }
-
    @Override
    public PipelineStepStatus execute(Document doc) throws PipelineException {
       final List<String> newValues = buildNewValues(doc.getFields(fromFieldName));

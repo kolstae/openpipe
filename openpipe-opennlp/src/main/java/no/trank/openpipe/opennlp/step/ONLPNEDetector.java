@@ -42,10 +42,6 @@ public class ONLPNEDetector extends MultiInputFieldPipelineStep {
    @NotEmpty
    private Map<String, NameFinder> nameFinders = null;
 
-   public ONLPNEDetector() {
-      super("Open NLP NE-detector");
-   }
-
    @Override
    protected void process(Document doc, String fieldName, List<AnnotatedField> fieldValues) throws PipelineException {
       for (AnnotatedField fieldValue : fieldValues) {

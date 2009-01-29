@@ -29,6 +29,9 @@ public abstract class MultiInputFieldPipelineStep extends BasePipelineStep {
    @NotEmpty
    private List<String> inputFields = Collections.emptyList();
 
+   public MultiInputFieldPipelineStep() {
+   }
+
    /**
     * Creates a step with the given name.
     *

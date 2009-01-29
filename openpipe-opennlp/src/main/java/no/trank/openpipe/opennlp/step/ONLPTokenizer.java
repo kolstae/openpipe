@@ -37,10 +37,6 @@ public class ONLPTokenizer extends MultiInputFieldPipelineStep {
    @NotNull
    private Tokenizer tokenizer;
 
-   public ONLPTokenizer() {
-      super("Open NLP Tokenizer");
-   }
-
    @Override
    protected void process(Document doc, String fieldName, List<AnnotatedField> fieldValues) throws PipelineException {
       for (AnnotatedField fieldValue : fieldValues) {

@@ -58,7 +58,6 @@ public class LanguageIdentifier extends BasePipelineStep {
     * Creates a step with <tt>&quot;LanguageIdentifier&quot;</tt> as name.
     */
    public LanguageIdentifier() {
-      super("LanguageIdentifier");
       detector.setDeclaredEncoding(charset.name());
    }
 

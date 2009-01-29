@@ -48,6 +48,9 @@ public abstract class PipelineSelector extends BasePipelineStep {
    private Map<String, PipelineStepStatusCode> statusCodeMap = Collections.emptyMap();
    private Map<String, SubPipeline> swMap = new HashMap<String, SubPipeline>();
 
+   public PipelineSelector() {
+   }
+
    public PipelineSelector(String name) {
       super(name);
    }

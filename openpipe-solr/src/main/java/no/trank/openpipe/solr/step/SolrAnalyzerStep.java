@@ -59,13 +59,6 @@ public class SolrAnalyzerStep extends MultiInputFieldPipelineStep {
    @NotNull
    private Set<String> annotations = Collections.emptySet();
 
-   /**
-    * Constructs a <tt>SolrAnalyzerStep</tt> with name &quot;SolrAnalyzerStep&quot;
-    */
-   public SolrAnalyzerStep() {
-      super("SolrAnalyzerStep");
-   }
-
    @Override
    protected void process(Document doc, String fieldName, List<AnnotatedField> fieldValues) throws PipelineException {
       try {

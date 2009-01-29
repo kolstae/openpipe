@@ -33,16 +33,12 @@ import static no.trank.openpipe.util.HexUtil.toHexString;
  * @version $Revision$
  */
 public class ChecksumFields extends MultiInputFieldPipelineStep {
-   private final static Charset CHARSET = Charset.forName("UTF-8"); 
+   private static final Charset CHARSET = Charset.forName("UTF-8");
    @NotEmpty
    private String outField;
    @NotEmpty
    private String algorithm = "MD5";
    private MessageDigest messageDigest;
-
-   public ChecksumFields() {
-      super("ChecksumFields");
-   }
 
    @Override
    public PipelineStepStatus execute(Document doc) throws PipelineException {

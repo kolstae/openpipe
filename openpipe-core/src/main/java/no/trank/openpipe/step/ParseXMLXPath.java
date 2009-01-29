@@ -66,10 +66,6 @@ public class ParseXMLXPath extends BasePipelineStep {
    private DocumentBuilder builder;
    private XPath xPath;
 
-   public ParseXMLXPath() {
-      super("ParseXMLXPath");
-   }
-
    @Override
    public PipelineStepStatus execute(Document doc) throws PipelineException {
       final List<String> list = doc.getFieldValues(fieldName);

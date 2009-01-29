@@ -18,14 +18,14 @@ package no.trank.openpipe.step;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import no.trank.openpipe.api.MultiInputOutputFieldPipelineStep;
 import no.trank.openpipe.api.PipelineException;
 import no.trank.openpipe.api.document.AnnotatedField;
 import no.trank.openpipe.api.document.Document;
 import no.trank.openpipe.config.annotation.NotNull;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This step splits input text according to a few simple rules and outputs the combinations to a multi valued field:
@@ -111,7 +111,7 @@ public class HierarchicalSplitter extends MultiInputOutputFieldPipelineStep {
    private String alternativeSplit;
 
    public HierarchicalSplitter() {
-      super("HierarchicalSplitter", false);
+      super(false);
    }
 
    @Override

@@ -38,10 +38,6 @@ public class AnnotateSentence extends MultiInputFieldPipelineStep {
    private static final char[] CHARS_SENT = new char[] {'.', '!', '?'};
    private static final char[] CHARS_WS = new char[] {' ', '"', '\r', '\n', '\t'};
 
-   public AnnotateSentence() {
-      super("AnnotateSentence");
-   }
-
    static {
       Arrays.sort(CHARS_SENT);
       Arrays.sort(CHARS_WS);

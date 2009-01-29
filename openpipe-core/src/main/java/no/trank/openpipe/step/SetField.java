@@ -31,10 +31,6 @@ public class SetField extends BasePipelineStep {
    private Map<String, String> fieldValueMap;
    private boolean overwrite = true;
 
-   public SetField() {
-      super("SetField");
-   }
-
    @Override
    public PipelineStepStatus execute(Document doc) throws PipelineException {
       for (Map.Entry<String, String> entry : fieldValueMap.entrySet()) {

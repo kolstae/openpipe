@@ -27,6 +27,10 @@ public abstract class BasePipelineStep implements PipelineStep {
    @NotEmpty
    private String name;
 
+   public BasePipelineStep() {
+      name = getClass().getSimpleName();
+   }
+
    /**
     * Creates a step with the given name.
     *

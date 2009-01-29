@@ -63,10 +63,6 @@ public class DocumentParser extends BasePipelineStep {
    private boolean failOnParseFailure;
    private boolean stopOnParseFailure;
 
-   public DocumentParser() {
-      super("DocumentParser");
-   }
-
    @Override
    public PipelineStepStatus execute(Document doc) throws PipelineException {
       final RawData data = doc.getRawData();

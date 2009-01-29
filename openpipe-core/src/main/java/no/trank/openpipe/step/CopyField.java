@@ -17,13 +17,13 @@ package no.trank.openpipe.step;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import no.trank.openpipe.api.MultiInputOutputFieldPipelineStep;
 import no.trank.openpipe.api.PipelineException;
 import no.trank.openpipe.api.document.AnnotatedField;
 import no.trank.openpipe.api.document.Document;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This step copies values from fields to other fields.
@@ -41,7 +41,7 @@ public class CopyField extends MultiInputOutputFieldPipelineStep {
    private boolean overwrite = true;
 
    public CopyField() {
-      super("CopyField", false);
+      super(false);
    }
 
    @Override

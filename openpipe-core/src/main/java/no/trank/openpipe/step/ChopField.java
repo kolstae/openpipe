@@ -40,10 +40,6 @@ public class ChopField extends MultiInputFieldPipelineStep {
    private String fitField;
    private Pattern LAST_WORD = Pattern.compile("[\\s\\.]+[\\S&&[^\\.]]+[\\s\\.]*$");
 
-   public ChopField() {
-      super("ChopField");
-   }
-
    @Override
    protected void process(Document doc, String fieldName, List<AnnotatedField> fieldValues) throws PipelineException {
       List<AnnotatedField> newFields = new ArrayList<AnnotatedField>();

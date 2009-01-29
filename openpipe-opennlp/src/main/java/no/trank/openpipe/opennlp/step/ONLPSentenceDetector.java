@@ -37,10 +37,6 @@ public class ONLPSentenceDetector extends MultiInputFieldPipelineStep {
    @NotNull
    private SentenceDetector detector;
 
-   public ONLPSentenceDetector() {
-      super("Open NLP Sentence-detector");
-   }
-
    @Override
    protected void process(Document doc, String fieldName, List<AnnotatedField> fieldValues) throws PipelineException {
       for (AnnotatedField fieldValue : fieldValues) {

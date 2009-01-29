@@ -22,14 +22,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import no.trank.openpipe.api.MultiInputOutputFieldPipelineStep;
 import no.trank.openpipe.api.PipelineException;
 import no.trank.openpipe.api.document.AnnotatedField;
 import no.trank.openpipe.api.document.Document;
 import no.trank.openpipe.config.annotation.NotEmpty;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This step converts date formats using {@link SimpleDateFormat}.
@@ -45,7 +45,7 @@ public class ConvertDate extends MultiInputOutputFieldPipelineStep {
    private boolean blankError;
 
    public ConvertDate() {
-      super("ConvertDate", false);
+      super(false);
    }
 
    @Override

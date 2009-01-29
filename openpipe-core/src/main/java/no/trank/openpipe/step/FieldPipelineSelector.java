@@ -25,10 +25,6 @@ import no.trank.openpipe.api.document.Document;
 public class FieldPipelineSelector extends PipelineSelector {
    private String operationField = "operation";
 
-   public FieldPipelineSelector() {
-      super("FieldPipelineSelector");
-   }
-
    @Override
    protected String getSwitchValue(Document doc) {
       return doc.getFieldValue(operationField);

@@ -58,10 +58,6 @@ public class WriteXML extends BasePipelineStep {
    private int docCount;
    private int fileCount;
 
-   public WriteXML() {
-      super("WriteXML");
-   }
-
    @Override
    public void prepare() throws PipelineException {
       super.prepare();

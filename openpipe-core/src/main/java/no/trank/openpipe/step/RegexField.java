@@ -46,7 +46,7 @@ public class RegexField extends MultiInputOutputFieldPipelineStep {
    private boolean nullIsBlank;
 
    public RegexField() {
-      super("RegexField", false);
+      super(false);
    }
 
    @Override

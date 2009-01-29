@@ -33,10 +33,6 @@ import no.trank.openpipe.api.document.Document;
 public class RemoveFields extends MultiInputFieldPipelineStep {
    private static final Logger log = LoggerFactory.getLogger(RemoveFields.class);
 
-   public RemoveFields() {
-      super("RemoveField");
-   }
-
    @Override
    protected void process(Document doc, String fieldName, List<AnnotatedField> fieldValues) throws PipelineException {
       log.debug("Removing field '{}'", fieldName);
