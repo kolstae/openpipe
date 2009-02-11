@@ -24,8 +24,7 @@ import no.trank.openpipe.api.document.Document;
  *
  * @version $Revision$
  */
-public interface SubPipeline {
-   
+public interface SubPipeline extends Finishable {
    /**
     * Prepares the sub-pipeline for a batch of documents. Must be called before the first call to
     * {@link #executeSteps(Document)}.
@@ -35,7 +34,7 @@ public interface SubPipeline {
     * @throws PipelineException if the sub-pipeline could not be prepared.
     */
    boolean prepare() throws PipelineException;
-   
+
    /**
     * Finishes the sub-pipeline after a batch of documents. Must be called after a batch of documents have been
     * processed with {@link #executeSteps(Document)}, to ensure changes are committed or resources are released.
@@ -44,6 +43,7 @@ public interface SubPipeline {
     *
     * @throws PipelineException if the sub-pipeline could not finish successfully.
     */
+   @Override
    void finish(boolean success) throws PipelineException;
 
    /**

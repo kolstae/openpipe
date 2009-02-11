@@ -22,15 +22,15 @@ public class PipelineException extends Exception {
    private String pipelineStepName;
 
    public PipelineException() {
-      super();
    }
 
    public PipelineException(String message) {
-      this(message, null, null);
+      this(message, (String) null);
    }
    
    public PipelineException(String message, String pipelineStepName) {
-      this(message, null, pipelineStepName);
+      super(message);
+      this.pipelineStepName = pipelineStepName;
    }
 
    public PipelineException(String message, Throwable cause) {

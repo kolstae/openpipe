@@ -25,7 +25,7 @@ import no.trank.openpipe.api.document.Document;
  *
  * @version $Revision$
  */
-public interface PipelineStep {
+public interface PipelineStep extends Finishable {
 
    /**
     * This is called when the application wants a document processed by this step.
@@ -52,6 +52,7 @@ public interface PipelineStep {
     *
     * @throws PipelineException if finish failed.
     */
+   @Override
    void finish(boolean success) throws PipelineException;
 
    /**

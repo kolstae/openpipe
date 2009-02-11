@@ -91,25 +91,10 @@ public abstract class PipelineSelector extends BasePipelineStep {
    @Override
    public void finish(boolean success) throws PipelineException {
       // Rethrow all exceptions
-      MultiPipelineException pipelineException = null;
-      for (SubPipeline pipeline : swMap.values()) {
-            try {
-               pipeline.finish(success);
-            } catch (PipelineException e) {
-               if (pipelineException == null) {
-                  pipelineException = new MultiPipelineException(getName());
-               }
-               pipelineException.add(e);
-            } catch (RuntimeException e) {
-               if (pipelineException == null) {
-                  pipelineException = new MultiPipelineException(getName());
-               }
-               pipelineException.add(new PipelineException(e));
-            }
-      }
-      swMap.clear();
-      if (pipelineException != null) {
-         throw pipelineException;
+      final MultiPipelineException exception = BaseSubPipeline.finish(swMap.values(), success);
+      if (exception != null) {
+         exception.setPipelineStepNameIfNull(getName());
+         throw exception;
       }
    }
 

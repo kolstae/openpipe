@@ -18,25 +18,14 @@ package no.trank.openpipe.api;
 /**
  * @version $Revision$
  */
-public class MultiPipelineException extends PipelineException {
-   private Throwable lastThrowable = this;
+public interface Finishable {
 
-   public MultiPipelineException() {
-   }
-
-   public MultiPipelineException(String pipelineStepName) {
-      super((String) null, pipelineStepName);
-   }
-
-   public boolean add(Throwable throwable) {
-      if (throwable == null) {
-         return false;
-      }
-      lastThrowable.initCause(throwable);
-      lastThrowable = throwable;
-      while (lastThrowable.getCause() != null) {
-         lastThrowable = lastThrowable.getCause();
-      }
-      return true;
-   }
+   /**
+    * Finishes the object after a batch of documents.
+    *
+    * @param success if the previous batch of documents succeeded.
+    *
+    * @throws no.trank.openpipe.api.PipelineException if the object could not finish successfully.
+    */
+   void finish(boolean success) throws PipelineException;
 }

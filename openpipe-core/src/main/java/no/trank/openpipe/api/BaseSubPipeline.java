@@ -16,6 +16,7 @@
 package no.trank.openpipe.api;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -54,7 +55,7 @@ public class BaseSubPipeline implements SubPipeline {
       for (PipelineStep step : getPipelineSteps()) {
          try {
             step.prepare();
-            log.info("Prepared {}{}", step.getName(), step.getRevision().replace('$', ' '));
+            log.info("Prepared {} {}", step.getName(), step.getRevision().replace('$', ' ').trim());
             preparedSteps.add(step);
          } catch (PipelineException e) {
             e.setPipelineStepNameIfNull(step.getName());
@@ -68,12 +69,24 @@ public class BaseSubPipeline implements SubPipeline {
 
    @Override
    public void finish(boolean success) throws PipelineException {
+      final MultiPipelineException exception = finish(preparedSteps, success);
+      if (exception != null) {
+         throw exception;
+      }
+   }
+
+   public static MultiPipelineException finish(Collection<? extends Finishable> steps, boolean success) {
       MultiPipelineException pipelineException = null;
-      for (PipelineStep step : preparedSteps) {
+      for (Finishable step : steps) {
          try {
             step.finish(success);
+         } catch (MultiPipelineException e) {
+            if (pipelineException == null) {
+               pipelineException = e;
+            } else {
+               pipelineException.add(e.getCause());
+            }
          } catch (PipelineException e) {
-            e.setPipelineStepNameIfNull(step.getName());
             if (pipelineException == null) {
                pipelineException = new MultiPipelineException();
             }
@@ -82,13 +95,11 @@ public class BaseSubPipeline implements SubPipeline {
             if (pipelineException == null) {
                pipelineException = new MultiPipelineException();
             }
-            pipelineException.add(new PipelineException(e, step.getName()));
+            pipelineException.add(new PipelineException(e));
          }
       }
-      preparedSteps.clear();
-      if (pipelineException != null) {
-         throw pipelineException;
-      }
+      steps.clear();
+      return pipelineException;
    }
 
    @Override

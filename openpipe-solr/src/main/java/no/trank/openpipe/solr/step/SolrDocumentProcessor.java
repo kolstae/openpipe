@@ -119,7 +119,6 @@ public class SolrDocumentProcessor extends BasePipelineStep {
    private String solrSchemaUrl;
    @NullNotEmpty
    private String idFieldName;
-
    @NotNull
    private Map<String, String> inputToOuputFieldMap = Collections.emptyMap();
    @NotNull
@@ -132,6 +131,7 @@ public class SolrDocumentProcessor extends BasePipelineStep {
    @NotNull
    private SolrHttpDocumentPoster documentPoster;
    private HttpClient httpClient;
+   private boolean optimizeOnSuccess;
 
    /**
     * Converts a document to XML and posts it to solr.
@@ -243,6 +243,9 @@ public class SolrDocumentProcessor extends BasePipelineStep {
       }
       try {
          documentPoster.finish();
+         if (success && optimizeOnSuccess) {
+            documentPoster.optimize();
+         }
       } catch (XMLStreamException e) {
          throw new PipelineException("Could not write xml", e);
       }
@@ -424,5 +427,9 @@ public class SolrDocumentProcessor extends BasePipelineStep {
 
    protected boolean addDynamicField(String fieldPattern) {
       return solrDynamicFields.add(Pattern.compile(fieldPattern.replaceAll("\\*", "\\.*")));
+   }
+
+   public void setOptimizeOnSuccess(boolean optimizeOnSuccess) {
+      this.optimizeOnSuccess = optimizeOnSuccess;
    }
 }
