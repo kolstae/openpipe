@@ -29,6 +29,7 @@
       <module>openpipe-solr</module>
       <module>openpipe-opennlp</module>
       <module>openpipe-lang</module>
+      <module>lemmatizer</module>
       <module>parse</module>
       <module>parse-ms</module>
       <module>parse-misc</module>
