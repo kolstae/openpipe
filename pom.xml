@@ -185,8 +185,8 @@
          </dependency>
          <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>spring</artifactId>
-            <version>2.5.5</version>
+            <artifactId>spring-context</artifactId>
+            <version>${spring.version}</version>
             <exclusions>
                <exclusion>
                   <groupId>commons-logging</groupId>
@@ -195,24 +195,29 @@
             </exclusions>
          </dependency>
          <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>${spring.version}</version>
+         </dependency>
+         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.5.2</version>
+            <version>${slf4j.version}</version>
          </dependency>
          <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>log4j-over-slf4j</artifactId>
-            <version>1.5.2</version>
+            <version>${slf4j.version}</version>
          </dependency>
          <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
-            <version>1.5.2</version>
+            <version>${slf4j.version}</version>
          </dependency>
          <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>0.9.9</version>
+            <version>0.9.29</version>
          </dependency>
          <dependency>
             <groupId>commons-dbcp</groupId>
@@ -284,7 +289,7 @@
                   <link>http://www.slf4j.org/api/</link>
                   <link>http://lucene.apache.org/solr/api/</link>
                   <link>http://lucene.apache.org/java/docs/api/</link>
-                  <link>http://static.springframework.org/spring/docs/2.0.x/api</link>
+                  <link>http://static.springframework.org/spring/docs/3.0.x/api</link>
                   <link>http://icu-project.org/apiref/icu4j/</link>
                   <link>http://ws.apache.org/jaxme/apidocs/</link>
                </links>
@@ -360,5 +365,7 @@
       <javaVersion>1.6</javaVersion>
       <!-- this magic system property is honored by many plugins: http://docs.codehaus.org/display/MAVENUSER/POM+Element+for+Source+File+Encoding -->
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+      <spring.version>3.0.5.RELEASE</spring.version>
+      <slf4j.version>1.6.1</slf4j.version>
    </properties>
 </project>
