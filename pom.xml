@@ -18,7 +18,7 @@
    <modelVersion>4.0.0</modelVersion>
    <groupId>no.trank.openpipe</groupId>
    <artifactId>openpipe-parent</artifactId>
-   <version>1.0-SNAPSHOT</version>
+   <version>2.0-SNAPSHOT</version>
    <name>OpenPipe Parent</name>
    <packaging>pom</packaging>
    <inceptionYear>2007</inceptionYear>
@@ -104,42 +104,42 @@
          <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>openpipe-core</artifactId>
-            <version>${pom.version}</version>
+            <version>${project.version}</version>
          </dependency>
          <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>openpipe-jdbc</artifactId>
-            <version>${pom.version}</version>
+            <version>${project.version}</version>
          </dependency>
          <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>openpipe-solr</artifactId>
-            <version>${pom.version}</version>
+            <version>${project.version}</version>
          </dependency>
          <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>openpipe-opennlp</artifactId>
-            <version>${pom.version}</version>
+            <version>${project.version}</version>
          </dependency>
          <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>openpipe-parse</artifactId>
-            <version>${pom.version}</version>
+            <version>${project.version}</version>
          </dependency>
          <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>openpipe-parse-ms</artifactId>
-            <version>${pom.version}</version>
+            <version>${project.version}</version>
          </dependency>
          <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>openpipe-parse-misc</artifactId>
-            <version>${pom.version}</version>
+            <version>${project.version}</version>
          </dependency>
          <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>solr-tokenizer</artifactId>
-            <version>${pom.version}</version>
+            <version>${project.version}</version>
          </dependency>
          <dependency>
             <groupId>log4j</groupId>
@@ -359,49 +359,10 @@
          </plugin>
       </plugins>
    </reporting>
-   <distributionManagement>
-      <downloadUrl>http://developer.berlios.de/project/filelist.php?group_id=8967</downloadUrl>
-      <site>
-         <id>openpipe.site</id>
-         <name>OpenPipe</name>
-         <url>scp://shell.berlios.de/home/groups/openpipe/htdocs/</url>
-      </site>
-      <repository>
-         <id>openpipe.site</id>
-         <name>OpenPipe repository</name>
-         <url>scp://shell.berlios.de/home/groups/openpipe/htdocs/repository/</url>
-      </repository>
-   </distributionManagement>
    <scm>
-      <connection>scm:svn:http://svn.berlios.de/svnroot/repos/openpipe/openpipe/trunk</connection>
-      <developerConnection>scm:svn:svn+ssh://svn.berlios.de/svnroot/repos/openpipe/openpipe/trunk</developerConnection>
-      <url>http://svn.berlios.de/viewcvs/openpipe/openpipe/trunk</url>
+      <connection>scm:git:https://github.com/dsmiley/openpipe.git</connection>
+      <!--<developerConnection>scm:git:https://dsmiley@github.com/dsmiley/openpipe.git</developerConnection>-->
    </scm>
-   <mailingLists>
-      <mailingList>
-         <name>Users</name>
-         <archive>http://lists.berlios.de/pipermail/openpipe-user/</archive>
-         <post>openpipe-user@lists.berlios.de</post>
-         <subscribe>http://lists.berlios.de/mailman/listinfo/openpipe-user</subscribe>
-         <unsubscribe>http://lists.berlios.de/mailman/listinfo/openpipe-user</unsubscribe>
-      </mailingList>
-      <mailingList>
-         <name>Developers</name>
-         <archive>http://lists.berlios.de/pipermail/openpipe-dev/</archive>
-         <post>mailto:openpipe-dev@lists.berlios.de</post>
-         <subscribe>http://lists.berlios.de/mailman/listinfo/openpipe-dev</subscribe>
-         <unsubscribe>http://lists.berlios.de/mailman/listinfo/openpipe-dev</unsubscribe>
-      </mailingList>
-      <mailingList>
-         <name>Commits</name>
-         <subscribe>http://lists.berlios.de/mailman/listinfo/openpipe-commits</subscribe>
-         <unsubscribe>http://lists.berlios.de/mailman/listinfo/openpipe-commits</unsubscribe>
-      </mailingList>
-   </mailingLists>
-   <issueManagement>
-      <system>berliOS</system>
-      <url>http://developer.berlios.de/bugs/?group_id=8967</url>
-   </issueManagement>
    <licenses>
       <license>
          <name>Apache 2</name>
