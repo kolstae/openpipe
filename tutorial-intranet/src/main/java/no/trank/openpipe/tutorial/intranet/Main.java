@@ -47,19 +47,19 @@ public class Main {
          try {
             ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("intranetApplicationContext.xml");
             try {
-               FileDocumentReader directory = (FileDocumentReader) appContext.getBean("fileDocumentReader", FileDocumentReader.class);
+               FileDocumentReader directory = appContext.getBean("fileDocumentReader", FileDocumentReader.class);
                directory.setDirectory(args[0]);
                
                if (args.length > 1) {
-                  SolrHttpDocumentPoster solrDocumentPoster = (SolrHttpDocumentPoster) appContext.getBean("solrDocumentPoster", SolrHttpDocumentPoster.class);
-                  SolrDocumentProcessor solrDocumentProcessor = (SolrDocumentProcessor) appContext.getBean("solrDocumentProcessor", SolrDocumentProcessor.class);
+                  SolrHttpDocumentPoster solrDocumentPoster = appContext.getBean("solrDocumentPoster", SolrHttpDocumentPoster.class);
+                  SolrDocumentProcessor solrDocumentProcessor = appContext.getBean("solrDocumentProcessor", SolrDocumentProcessor.class);
                
                   String solrUrl = args[1];
                   solrDocumentPoster.setPostUrl(solrUrl + "/update");
                   solrDocumentProcessor.setSolrSchemaUrl(solrUrl + "/admin/get-file.jsp?file=schema.xml");
                }
                
-               Runnable pipelineApplication = (Runnable) appContext.getBean("pipelineApplicationBean", Runnable.class);
+               Runnable pipelineApplication = appContext.getBean("pipelineApplicationBean", Runnable.class);
                pipelineApplication.run();
             } finally {
                appContext.close();
