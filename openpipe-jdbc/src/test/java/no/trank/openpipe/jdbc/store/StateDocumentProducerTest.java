@@ -15,6 +15,17 @@
  */
 package no.trank.openpipe.jdbc.store;
 
+import junit.framework.TestCase;
+import no.trank.openpipe.api.document.Document;
+import no.trank.openpipe.api.document.DocumentOperation;
+import no.trank.openpipe.api.document.DocumentProducer;
+import no.trank.openpipe.util.Iterators;
+import org.apache.ws.jaxme.sqls.hsqldb.HsqlDbSQLFactoryImpl;
+import org.hsqldb.jdbcDriver;
+import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
+import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
+import org.springframework.jdbc.datasource.SingleConnectionDataSource;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -22,18 +33,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import junit.framework.TestCase;
-import org.apache.ws.jaxme.sqls.hsqldb.HsqlDbSQLFactoryImpl;
 import static org.easymock.EasyMock.*;
-import org.hsqldb.jdbcDriver;
-import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
-import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
-import org.springframework.jdbc.datasource.SingleConnectionDataSource;
-
-import no.trank.openpipe.api.document.Document;
-import no.trank.openpipe.api.document.DocumentOperation;
-import no.trank.openpipe.api.document.DocumentProducer;
-import no.trank.openpipe.util.Iterators;
 
 /**
  * @version $Revision$
@@ -255,7 +255,8 @@ public class StateDocumentProducerTest extends TestCase {
    }
 
    private void dropTable() {
-      jdbcTemplate.getJdbcOperations().execute("DROP TABLE " + TABLE_NAME);
+      if (jdbcTemplate != null)
+         jdbcTemplate.getJdbcOperations().execute("DROP TABLE " + TABLE_NAME);
    }
 
    private void createValidTable() {

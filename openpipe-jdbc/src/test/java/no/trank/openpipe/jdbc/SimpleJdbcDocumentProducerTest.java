@@ -15,21 +15,15 @@
  */
 package no.trank.openpipe.jdbc;
 
-import java.sql.Timestamp;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
 import junit.framework.TestCase;
+import no.trank.openpipe.api.document.Document;
+import no.trank.openpipe.api.document.DocumentOperation;
 import org.hsqldb.jdbcDriver;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
-import no.trank.openpipe.api.document.Document;
-import no.trank.openpipe.api.document.DocumentOperation;
+import java.sql.Timestamp;
+import java.util.*;
 
 /**
  * @version $Revision$
@@ -164,9 +158,11 @@ public class SimpleJdbcDocumentProducerTest extends TestCase {
    @Override
    protected void tearDown() throws Exception {
       if (dataSource != null) {
-         jdbcTemplate.execute("DROP TABLE documents");
-         jdbcTemplate.execute("DROP TABLE status_count");
-         jdbcTemplate.execute("DROP TABLE status_ts");
+         if (jdbcTemplate != null) {
+            jdbcTemplate.execute("DROP TABLE documents");
+            jdbcTemplate.execute("DROP TABLE status_count");
+            jdbcTemplate.execute("DROP TABLE status_ts");
+         }
          dataSource.destroy();
       }
    }
