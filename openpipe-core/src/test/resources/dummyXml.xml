@@ -1,0 +1,13 @@
+<rootDoc xmlns="mynamespace">
+   <header>
+
+   </header>
+   <state>
+      <city a="Boston" b="beta">body</city>
+      <city a="Lowell" b="beta">body</city>
+   </state>
+   <state>
+      <city a="New York City" b="beta"></city>
+      <city a="Buffalo" b="beta" />
+   </state>
+</rootDoc>

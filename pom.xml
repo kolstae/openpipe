@@ -255,6 +255,11 @@
             <artifactId>solr</artifactId>
             <version>1.2-trank-1</version>
          </dependency>
+         <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>r08</version>
+         </dependency>
       </dependencies>
    </dependencyManagement>
    <dependencies>

@@ -27,6 +27,14 @@
    <name>OpenPipe - Core</name>
    <dependencies>
       <dependency>
+         <groupId>org.springframework</groupId>
+         <artifactId>spring-context</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>com.google.guava</groupId>
+         <artifactId>guava</artifactId>
+      </dependency>
+      <dependency>
          <groupId>org.slf4j</groupId>
          <artifactId>slf4j-api</artifactId>
       </dependency>
@@ -45,4 +53,5 @@
          <artifactId>easymock</artifactId>
       </dependency>
    </dependencies>
+
 </project>
