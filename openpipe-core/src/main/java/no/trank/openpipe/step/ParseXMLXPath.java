@@ -25,11 +25,7 @@ import java.util.regex.Pattern;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
+import javax.xml.xpath.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +38,7 @@ import no.trank.openpipe.api.BasePipelineStep;
 import no.trank.openpipe.api.PipelineException;
 import no.trank.openpipe.api.PipelineStepStatus;
 import no.trank.openpipe.api.document.Document;
+import no.trank.openpipe.api.document.DomRawData;
 import no.trank.openpipe.config.annotation.NotEmpty;
 
 /**
@@ -68,11 +65,28 @@ public class ParseXMLXPath extends BasePipelineStep {
 
    @Override
    public PipelineStepStatus execute(Document doc) throws PipelineException {
+      if (fieldName != null)
+         return execute_field(doc);
+      else
+         return execute_Dom(doc);
+   }
+
+   private PipelineStepStatus execute_Dom(Document doc) throws PipelineException {
+      DomRawData domRawData = (DomRawData) doc.getRawData();
+      try {
+         evalXPaths(doc, domRawData.getDom());
+      } catch (XPathExpressionException e) {
+         handleException("(dom)", e);//TODO put dom in string?
+      }
+      return PipelineStepStatus.DEFAULT;
+   }
+
+   private PipelineStepStatus execute_field(Document doc) throws PipelineException {
       final List<String> list = doc.getFieldValues(fieldName);
       for (String text : list) {
          try {
             final Node reader = builder.parse(new InputSource(new StringReader(text)));
-            parseXML(doc, reader);
+            evalXPaths(doc, reader);
          } catch (IOException e) {
             handleException(text, e);
          } catch (SAXException e) {
@@ -93,7 +107,7 @@ public class ParseXMLXPath extends BasePipelineStep {
       }
    }
 
-   private void parseXML(Document doc, Node node) throws XPathExpressionException {
+   private void evalXPaths(Document doc, Node node) throws XPathExpressionException {
       for (XPathFieldName e : xPaths) {
          final NodeList nl = (NodeList) e.getXPathExpression().evaluate(node, XPathConstants.NODESET);
          if (nl != null && nl.getLength() > 0) {
