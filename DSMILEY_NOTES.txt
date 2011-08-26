@@ -1,0 +1,10 @@
+My thoughts for improvement on the OpenPipe API:
+
+ * Use Spring Beans Validation framework instead of built-in one.
+ * Use Spring's lifecycle for DocumentProducer init() & close(),
+      and BasePipelineStep prepare() and finish().
+  - will always call close(); have fail() be in addition. Is there a Spring facility for this?
+
+ * How do steps produce more than one document or aggregate documents or filter out a document?
+  - filtering: return null?  return some other pipeline step?
+  - split or aggregate: use a document producer configured to take another document producer
